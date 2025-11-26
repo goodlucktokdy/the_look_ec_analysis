@@ -1043,14 +1043,14 @@ elif pages[selected_page] == "problems":
     """, unsafe_allow_html=True)
     
     # 문제 1: Promising 미활동 (High/Low 분리)
-    st.subheader("🚨 문제 #1: Promising 고객 대다수 미활동")
+    st.subheader("🚨 문제 #1: Promising 고객 대다수 첫 구매 후 미활동")
     
     col1, col2 = st.columns([1, 1])
     
     with col1:
         st.markdown("""
         <div class="problem-box">
-            <div class="problem-title">📊 현황 데이터 (High/Low 분리)</div>
+            <div class="problem-title">📊 첫 구매후 활동 현황 데이터 (High/Low 분리)</div>
             <div style="color: #4b5563; line-height: 1.8;">
                 <b>🟣 Promising High Value (3,555명)</b><br>
                 • 미활동(0 Session): <b>46.22%</b> (1,643명)<br>
@@ -1080,7 +1080,7 @@ elif pages[selected_page] == "problems":
             y='count',
             color='status',
             barmode='stack',
-            title='Promising 세그먼트 활동 현황',
+            title='Promising 세그먼트 첫 구매 후 활동 현황',
             color_discrete_map={'미활동': '#ef4444', '활동': '#10b981'}
         )
         fig.update_layout(height=350)
@@ -1263,7 +1263,7 @@ elif pages[selected_page] == "problems":
                 • <b>합계: 16,475명 (55.30%)</b><br><br>
                 <b>매출 영향:</b><br>
                 • 이탈 위험 고객 매출: $1.4M (45.9%)<br>
-                • 완전 이탈 시 <b>연 매출 46% 손실</b>
+                • 완전 이탈 시 <b>총 매출의 46% 손실</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
