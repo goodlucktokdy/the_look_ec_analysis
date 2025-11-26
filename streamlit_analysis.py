@@ -363,7 +363,7 @@ if pages[selected_page] == "executive":
     st.markdown("""
     <div class="main-header">
         <h1>🏠 Executive Summary</h1>
-        <p>TheLook E-commerce RFM 기반 고객 세그먼트 분석 및 전략 제안</p>
+        <p>김동윤의 TheLook E-commerce RFM 기반 고객 세그먼트 분석 및 전략 제안</p>
     </div>
     """, unsafe_allow_html=True)
     
