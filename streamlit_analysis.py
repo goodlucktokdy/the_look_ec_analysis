@@ -463,13 +463,11 @@ selected_page = st.sidebar.radio("", list(pages.keys()), label_visibility="colla
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("""
-<div style="font-size: 0.9rem;">
-    <h2 style="color: #667eea;">
+<div style="font-size: 0.9rem;color: #667eea;">
         <p><strong>분석 기간:</strong> 2023.01 - 2024.12</p>
         <p><strong>총 고객 수:</strong> 29,795명</p>
         <p><strong>총 매출:</strong> $3,063,495</p>
         <p><strong>데이터:</strong> BigQuery Public Dataset thelook e-commerce</p>
-    </h2>
 </div>
 """, unsafe_allow_html=True)
 
