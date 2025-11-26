@@ -1062,7 +1062,7 @@ elif pages[selected_page] == "problems":
     with col1:
         st.markdown("""
         <div class="problem-box">
-            <div class="problem-title">📊 현황 데이터 (High/Low 분리) - 구매 횟수 1회</div>
+            <div class="problem-title">📊 구매 후 세션 데이터 (High/Low 분리) - 구매 횟수 1회</div>
             <div style="color: #4b5563; line-height: 1.8;">
                 <b>🟣 Promising High Value (3,555명) - 구매 1회</b><br>
                 • 미활동(0 Session): <b>46.22%</b> (1,643명)<br>
@@ -1092,7 +1092,7 @@ elif pages[selected_page] == "problems":
             y='count',
             color='status',
             barmode='stack',
-            title='Promising 세그먼트 활동 현황',
+            title='Promising 세그먼트 구매 후 세션 활동',
             color_discrete_map={'미활동': '#ef4444', '활동': '#10b981'}
         )
         fig.update_layout(height=350)
