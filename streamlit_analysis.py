@@ -1502,8 +1502,8 @@ elif pages[selected_page] == "promising":
     # 첫 구매 카테고리별 VIP 전환율
     st.markdown("""
         ### 📊 첫 구매 카테고리별 VIP 전환율  
-        ##### 지표정의: Recency 180일 이내에 속하는 VIP Champion, Promising High&Low 대상
-        ##### 지표계산: VIP Champion/(Promising High&Low + VIP Champion)
+        ##### 지표정의: Recency 180일 이내에 속하는 VIP, Promising High&Low 대상
+        ##### 지표계산: VIP/(Promising High&Low + VIP)
         """)
     
     fig = px.bar(
@@ -1627,7 +1627,7 @@ elif pages[selected_page] == "vip":
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
     # 전환 속도 분석
-    st.subheader("🚀 VIP 전환 속도별 분석")
+    st.subheader("🚀 VIP 전환 속도별(현재 VIP 유저의 첫 구매 이후 재구매까지 속도) 분석")
     
     col1, col2 = st.columns(2)
     
@@ -1683,8 +1683,8 @@ elif pages[selected_page] == "channel":
     # 채널별 VIP 전환율
     st.markdown("""
         ### 📊 가입시 유입 트래픽 소스별 VIP 전환율  
-        ##### 지표정의: Recency 180일 이내에 속하는 VIP Champion, Promising High&Low 대상
-        ##### 지표계산: VIP Champion/(Promising High&Low + VIP Champion)
+        ##### 지표정의: Recency 180일 이내에 속하는 VIP, Promising High&Low 대상
+        ##### 지표계산: VIP/(Promising High&Low + VIP)
         """)
 
     
