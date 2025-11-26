@@ -16,7 +16,7 @@ import numpy as np
 # 페이지 설정
 # ============================================
 st.set_page_config(
-    page_title="TheLook RFM 분석 포트폴리오",
+    page_title="김동윤의 TheLook RFM 분석 포트폴리오",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
