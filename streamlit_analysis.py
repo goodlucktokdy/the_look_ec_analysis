@@ -1672,12 +1672,12 @@ elif pages[selected_page] == "channel":
     st.markdown("""
     <div class="main-header">
         <h1>📢 채널 & 카테고리 분석</h1>
-        <p>트래픽 소스별 VIP 전환율 및 고LTV 카테고리 분석</p>
+        <p>가입시 유입 트래픽 소스별 VIP 전환율 및 고LTV 카테고리 분석</p>
     </div>
     """, unsafe_allow_html=True)
     
     # 채널별 VIP 전환율
-    st.subheader("📊 트래픽 소스별 VIP 전환율")
+    st.subheader("📊 가입시 유입 트래픽 소스별 VIP 전환율[Recency가 180일 이내인 Promising High/Low + VIP Champion이 모수(분모)]")
     
     col1, col2 = st.columns(2)
     
