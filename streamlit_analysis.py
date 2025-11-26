@@ -3,7 +3,7 @@ TheLook E-commerce RFM 분석 포트폴리오 (Complete Version v2)
 =========================================================
 분석 기간: 2023-01-01 ~ 2024-12-31
 총 분석 고객: 29,795명
-RFM 세그먼트: 9개 (VIP Champions, Loyal High/Low, Promising High/Low, Need Attention, At Risk, Hibernating, Others)
+RFM 세그먼트: 9개 (VIP , Loyal High/Low, Promising High/Low, Need Attention, At Risk, Hibernating, Others)
 """
 
 import streamlit as st
@@ -293,7 +293,7 @@ rfm_distribution = {
 
 # RFM 세그먼트 데이터
 segment_data = pd.DataFrame([
-    {"segment": "VIP Champions", "user_count": 1531, "pct": 5.14, "avg_recency": 79.5, 
+    {"segment": "VIP ", "user_count": 1531, "pct": 5.14, "avg_recency": 79.5, 
      "avg_frequency": 2.32, "avg_monetary": 275.88, "revenue_pct": 13.79, 
      "r_score": 4.59, "f_score": 4.28, "m_score": 4.30, "total_revenue": 422377.78},
     {"segment": "Loyal High Value", "user_count": 2026, "pct": 6.80, "avg_recency": 185.3, 
@@ -370,7 +370,7 @@ vip_repurchase_timing = pd.DataFrame([
      "avg_first_revenue": 127.70, "avg_second_revenue": 120.24, "avg_ltv": 275.30}
 ])
 
-# Champions 전환 속도 분석
+#  전환 속도 분석
 conversion_speed = pd.DataFrame([
     {"speed": "1. Quick (≤30 days)", "count": 165, "avg_days": 14.4, "avg_sessions": 0.9, 
      "avg_product_views": 0.2, "avg_ltv": 282.50, "avg_m_score": 4.35},
@@ -410,7 +410,7 @@ category_vip_conversion = pd.DataFrame([
 
 # 첫 세션 행동 분석 (세그먼트별)
 first_session_behavior = pd.DataFrame([
-    {"segment": "VIP Champions", "avg_events": 6.64, "cart_usage_rate": 100.0, 
+    {"segment": "VIP ", "avg_events": 6.64, "cart_usage_rate": 100.0, 
      "purchase_rate": 100.0, "avg_monetary": 275.88},
     {"segment": "Promising High Value", "avg_events": 7.05, "cart_usage_rate": 100.0, 
      "purchase_rate": 99.16, "avg_monetary": 155.86},
@@ -424,7 +424,7 @@ first_session_behavior = pd.DataFrame([
      "purchase_rate": 100.0, "avg_monetary": 86.39}
 ])
 
-# 채널 x 카테고리별 Champions LTV TOP 10
+# 채널 x 카테고리별  LTV TOP 10
 channel_category_ltv = pd.DataFrame([
     {"channel": "Facebook", "category": "Outerwear & Coats", "champion_count": 8, 
      "avg_ltv": 386.28, "avg_first_price": 243.98, "m_score_5_count": 6},
@@ -454,7 +454,7 @@ pages = {
     "👥 세그먼트 현황 분석": "segments",
     "⚠️ 문제 정의 & 인사이트": "problems",
     "🎯 Promising 분석": "promising",
-    "👑 VIP Champions 분석": "vip",
+    "👑 VIP  분석": "vip",
     "📢 채널 & 카테고리 분석": "channel",
     "🚀 Action Plan & ROI": "action"
 }
@@ -610,7 +610,7 @@ if pages[selected_page] == "executive":
             <div class="insight-title">💡 세그먼트 핵심 요약</div>
             <div class="insight-text">
                 <b>성장 동력 (28.4%)</b><br>
-                • VIP Champions: 5.14%<br>
+                • VIP : 5.14%<br>
                 • Promising: 28.35%<br><br>
                 <b>위험 고객 (54.9%)</b><br>
                 • At Risk: 22.28%<br>
@@ -832,7 +832,7 @@ elif pages[selected_page] == "rfm_criteria":
     """, unsafe_allow_html=True)
     
     segment_criteria = pd.DataFrame({
-        "세그먼트": ["VIP Champions", "Loyal High Value", "Loyal Low Value", "Promising High Value", 
+        "세그먼트": ["VIP ", "Loyal High Value", "Loyal Low Value", "Promising High Value", 
                    "Promising Low Value", "Need Attention", "At Risk", "Hibernating", "Others"],
         "R 조건": ["≥4", "≥3", "≥3", "≥4", "≥4", "≤2", "=3", "≤2", "기타"],
         "F 조건": ["≥4", "≥4", "≥4", "=3", "=3", "≥4", "=3", "≤3", "기타"],
@@ -902,7 +902,7 @@ elif pages[selected_page] == "rfm_criteria":
     <div class="insight-box success">
         <div class="insight-title">✅ 세그먼트 분류 검증 결과</div>
         <div class="insight-text">
-            • <b>VIP Champions (5.14%)</b>: 평균 LTV $275.88로 전체 평균의 <b>2.7배</b> → 프리미엄 고객 정확 식별<br>
+            • <b>VIP  (5.14%)</b>: 평균 LTV $275.88로 전체 평균의 <b>2.7배</b> → 프리미엄 고객 정확 식별<br>
             • <b>Promising (28.35%)</b>: 최근성 높고 1회 구매 → 전환 잠재력 높은 그룹 정확 분리<br>
             • <b>At Risk + Hibernating (54.86%)</b>: 과반수가 이탈 위험 → <b>리텐션 전략 시급</b>
         </div>
@@ -1024,7 +1024,7 @@ elif pages[selected_page] == "segments":
     <div class="insight-box">
         <div class="insight-title">💡 세그먼트 특성 요약</div>
         <div class="insight-text">
-            • <b>VIP Champions</b>: 모든 RFM 지표 최상위 (R:4.59, F:4.28, M:4.30)<br>
+            • <b>VIP </b>: 모든 RFM 지표 최상위 (R:4.59, F:4.28, M:4.30)<br>
             • <b>Promising</b>: 높은 Recency(4.55)와 중간 Monetary, 낮은 Frequency(3.0) → 재구매 유도 핵심 타겟<br>
             • <b>Hibernating</b>: 모든 지표 최하위 (R:1.53, F:3.0, M:2.35) → 윈백 또는 자연 이탈 허용
         </div>
@@ -1198,7 +1198,7 @@ elif pages[selected_page] == "problems":
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
     # 문제 2: VIP 재구매 지연
-    st.subheader("🚨 문제 #2: VIP Champions 재구매 주기 과다 지연")
+    st.subheader("🚨 문제 #2: VIP  재구매 주기 과다 지연")
     
     col1, col2 = st.columns([1, 1])
     
@@ -1219,7 +1219,7 @@ elif pages[selected_page] == "problems":
         <div class="problem-box">
             <div class="problem-title">📊 현황 데이터</div>
             <div style="color: #4b5563; line-height: 1.8;">
-                <b>VIP Champions 재구매 타이밍:</b><br>
+                <b>VIP  재구매 타이밍:</b><br>
                 • 1주일 이내: 3.07% (47명)<br>
                 • 2주 이내: 2.61% (40명)<br>
                 • 1개월 이내: 5.09% (78명)<br>
@@ -1528,12 +1528,12 @@ elif pages[selected_page] == "promising":
     """, unsafe_allow_html=True)
 
 # ============================================
-# 페이지 6: VIP Champions 심층분석
+# 페이지 6: VIP  심층분석
 # ============================================
 elif pages[selected_page] == "vip":
     st.markdown("""
     <div class="main-header">
-        <h1>👑 VIP Champions 심층분석</h1>
+        <h1>👑 VIP  심층분석</h1>
         <p>최고 가치 고객군의 행동 패턴 및 성공 요인 분석</p>
     </div>
     """, unsafe_allow_html=True)
@@ -1545,7 +1545,7 @@ elif pages[selected_page] == "vip":
         st.markdown("""
         <div class="metric-card green">
             <div class="metric-value">1,531</div>
-            <div class="metric-label">VIP Champions</div>
+            <div class="metric-label">VIP </div>
             <div class="metric-delta">전체의 5.14%</div>
         </div>
         """, unsafe_allow_html=True)
@@ -1623,7 +1623,7 @@ elif pages[selected_page] == "vip":
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
     # 전환 속도 분석
-    st.subheader("🚀 Champions 전환 속도별 분석")
+    st.subheader("🚀 VIP 전환 속도별 분석")
     
     col1, col2 = st.columns(2)
     
@@ -1634,8 +1634,8 @@ elif pages[selected_page] == "vip":
             y='count',
             color='avg_ltv',
             color_continuous_scale='Greens',
-            title='전환 속도별 Champions 수',
-            labels={'count': 'Champions 수', 'speed': '전환 속도'}
+            title='전환 속도별 VIP 수',
+            labels={'count': 'VIP 수', 'speed': '전환 속도'}
         )
         fig.update_layout(height=350)
         st.plotly_chart(fig, use_container_width=True)
@@ -1945,7 +1945,7 @@ elif pages[selected_page] == "action":
     with col1:
         st.markdown("""
         <div class="action-box">
-            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🎯 대상: VIP Champions 1,531명</div>
+            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🎯 대상: VIP  1,531명</div>
             
             <b>구체적 액션:</b><br>
             • <b>VIP 전용 멤버십 프로그램:</b> 포인트 적립, 전용 할인, 얼리 액세스<br>
@@ -2114,7 +2114,7 @@ elif pages[selected_page] == "action":
     kpi_data = pd.DataFrame({
         "KPI": ["Promising High 세션 활동 전환", "Promising Low 세션 활동 전환", 
                 "Promising High 재구매 전환", "Promising Low 재구매 전환",
-                "VIP Champions 비율", "평균 LTV"],
+                "VIP  비율", "평균 LTV"],
         "현재": ["53.8% (활동)", "12.6% (활동)", "0% (1회 구매)", "0% (1회 구매)", "5.14%", "$102.82"],
         "목표 (3개월)": ["60%", "18%", "15%", "10%", "6%", "$108"],
         "목표 (6개월)": ["65%", "25%", "25%", "15%", "7%", "$115"],
