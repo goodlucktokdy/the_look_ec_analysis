@@ -1677,7 +1677,11 @@ elif pages[selected_page] == "channel":
     """, unsafe_allow_html=True)
     
     # 채널별 VIP 전환율
-    st.subheader("📊 가입시 유입 트래픽 소스별 VIP 전환율[Recency가 180일 이내인 Promising High/Low + VIP Champion이 모수(분모)]")
+    st.markdown("""
+        ### 📊 가입시 유입 트래픽 소스별 VIP 전환율  
+        ##### _ Recency 180일 이내에 속하는 VIP Champion/(Promising High/Low + VIP Champion) _ 
+        """)
+
     
     col1, col2 = st.columns(2)
     
