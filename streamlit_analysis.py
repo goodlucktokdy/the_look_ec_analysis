@@ -443,7 +443,7 @@ channel_category_ltv = pd.DataFrame([
 # ============================================
 st.sidebar.markdown("""
 <div style="text-align: center; padding: 1rem 0;">
-    <h2 style="margin: 0; color: #667eea;">📊 RFM 분석</h2>
+    <h2 style="margin: 0; color: #667eea;">📊 김동윤의 RFM 분석</h2>
     <p style="color: #6b7280; font-size: 0.9rem;">김동윤의 빅쿼리 TheLook E-commerce 데이터셋 분석</p>
 </div>
 """, unsafe_allow_html=True)
@@ -1061,6 +1061,7 @@ elif pages[selected_page] == "problems":
     
     with col1:
         st.markdown("""
+<div style="line-height: 1.7; color: #444">
 <b>🟣 Promising High Value 전략 (세션 활동 유도 → 고가 상품 재구매):</b><br>
 • D+1: "구매하신 상품과 어울리는 프리미엄 아이템" 이메일 (사이트 방문 유도)<br>
 • D+3: "나만의 스타일 큐레이션" 개인화 추천 (브라우징 유도)<br>
@@ -1072,7 +1073,9 @@ elif pages[selected_page] == "problems":
 • D+3: 베스트셀러 큐레이션 + "무료배송까지 $XX" (브라우징 유도)<br>
 • D+7: 번들/세트 상품 30% 할인 (업셀링 + 세션 유도)<br>
 • D+14: 리뷰 하이라이트 + 한정 시간 15% 쿠폰 (재구매 전환)
+</div>
 """, unsafe_allow_html=True)
+
 
     
     with col2:
