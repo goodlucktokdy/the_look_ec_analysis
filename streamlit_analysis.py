@@ -453,8 +453,8 @@ pages = {
     "🔬 RFM 등급 기준 & 근거": "rfm_criteria",
     "👥 세그먼트 현황 분석": "segments",
     "⚠️ 문제 정의 & 인사이트": "problems",
-    "🎯 Promising 전환 분석": "promising",
-    "👑 VIP Champions 심층분석": "vip",
+    "🎯 Promising 분석": "promising",
+    "👑 VIP Champions 분석": "vip",
     "📢 채널 & 카테고리 분석": "channel",
     "🚀 Action Plan & ROI": "action"
 }
