@@ -17,7 +17,7 @@ import numpy as np
 # 페이지 설정
 # ============================================
 st.set_page_config(
-    page_title="TheLook RFM 분석 포트폴리오",
+    page_title="김동윤: 빅쿼리 TheLook 데이터셋 RFM 분석 포트폴리오",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -443,7 +443,7 @@ channel_category_ltv = pd.DataFrame([
 # ============================================
 st.sidebar.markdown("""
 <div style="text-align: center; padding: 1rem 0;">
-    <h2 style="margin: 0; color: #667eea;">📊 김동윤의 BigQuery THE LOOK 데이터셋 RFM 분석</h2>
+    <h2 style="margin: 0; color: #667eea;">📊 RFM 분석</h2>
     <p style="color: #6b7280; font-size: 0.9rem;">TheLook E-commerce</p>
 </div>
 """, unsafe_allow_html=True)
@@ -1043,25 +1043,37 @@ elif pages[selected_page] == "problems":
     """, unsafe_allow_html=True)
     
     # 문제 1: Promising 미활동 (High/Low 분리)
-    st.subheader("🚨 문제 #1: Promising 고객 대다수 첫 구매 후 미활동")
+    st.subheader("🚨 문제 #1: Promising 고객 대다수 미활동 (구매 횟수 = 모두 1회)")
+    
+    # 핵심 특성 강조
+    st.markdown("""
+    <div class="insight-box navy">
+        <div class="insight-title">⚠️ 핵심 특성: Promising 세그먼트는 모두 구매 횟수 1회</div>
+        <div class="insight-text">
+            • Promising High Value: 평균 구매 횟수 <b>1.0회</b> (F Score = 3)<br>
+            • Promising Low Value: 평균 구매 횟수 <b>1.0회</b> (F Score = 3)<br>
+            • <b>아직 재구매가 발생하지 않은 "잠재 충성 고객"</b> → 2차 구매 유도가 핵심 과제
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     col1, col2 = st.columns([1, 1])
     
     with col1:
         st.markdown("""
         <div class="problem-box">
-            <div class="problem-title">📊 첫 구매후 활동 현황 데이터 (High/Low 분리)</div>
+            <div class="problem-title">📊 현황 데이터 (High/Low 분리) - 구매 횟수 1회</div>
             <div style="color: #4b5563; line-height: 1.8;">
-                <b>🟣 Promising High Value (3,555명)</b><br>
+                <b>🟣 Promising High Value (3,555명) - 구매 1회</b><br>
                 • 미활동(0 Session): <b>46.22%</b> (1,643명)<br>
                 • 1 Session: 13.31% (473명)<br>
                 • 2-3 Sessions: 35.67% (1,268명)<br>
-                • 평균 LTV: <b>$155.86</b><br><br>
-                <b>🟠 Promising Low Value (4,891명)</b><br>
+                • 평균 LTV: <b>$155.86</b> (1회 구매 금액)<br><br>
+                <b>🟠 Promising Low Value (4,891명) - 구매 1회</b><br>
                 • 미활동(0 Session): <b>87.41%</b> (4,275명)<br>
                 • 1 Session: 4.64% (227명)<br>
                 • 2-3 Sessions: 7.85% (384명)<br>
-                • 평균 LTV: <b>$34.28</b>
+                • 평균 LTV: <b>$34.28</b> (1회 구매 금액)
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1080,26 +1092,30 @@ elif pages[selected_page] == "problems":
             y='count',
             color='status',
             barmode='stack',
-            title='Promising 세그먼트 첫 구매 후 활동 현황',
+            title='Promising 세그먼트 활동 현황',
             color_discrete_map={'미활동': '#ef4444', '활동': '#10b981'}
         )
         fig.update_layout(height=350)
         st.plotly_chart(fig, use_container_width=True)
     
     # Promising High Value 인사이트 & ROI
-    st.markdown("#### 🟣 Promising High Value 분석")
+    st.markdown("#### 🟣 Promising High Value 분석 (구매 횟수 = 1회)")
     
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
         <div class="insight-box purple">
-            <div class="insight-title">💡 인사이트: Promising High Value</div>
+            <div class="insight-title">💡 핵심 인사이트: 구매 1회인데 세션 활동에 따라 LTV 차이 발생</div>
             <div class="insight-text">
-                • 미활동 고객 LTV: $131.06 → 활동(4-5 Sessions) LTV: $244.25 (<b>+86% 상승</b>)<br>
-                • 미활동률 46.2%는 Low의 87.4%보다 낮지만, <b>고가치 고객 손실</b>이 더 심각<br>
-                • 1,643명의 미활동 고객이 잠재적으로 <b>$185,000+</b> 매출 기회 보유<br>
-                • <b>첫 구매 후 7일 이내</b>가 재활성화 골든타임
+                <b>🔍 놀라운 발견:</b> 모든 Promising High 고객은 <b>구매 횟수가 1회</b>로 동일한데,<br>
+                첫 구매 후 <b>세션 활동</b>에 따라 <b>첫 구매 객단가(LTV)</b>가 크게 다름:<br><br>
+                • 미활동(0 Session) LTV: <b>$131.06</b><br>
+                • 1 Session LTV: <b>$153.98</b> (+17%)<br>
+                • 2-3 Sessions LTV: <b>$176.89</b> (+35%)<br>
+                • 4-5 Sessions LTV: <b>$244.25</b> (<b>+86%</b>)<br><br>
+                <b>→ 세션 활동이 많은 고객 = 더 비싼 상품을 첫 구매 시 선택</b><br>
+                <b>→ 세션 유도 = 2차 구매 시 더 높은 객단가 기대</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1107,36 +1123,41 @@ elif pages[selected_page] == "problems":
     with col2:
         st.markdown("""
         <div class="roi-box">
-            <div class="roi-title">💰 Promising High ROI 산출</div>
+            <div class="roi-title">💰 Promising High ROI 산출 (세션 활동 기반)</div>
             <div style="color: #4b5563; line-height: 1.8; font-size: 0.9rem;">
+                <b>전략: 세션 활동 유도 → 재구매 시 높은 객단가</b><br><br>
                 <b>가정:</b><br>
-                • 미활동 1,643명 중 25% 재활성화 = 411명<br>
-                • 평균 추가 구매액: $120 (고가 상품 타겟)<br>
-                • VIP 전환율: 18% (고가 구매자 높은 전환율)<br><br>
+                • 미활동 1,643명 중 30% 세션 활동 전환 = 493명<br>
+                • 세션 활동 전환 고객의 50% 재구매 = 247명<br>
+                • 재구매 시 예상 객단가: $176 (2-3 Sessions LTV 기준)<br><br>
                 <b>계산:</b><br>
-                • 직접 매출: 411 × $120 = <b>$49,320</b><br>
-                • VIP 전환: 74명 × $250 = <b>$18,500</b><br>
-                • 2차 재구매(35%): 144명 × $90 = <b>$12,960</b><br>
-                • LTV 상승 효과: $50,000<br><br>
+                • 2차 구매 매출: 247명 × $176 = <b>$43,472</b><br>
+                • VIP 전환(20%): 49명 × $275 = <b>$13,475</b><br>
+                • 3차 재구매(40%): 99명 × $120 = <b>$11,880</b><br>
+                • 객단가 상승 효과: <b>$62,000</b><br><br>
                 <b>예상 ROI: $131,000</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
     
     # Promising Low Value 인사이트 & ROI
-    st.markdown("#### 🟠 Promising Low Value 분석")
+    st.markdown("#### 🟠 Promising Low Value 분석 (구매 횟수 = 1회)")
     
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
         <div class="insight-box warning">
-            <div class="insight-title">💡 인사이트: Promising Low Value</div>
+            <div class="insight-title">💡 핵심 인사이트: 구매 1회인데 세션 활동에 따라 LTV 차이 발생</div>
             <div class="insight-text">
-                • <b>87.4%</b>가 첫 구매 후 재방문 없음 → 첫 구매 경험 불만족 시그널<br>
-                • 미활동 LTV: $32.59 → 활동(2-3 Sessions) LTV: $47.18 (<b>+45% 상승</b>)<br>
-                • 4,275명의 미활동 고객 = <b>$139,000</b> 잠재 매출 (미활동×$32.59)<br>
-                • 저가 구매 고객도 <b>번들/세트 업셀링</b>으로 LTV 상승 가능
+                <b>🔍 놀라운 발견:</b> 모든 Promising Low 고객도 <b>구매 횟수가 1회</b>로 동일한데,<br>
+                첫 구매 후 <b>세션 활동</b>에 따라 <b>첫 구매 객단가(LTV)</b>가 다름:<br><br>
+                • 미활동(0 Session) LTV: <b>$32.59</b><br>
+                • 1 Session LTV: <b>$44.13</b> (+35%)<br>
+                • 2-3 Sessions LTV: <b>$47.18</b> (<b>+45%</b>)<br><br>
+                <b>→ 세션 활동이 많은 고객 = 더 비싼 상품 선택 경향</b><br>
+                <b>→ 87.4% 미활동 = 세션 활동 유도가 최우선 과제</b><br>
+                <b>→ 세션 유도 후 업셀링 → LTV 상승 가능</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1144,37 +1165,44 @@ elif pages[selected_page] == "problems":
     with col2:
         st.markdown("""
         <div class="roi-box">
-            <div class="roi-title">💰 Promising Low ROI 산출</div>
+            <div class="roi-title">💰 Promising Low ROI 산출 (세션 활동 기반)</div>
             <div style="color: #4b5563; line-height: 1.8; font-size: 0.9rem;">
+                <b>전략: 세션 활동 유도 → 재구매 시 업셀링</b><br><br>
                 <b>가정:</b><br>
-                • 미활동 4,275명 중 15% 재활성화 = 641명<br>
-                • 평균 추가 구매액: $50 (번들/세트 상품)<br>
-                • VIP 전환율: 8% (업셀링 성공 시)<br><br>
+                • 미활동 4,275명 중 20% 세션 활동 전환 = 855명<br>
+                • 세션 활동 전환 고객의 35% 재구매 = 299명<br>
+                • 재구매 시 예상 객단가: $47 (2-3 Sessions LTV 기준)<br><br>
                 <b>계산:</b><br>
-                • 직접 매출: 641 × $50 = <b>$32,050</b><br>
-                • VIP 전환: 51명 × $180 = <b>$9,180</b><br>
-                • 2차 재구매(25%): 160명 × $40 = <b>$6,400</b><br>
-                • 업셀링 효과: $34,000<br><br>
+                • 2차 구매 매출: 299명 × $47 = <b>$14,053</b><br>
+                • 업셀링 성공(30%): 90명 × $80 = <b>$7,200</b><br>
+                • VIP 전환(10%): 30명 × $180 = <b>$5,400</b><br>
+                • 3차 재구매(25%): 75명 × $50 = <b>$3,750</b><br>
+                • 객단가 상승 효과: <b>$51,600</b><br><br>
                 <b>예상 ROI: $82,000</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
     
-    # 해결방안 (High/Low 차별화)
+    # 해결방안 (High/Low 차별화) - 세션 활동 유도 중심
     st.markdown("""
     <div class="solution-box">
-        <div class="solution-title">✅ 해결 방안 (High/Low 차별화)</div>
+        <div class="solution-title">✅ 해결 방안: 세션 활동 유도 → 재구매 시 높은 객단가 (High/Low 차별화)</div>
         <div style="color: #4b5563; line-height: 1.8;">
-            <b>🟣 Promising High Value 전략:</b><br>
-            • D+1: VIP 혜택 미리보기 + 관련 프리미엄 상품 추천<br>
-            • D+3: 첫 구매 고객 전용 20% 할인 쿠폰 (고가 상품 적용)<br>
-            • D+7: "VIP 레벨 달성까지 1회 남았습니다" + 무료배송<br>
-            • D+14: 신상품 얼리 액세스 초대<br><br>
-            <b>🟠 Promising Low Value 전략:</b><br>
-            • D+1: 관련 저가 상품 + 번들 세트 추천<br>
-            • D+3: 15% 할인 쿠폰 + "무료배송까지 $XX 남았어요"<br>
-            • D+7: 세트 상품 30% 할인 (업셀링)<br>
-            • D+14: 베스트셀러 큐레이션 + 리뷰 하이라이트
+            <b>🎯 핵심 전략: "세션 활동 유도"가 최우선</b><br>
+            • 구매 횟수 1회인데 세션 활동이 많은 고객의 객단가가 더 높음<br>
+            • <b>세션 활동 유도 → 사이트 재방문 → 더 많은 상품 탐색 → 재구매 시 높은 객단가</b><br><br>
+            
+            <b>🟣 Promising High Value 전략 (세션 활동 유도 → 고가 상품 재구매):</b><br>
+            • D+1: "구매하신 상품과 어울리는 프리미엄 아이템" 이메일 (사이트 방문 유도)<br>
+            • D+3: "나만의 스타일 큐레이션" 개인화 추천 (브라우징 유도)<br>
+            • D+7: 신상품 프리뷰 + VIP 전용 얼리 액세스 (세션 증가 유도)<br>
+            • D+14: "VIP까지 1회 남았습니다" + 고가 상품 20% 할인 (재구매 전환)<br><br>
+            
+            <b>🟠 Promising Low Value 전략 (세션 활동 유도 → 업셀링):</b><br>
+            • D+1: "이 상품을 본 고객이 함께 구매한 아이템" (사이트 방문 유도)<br>
+            • D+3: 베스트셀러 큐레이션 + "무료배송까지 $XX" (브라우징 유도)<br>
+            • D+7: 번들/세트 상품 30% 할인 (업셀링 + 세션 유도)<br>
+            • D+14: 리뷰 하이라이트 + 한정 시간 15% 쿠폰 (재구매 전환)
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -1263,7 +1291,7 @@ elif pages[selected_page] == "problems":
                 • <b>합계: 16,475명 (55.30%)</b><br><br>
                 <b>매출 영향:</b><br>
                 • 이탈 위험 고객 매출: $1.4M (45.9%)<br>
-                • 완전 이탈 시 <b>총 매출의 46% 손실</b>
+                • 완전 이탈 시 <b>연 매출 46% 손실</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1275,7 +1303,20 @@ elif pages[selected_page] == "promising":
     st.markdown("""
     <div class="main-header">
         <h1>🎯 Promising 전환 분석</h1>
-        <p>Promising → VIP 전환 경로 및 핵심 성공 요인 분석</p>
+        <p>Promising → VIP 전환 경로 및 핵심 성공 요인 분석 (구매 횟수 = 모두 1회)</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 핵심 특성 강조
+    st.markdown("""
+    <div class="insight-box navy">
+        <div class="insight-title">⚠️ 핵심 특성: Promising 세그먼트는 모두 구매 횟수 1회</div>
+        <div class="insight-text">
+            • Promising High Value: 평균 구매 횟수 <b>1.0회</b>, 평균 Frequency <b>3.0</b> (F Score = 3)<br>
+            • Promising Low Value: 평균 구매 횟수 <b>1.0회</b>, 평균 Frequency <b>3.0</b> (F Score = 3)<br>
+            • <b>중요:</b> 구매 횟수는 1회로 동일한데, <b>세션 활동에 따라 첫 구매 객단가(LTV)가 다름</b><br>
+            • <b>→ 세션 활동 유도가 핵심 전략: 더 많은 탐색 → 더 높은 객단가 → 재구매 시 VIP 전환</b>
+        </div>
     </div>
     """, unsafe_allow_html=True)
     
@@ -1286,7 +1327,7 @@ elif pages[selected_page] == "promising":
         st.markdown("""
         <div class="metric-card purple">
             <div class="metric-value">3,555</div>
-            <div class="metric-label">Promising High</div>
+            <div class="metric-label">Promising High (1회 구매)</div>
             <div class="metric-delta">미활동률 46.2%</div>
         </div>
         """, unsafe_allow_html=True)
@@ -1295,7 +1336,7 @@ elif pages[selected_page] == "promising":
         st.markdown("""
         <div class="metric-card orange">
             <div class="metric-value">4,891</div>
-            <div class="metric-label">Promising Low</div>
+            <div class="metric-label">Promising Low (1회 구매)</div>
             <div class="metric-delta delta-negative">미활동률 87.4%</div>
         </div>
         """, unsafe_allow_html=True)
@@ -1303,25 +1344,36 @@ elif pages[selected_page] == "promising":
     with col3:
         st.markdown("""
         <div class="metric-card green">
-            <div class="metric-value">$155.86</div>
-            <div class="metric-label">High 평균 LTV</div>
-            <div class="metric-delta">Low 대비 4.5배</div>
+            <div class="metric-value">+86%</div>
+            <div class="metric-label">High: 세션 활동 시 LTV 상승</div>
+            <div class="metric-delta">$131 → $244</div>
         </div>
         """, unsafe_allow_html=True)
     
     with col4:
         st.markdown("""
         <div class="metric-card blue">
-            <div class="metric-value">$721K</div>
-            <div class="metric-label">Promising 총 매출</div>
-            <div class="metric-delta">전체의 23.6%</div>
+            <div class="metric-value">+45%</div>
+            <div class="metric-label">Low: 세션 활동 시 LTV 상승</div>
+            <div class="metric-delta">$33 → $47</div>
         </div>
         """, unsafe_allow_html=True)
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
     # 활동 레벨별 분석 (High/Low 분리)
-    st.subheader("📊 구매 후 활동 레벨별 분석 (High/Low 비교)")
+    st.subheader("📊 세션 활동별 LTV 분석 (구매 횟수는 모두 1회)")
+    
+    st.markdown("""
+    <div class="insight-box danger">
+        <div class="insight-title">🔥 핵심 발견: 구매 1회인데 세션 활동에 따라 첫 구매 객단가가 다름!</div>
+        <div class="insight-text">
+            아래 차트에서 보여주는 <b>평균 LTV는 "첫 구매 1회 금액"</b>입니다.<br>
+            세션 활동이 많은 고객일수록 <b>첫 구매 시 더 비싼 상품을 구매</b>하는 경향이 있습니다.<br>
+            <b>→ 세션 활동 유도 = 더 많은 상품 탐색 = 더 높은 객단가 = 재구매 시 VIP 전환 가능성 ↑</b>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
@@ -1330,22 +1382,24 @@ elif pages[selected_page] == "promising":
         fig = px.bar(
             promising_high,
             x='activity_level',
-            y='user_count',
+            y='avg_monetary',
             color='avg_monetary',
             color_continuous_scale='Purples',
-            title='🟣 Promising High Value: 활동 레벨별 분포',
-            labels={'user_count': '고객 수', 'activity_level': '활동 레벨'}
+            title='🟣 Promising High: 세션 활동별 첫 구매 객단가 (구매 1회)',
+            labels={'avg_monetary': '첫 구매 객단가 ($)', 'activity_level': '세션 활동 레벨'}
         )
         fig.update_layout(height=350)
         st.plotly_chart(fig, use_container_width=True)
         
         st.markdown("""
         <div class="insight-box purple">
-            <div class="insight-title">Promising High 특성</div>
+            <div class="insight-title">🟣 Promising High: 구매 1회인데 세션 활동별 LTV 차이</div>
             <div class="insight-text">
-                • 미활동 → 4-5 Sessions: LTV <b>+86%</b> 상승<br>
-                • 세션 증가 = LTV 증가 <b>강한 상관관계</b><br>
-                • 활동 고객의 53.8%가 재활성화 성공
+                • 미활동(0 Session): <b>$131.06</b> (기준)<br>
+                • 1 Session: <b>$153.98</b> (+17.5%)<br>
+                • 2-3 Sessions: <b>$176.89</b> (+35.0%)<br>
+                • 4-5 Sessions: <b>$244.25</b> (<b>+86.4%</b>)<br><br>
+                <b>→ 세션 활동이 많을수록 첫 구매 시 더 비싼 상품 구매</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1355,76 +1409,101 @@ elif pages[selected_page] == "promising":
         fig = px.bar(
             promising_low,
             x='activity_level',
-            y='user_count',
+            y='avg_monetary',
             color='avg_monetary',
             color_continuous_scale='Oranges',
-            title='🟠 Promising Low Value: 활동 레벨별 분포',
-            labels={'user_count': '고객 수', 'activity_level': '활동 레벨'}
+            title='🟠 Promising Low: 세션 활동별 첫 구매 객단가 (구매 1회)',
+            labels={'avg_monetary': '첫 구매 객단가 ($)', 'activity_level': '세션 활동 레벨'}
         )
         fig.update_layout(height=350)
         st.plotly_chart(fig, use_container_width=True)
         
         st.markdown("""
         <div class="insight-box warning">
-            <div class="insight-title">Promising Low 특성</div>
+            <div class="insight-title">🟠 Promising Low: 구매 1회인데 세션 활동별 LTV 차이</div>
             <div class="insight-text">
-                • 미활동 → 2-3 Sessions: LTV <b>+45%</b> 상승<br>
-                • 87.4% 미활동 → <b>첫 경험 개선 필수</b><br>
-                • 활동 유도 시 업셀링 가능성 높음
+                • 미활동(0 Session): <b>$32.59</b> (기준)<br>
+                • 1 Session: <b>$44.13</b> (+35.4%)<br>
+                • 2-3 Sessions: <b>$47.18</b> (<b>+44.8%</b>)<br><br>
+                <b>→ 87.4% 미활동 고객의 세션 유도가 핵심 과제</b><br>
+                <b>→ 세션 유도 시 객단가 상승 + 업셀링 가능</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
-    # 미활동 개선 목표 & ROI (High/Low 분리)
-    st.subheader("🎯 미활동 개선 목표 & 예상 ROI")
+    # 미활동 개선 목표 & ROI (High/Low 분리) - 세션 활동 유도 중심
+    st.subheader("🎯 미활동 개선 목표 & 예상 ROI (세션 활동 유도 전략)")
+    
+    st.markdown("""
+    <div class="insight-box success">
+        <div class="insight-title">💡 전략 핵심: 세션 활동 유도 → 객단가 상승 → 재구매 → VIP 전환</div>
+        <div class="insight-text">
+            <b>구매 횟수 1회인데 세션 활동에 따라 LTV가 다르다는 발견을 바탕으로:</b><br>
+            1. <b>미활동 고객에게 세션 활동 유도</b> (사이트 재방문, 상품 탐색)<br>
+            2. <b>세션 활동 시 더 높은 객단가 기대</b> (더 많은 탐색 = 더 나은 상품 선택)<br>
+            3. <b>재구매 유도</b> (2차 구매 시 VIP 전환 가능성 ↑)
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     col1, col2 = st.columns(2)
     
     with col1:
-        st.markdown("#### 🟣 Promising High Value")
+        st.markdown("#### 🟣 Promising High Value (구매 1회)")
         improvement_high = pd.DataFrame({
-            "지표": ["현재 미활동률", "목표 미활동률 (6개월)", "재활성화 목표 인원", 
-                    "예상 추가 구매액", "VIP 전환 예상", "예상 ROI"],
-            "값": ["46.22% (1,643명)", "35% (1,245명)", "398명", 
-                  "$47,760", "72명 × $250 = $18,000", "$131,000"]
+            "지표": ["현재 미활동률", "목표: 세션 활동 전환", "목표: 재구매 전환", 
+                    "예상 재구매 객단가", "예상 ROI"],
+            "값": ["46.22% (1,643명)", "1,643명 → 30% 세션 활동 (493명)", 
+                  "493명 → 50% 재구매 (247명)", "$176 (2-3 Sessions LTV 기준)", "$131,000"]
         })
         st.dataframe(improvement_high, hide_index=True, use_container_width=True)
         
         st.markdown("""
         <div class="roi-box">
-            <div class="roi-title">💰 상세 ROI 산출</div>
+            <div class="roi-title">💰 상세 ROI 산출 (세션 활동 기반)</div>
             <div style="color: #4b5563; line-height: 1.6; font-size: 0.9rem;">
-                • 미활동 1,643명 중 25% 재활성화 = <b>411명</b><br>
-                • 평균 추가 구매: $120 × 411 = $49,320<br>
-                • VIP 전환(18%): 74명 × $250 = $18,500<br>
-                • 2차 재구매(35%): 144명 × $90 = $12,960<br>
-                • LTV 상승 효과: $50,000<br>
+                <b>Step 1: 세션 활동 유도</b><br>
+                • 미활동 1,643명 중 30% 세션 활동 전환 = <b>493명</b><br><br>
+                <b>Step 2: 재구매 전환</b><br>
+                • 세션 활동 고객 493명 중 50% 재구매 = <b>247명</b><br>
+                • 예상 객단가: $176 (세션 활동 고객 LTV 기준)<br>
+                • 2차 구매 매출: 247 × $176 = <b>$43,472</b><br><br>
+                <b>Step 3: VIP 전환 & 후속 구매</b><br>
+                • VIP 전환(20%): 49명 × $275 = <b>$13,475</b><br>
+                • 3차 재구매(40%): 99명 × $120 = <b>$11,880</b><br>
+                • 객단가 상승 효과: <b>$62,173</b><br><br>
                 <b>Total Gross: $131,000</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
-        st.markdown("#### 🟠 Promising Low Value")
+        st.markdown("#### 🟠 Promising Low Value (구매 1회)")
         improvement_low = pd.DataFrame({
-            "지표": ["현재 미활동률", "목표 미활동률 (6개월)", "재활성화 목표 인원", 
-                    "예상 추가 구매액", "업셀링 성공 예상", "예상 ROI"],
-            "값": ["87.41% (4,275명)", "75% (3,668명)", "607명", 
-                  "$30,350", "121명 × $70 = $8,470", "$82,000"]
+            "지표": ["현재 미활동률", "목표: 세션 활동 전환", "목표: 재구매 전환", 
+                    "예상 재구매 객단가", "예상 ROI"],
+            "값": ["87.41% (4,275명)", "4,275명 → 20% 세션 활동 (855명)", 
+                  "855명 → 35% 재구매 (299명)", "$47 (2-3 Sessions LTV 기준)", "$82,000"]
         })
         st.dataframe(improvement_low, hide_index=True, use_container_width=True)
         
         st.markdown("""
         <div class="roi-box">
-            <div class="roi-title">💰 상세 ROI 산출</div>
+            <div class="roi-title">💰 상세 ROI 산출 (세션 활동 기반)</div>
             <div style="color: #4b5563; line-height: 1.6; font-size: 0.9rem;">
-                • 미활동 4,275명 중 15% 재활성화 = <b>641명</b><br>
-                • 평균 추가 구매: $50 × 641 = $32,050<br>
-                • VIP 전환(8%): 51명 × $180 = $9,180<br>
-                • 2차 재구매(25%): 160명 × $40 = $6,400<br>
-                • 업셀링 효과: $34,000<br>
+                <b>Step 1: 세션 활동 유도</b><br>
+                • 미활동 4,275명 중 20% 세션 활동 전환 = <b>855명</b><br><br>
+                <b>Step 2: 재구매 전환</b><br>
+                • 세션 활동 고객 855명 중 35% 재구매 = <b>299명</b><br>
+                • 예상 객단가: $47 (세션 활동 고객 LTV 기준)<br>
+                • 2차 구매 매출: 299 × $47 = <b>$14,053</b><br><br>
+                <b>Step 3: 업셀링 & VIP 전환</b><br>
+                • 업셀링(30%): 90명 × $80 = <b>$7,200</b><br>
+                • VIP 전환(10%): 30명 × $180 = <b>$5,400</b><br>
+                • 3차 재구매(25%): 75명 × $50 = <b>$3,750</b><br>
+                • 객단가 상승 효과: <b>$51,597</b><br><br>
                 <b>Total Gross: $82,000</b>
             </div>
         </div>
@@ -1737,51 +1816,67 @@ elif pages[selected_page] == "action":
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
+    # 핵심 전략 강조
+    st.markdown("""
+    <div class="insight-box navy">
+        <div class="insight-title">⚠️ 핵심 발견: Promising 고객은 모두 구매 횟수 1회 + 세션 활동에 따라 LTV 차이</div>
+        <div class="insight-text">
+            • Promising High/Low 모두 <b>구매 횟수 = 1회</b> (아직 재구매 발생 X)<br>
+            • 구매 1회인데 <b>세션 활동이 많은 고객의 첫 구매 객단가가 더 높음</b><br>
+            • <b>→ 전략: 세션 활동 유도 → 더 많은 탐색 → 재구매 시 높은 객단가 → VIP 전환</b>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
     # Phase 1-A: Promising High Value
-    st.markdown("### 🔴 Phase 1-A: Promising High Value 리텐션")
+    st.markdown("### 🔴 Phase 1-A: Promising High Value 리텐션 (구매 1회 → 세션 유도 → 재구매)")
     
     col1, col2 = st.columns([2, 1])
     
     with col1:
         st.markdown("""
         <div class="action-box">
-            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🟣 대상: Promising High 미활동 고객 1,643명</div>
+            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🟣 대상: Promising High 미활동 고객 1,643명 (구매 횟수 = 1회)</div>
             
             <b>현황:</b><br>
-            • 총 Promising High: 3,555명<br>
-            • 미활동률: 46.22% (1,643명)<br>
-            • 평균 LTV: $155.86 (미활동 $131.06)<br><br>
+            • 총 Promising High: 3,555명 (<b>모두 구매 1회</b>)<br>
+            • 미활동률: 46.22% (1,643명 세션 활동 없음)<br>
+            • 미활동 LTV: $131.06 vs 활동(4-5 Sessions) LTV: $244.25 (<b>+86%</b>)<br><br>
             
-            <b>구체적 액션:</b><br>
-            • <b>D+1:</b> VIP 혜택 미리보기 + 프리미엄 상품 3개 추천<br>
-            • <b>D+3:</b> 고가 상품 20% 할인 쿠폰 (VIP 전용 오퍼 강조)<br>
-            • <b>D+7:</b> "VIP까지 1회 구매 남았습니다" + 무료배송<br>
-            • <b>D+14:</b> 신상품 얼리 액세스 초대<br>
-            • <b>D+30:</b> VIP 멤버십 가입 마지막 기회<br><br>
+            <b>전략: 세션 활동 유도 → 재구매 시 높은 객단가</b><br>
+            • <b>D+1:</b> "구매하신 상품과 어울리는 아이템" 이메일 (사이트 방문 유도)<br>
+            • <b>D+3:</b> "나만의 스타일 큐레이션" 개인화 추천 (브라우징 유도)<br>
+            • <b>D+7:</b> 신상품 프리뷰 + VIP 전용 얼리 액세스 (세션 증가 유도)<br>
+            • <b>D+14:</b> "VIP까지 1회 남았습니다" + 고가 상품 20% 할인 (재구매 전환)<br>
+            • <b>D+30:</b> 최종 VIP 승급 기회 + 무료배송<br><br>
             
             <b>목표:</b><br>
-            • 미활동률: 46.22% → 35% (6개월)
+            • 세션 활동 전환: 미활동 1,643명 중 30% → 493명 세션 활동<br>
+            • 재구매 전환: 세션 활동 493명 중 50% → 247명 재구매
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
         <div class="roi-box">
-            <div class="roi-title">💰 ROI 산출 근거</div>
+            <div class="roi-title">💰 ROI 산출 (세션 활동 기반)</div>
             <div style="color: #4b5563; line-height: 1.8; font-size: 0.9rem;">
-                <b>가정:</b><br>
-                • 미활동 1,643명 중 25% 재활성화<br>
-                • = <b>411명</b> 재구매<br>
-                • 평균 추가 구매: $120<br>
-                • VIP 전환율: 18%<br><br>
-                <b>계산:</b><br>
-                • 직접 매출: 411 × $120<br>
-                • = <b>$49,320</b><br><br>
-                • VIP 전환: 74명 × $250<br>
-                • = <b>$18,500</b><br><br>
-                • 2차 재구매(35%):<br>
-                • 144명 × $90 = <b>$12,960</b><br><br>
-                • LTV 상승 효과: <b>$50,220</b><br><br>
+                <b>Step 1: 세션 활동 유도</b><br>
+                • 미활동 1,643명 중 30%<br>
+                • = <b>493명</b> 세션 활동 전환<br><br>
+                
+                <b>Step 2: 재구매 전환</b><br>
+                • 세션 활동 493명 중 50%<br>
+                • = <b>247명</b> 재구매<br>
+                • 예상 객단가: $176<br>
+                • 매출: 247 × $176 = <b>$43,472</b><br><br>
+                
+                <b>Step 3: VIP 전환 & 후속</b><br>
+                • VIP 전환(20%): 49 × $275<br>
+                • = <b>$13,475</b><br>
+                • 3차 재구매(40%): 99 × $120<br>
+                • = <b>$11,880</b><br>
+                • 객단가 상승: <b>$62,173</b><br><br>
                 <b>Total Gross: $131,000</b><br>
                 <b>Net (80%): $104,800</b>
             </div>
@@ -1791,50 +1886,56 @@ elif pages[selected_page] == "action":
     st.markdown("<br>", unsafe_allow_html=True)
     
     # Phase 1-B: Promising Low Value
-    st.markdown("### 🔴 Phase 1-B: Promising Low Value 리텐션")
+    st.markdown("### 🔴 Phase 1-B: Promising Low Value 리텐션 (구매 1회 → 세션 유도 → 업셀링)")
     
     col1, col2 = st.columns([2, 1])
     
     with col1:
         st.markdown("""
         <div class="action-box">
-            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🟠 대상: Promising Low 미활동 고객 4,275명</div>
+            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🟠 대상: Promising Low 미활동 고객 4,275명 (구매 횟수 = 1회)</div>
             
             <b>현황:</b><br>
-            • 총 Promising Low: 4,891명<br>
-            • 미활동률: <b>87.41%</b> (4,275명) - 심각<br>
-            • 평균 LTV: $34.28 (미활동 $32.59)<br><br>
+            • 총 Promising Low: 4,891명 (<b>모두 구매 1회</b>)<br>
+            • 미활동률: <b>87.41%</b> (4,275명 세션 활동 없음) - 심각<br>
+            • 미활동 LTV: $32.59 vs 활동(2-3 Sessions) LTV: $47.18 (<b>+45%</b>)<br><br>
             
-            <b>구체적 액션:</b><br>
-            • <b>D+1:</b> 관련 저가 상품 + 번들 세트 추천<br>
-            • <b>D+3:</b> 15% 할인 + "무료배송까지 $XX 남았어요"<br>
-            • <b>D+7:</b> 세트 상품 30% 할인 (업셀링 유도)<br>
-            • <b>D+14:</b> 베스트셀러 큐레이션 + 리뷰 하이라이트<br>
+            <b>전략: 세션 활동 유도 → 업셀링 → 재구매</b><br>
+            • <b>D+1:</b> "이 상품을 본 고객이 함께 구매한 아이템" (사이트 방문 유도)<br>
+            • <b>D+3:</b> 베스트셀러 큐레이션 + "무료배송까지 $XX" (브라우징 유도)<br>
+            • <b>D+7:</b> 번들/세트 상품 30% 할인 (업셀링 + 세션 유도)<br>
+            • <b>D+14:</b> 리뷰 하이라이트 + 한정 시간 15% 쿠폰 (재구매 전환)<br>
             • <b>D+30:</b> 최종 25% 할인 + 제한 시간 오퍼<br><br>
             
             <b>목표:</b><br>
-            • 미활동률: 87.41% → 75% (6개월)
+            • 세션 활동 전환: 미활동 4,275명 중 20% → 855명 세션 활동<br>
+            • 재구매 전환: 세션 활동 855명 중 35% → 299명 재구매
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
         <div class="roi-box">
-            <div class="roi-title">💰 ROI 산출 근거</div>
+            <div class="roi-title">💰 ROI 산출 (세션 활동 기반)</div>
             <div style="color: #4b5563; line-height: 1.8; font-size: 0.9rem;">
-                <b>가정:</b><br>
-                • 미활동 4,275명 중 15% 재활성화<br>
-                • = <b>641명</b> 재구매<br>
-                • 평균 추가 구매: $50 (번들)<br>
-                • VIP 전환율: 8%<br><br>
-                <b>계산:</b><br>
-                • 직접 매출: 641 × $50<br>
-                • = <b>$32,050</b><br><br>
-                • VIP 전환: 51명 × $180<br>
-                • = <b>$9,180</b><br><br>
-                • 2차 재구매(25%):<br>
-                • 160명 × $40 = <b>$6,400</b><br><br>
-                • 업셀링 효과: <b>$34,370</b><br><br>
+                <b>Step 1: 세션 활동 유도</b><br>
+                • 미활동 4,275명 중 20%<br>
+                • = <b>855명</b> 세션 활동 전환<br><br>
+                
+                <b>Step 2: 재구매 전환</b><br>
+                • 세션 활동 855명 중 35%<br>
+                • = <b>299명</b> 재구매<br>
+                • 예상 객단가: $47<br>
+                • 매출: 299 × $47 = <b>$14,053</b><br><br>
+                
+                <b>Step 3: 업셀링 & VIP 전환</b><br>
+                • 업셀링(30%): 90 × $80<br>
+                • = <b>$7,200</b><br>
+                • VIP 전환(10%): 30 × $180<br>
+                • = <b>$5,400</b><br>
+                • 3차 재구매(25%): 75 × $50<br>
+                • = <b>$3,750</b><br>
+                • 객단가 상승: <b>$51,597</b><br><br>
                 <b>Total Gross: $82,000</b><br>
                 <b>Net (80%): $65,600</b>
             </div>
@@ -1985,13 +2086,13 @@ elif pages[selected_page] == "action":
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
     # ROI 요약 테이블
-    st.subheader("📈 Phase별 ROI 요약")
+    st.subheader("📈 Phase별 ROI 요약 (세션 활동 유도 전략)")
     
     roi_summary = pd.DataFrame({
-        "Phase": ["Phase 1-A: Promising High 리텐션", "Phase 1-B: Promising Low 리텐션",
+        "Phase": ["Phase 1-A: Promising High (세션 유도)", "Phase 1-B: Promising Low (세션 유도)",
                   "Phase 2: VIP 유지", "Phase 3: Winback", "Phase 4: 채널 최적화", "**Total**"],
-        "대상 고객": ["미활동 1,643명", "미활동 4,275명", "1,531명", "16,344명", "전 채널", "-"],
-        "핵심 KPI": ["미활동률 46%→35%", "미활동률 87%→75%", "3개월 재구매 50%", "복귀율 5%", "VIP 전환 +10%", "-"],
+        "대상 고객": ["미활동 1,643명 (구매 1회)", "미활동 4,275명 (구매 1회)", "1,531명", "16,344명", "전 채널", "-"],
+        "핵심 KPI": ["세션 전환 30%→재구매 50%", "세션 전환 20%→재구매 35%", "3개월 재구매 50%", "복귀율 5%", "VIP 전환 +10%", "-"],
         "Gross ROI": ["$131,000", "$82,000", "$79,000", "$93,000", "$60,000", "**$445,000**"],
         "Net ROI (80%)": ["$104,800", "$65,600", "$63,200", "$74,400", "$48,000", "**$356,000**"],
         "우선순위": ["🔴 P1", "🔴 P1", "🟡 P2", "🟠 P2", "🟢 P3", "-"]
@@ -2000,12 +2101,14 @@ elif pages[selected_page] == "action":
     
     st.markdown("""
     <div class="insight-box success">
-        <div class="insight-title">💰 예상 총 ROI (Promising High/Low 분리)</div>
+        <div class="insight-title">💰 예상 총 ROI (세션 활동 유도 전략 기반)</div>
         <div class="insight-text">
             • Gross ROI: <b>$445,000</b> (현 매출 $3.06M 대비 +14.5%)<br>
             • Net ROI: <b>$356,000</b> (캠페인 비용 20% 제외)<br>
-            • Phase 1 합계: <b>$213,000</b> (High $131K + Low $82K) → 최우선 실행<br>
-            • Promising High가 Low보다 ROI 효율 <b>60% 높음</b> (High $131K / Low $82K)
+            • Phase 1 합계: <b>$213,000</b> (High $131K + Low $82K) → 최우선 실행<br><br>
+            <b>🔑 핵심 발견 기반 전략:</b><br>
+            • Promising 고객은 모두 <b>구매 횟수 1회</b>인데, 세션 활동에 따라 LTV가 다름<br>
+            • <b>세션 활동 유도 → 더 많은 탐색 → 재구매 시 높은 객단가 → VIP 전환</b>
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -2013,28 +2116,29 @@ elif pages[selected_page] == "action":
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
     # KPI 모니터링
-    st.subheader("📊 KPI 모니터링 대시보드")
+    st.subheader("📊 KPI 모니터링 대시보드 (세션 활동 + 미활동 개선)")
     
     kpi_data = pd.DataFrame({
-        "KPI": ["Promising High 미활동률", "Promising Low 미활동률", "VIP Champions 비율", 
-                "평균 LTV", "재구매율", "At Risk 비율"],
-        "현재": ["46.2%", "87.4%", "5.14%", "$102.82", "~17%", "22.28%"],
-        "목표 (3개월)": ["40%", "82%", "6%", "$108", "20%", "20%"],
-        "목표 (6개월)": ["35%", "75%", "7%", "$115", "22%", "18%"],
-        "목표 (1년)": ["30%", "65%", "10%", "$130", "28%", "15%"],
+        "KPI": ["Promising High 세션 활동 전환", "Promising Low 세션 활동 전환", 
+                "Promising High 재구매 전환", "Promising Low 재구매 전환",
+                "VIP Champions 비율", "평균 LTV"],
+        "현재": ["53.8% (활동)", "12.6% (활동)", "0% (1회 구매)", "0% (1회 구매)", "5.14%", "$102.82"],
+        "목표 (3개월)": ["60%", "18%", "15%", "10%", "6%", "$108"],
+        "목표 (6개월)": ["65%", "25%", "25%", "15%", "7%", "$115"],
+        "목표 (1년)": ["70%", "35%", "35%", "20%", "10%", "$130"],
         "측정 주기": ["주간", "주간", "월간", "월간", "월간", "월간"]
     })
     st.dataframe(kpi_data, hide_index=True, use_container_width=True)
     
     st.markdown("""
     <div class="insight-box navy">
-        <div class="insight-title">📌 실행 로드맵</div>
+        <div class="insight-title">📌 실행 로드맵 (세션 활동 유도 전략)</div>
         <div class="insight-text">
-            <b>Month 1:</b> Phase 1-A/1-B Promising 리텐션 캠페인 동시 론칭, A/B 테스트 시작<br>
-            <b>Month 2:</b> Phase 1 성과 분석, High/Low 전략 최적화, Phase 2 VIP 프로그램 설계<br>
-            <b>Month 3:</b> Phase 2 론칭, Phase 3 Winback 캠페인 준비<br>
-            <b>Month 4-6:</b> 전 Phase 병행 운영, 채널 최적화 적용<br>
-            <b>Month 6:</b> 전체 성과 리뷰, 2차 전략 수립
+            <b>Month 1:</b> Phase 1 세션 활동 유도 캠페인 론칭, 이메일/푸시 A/B 테스트 시작<br>
+            <b>Month 2:</b> 세션 활동 전환율 분석, 재구매 전환 캠페인 강화<br>
+            <b>Month 3:</b> Phase 2 VIP 프로그램 론칭, Phase 3 Winback 준비<br>
+            <b>Month 4-6:</b> 전 Phase 병행 운영, 세션→재구매→VIP 퍼널 최적화<br>
+            <b>Month 6:</b> 전체 성과 리뷰, 세션 활동 기반 ROI 검증, 2차 전략 수립
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -2045,10 +2149,11 @@ elif pages[selected_page] == "action":
 st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("""
 <div style="text-align: center; color: #9ca3af; font-size: 0.85rem; padding: 2rem 0; border-top: 1px solid #e5e7eb;">
-    <p><b>TheLook E-commerce RFM 분석 포트폴리오 (Complete Version v2)</b></p>
+    <p><b>TheLook E-commerce RFM 분석 포트폴리오 (Complete Version v3)</b></p>
     <p>분석 기간: 2023.01 - 2024.12 | 총 고객: 29,795명 | 총 매출: $3,063,495</p>
     <p>데이터: BigQuery thelook_ecommerce | RFM 세그먼트: 9개</p>
-    <p>Promising High/Low 분리 ROI 산출 | 미활동 개선 목표 반영</p>
+    <p><b>핵심 발견:</b> Promising 고객 구매 1회 + 세션 활동에 따른 LTV 차이</p>
+    <p>전략: 세션 활동 유도 → 재구매 시 높은 객단가 → VIP 전환</p>
     <p style="margin-top: 0.5rem;">Built with Streamlit & Plotly</p>
 </div>
 """, unsafe_allow_html=True)
