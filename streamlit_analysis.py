@@ -558,56 +558,6 @@ if pages[selected_page] == "executive":
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
-    # ROI 예상
-    st.subheader("💰 예상 ROI")
-    
-    col1, col2, col3 = st.columns(3)
-    
-    with col1:
-        st.markdown("""
-        <div class="action-box">
-            <div class="action-header">
-                <div class="action-icon" style="background: #dcfce7;">🌱</div>
-                <div class="action-title">Promising 리텐션</div>
-            </div>
-            <div class="action-content">
-                <p><b>목표:</b> 이탈률 70% → 50% 감소</p>
-                <p><b>예상 전환:</b> +1,184명 재구매</p>
-                <p><b>예상 매출:</b> <span style="color: #10b981; font-weight: 700;">+$101,000/년</span></p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        st.markdown("""
-        <div class="action-box">
-            <div class="action-header">
-                <div class="action-icon" style="background: #fef3c7;">📧</div>
-                <div class="action-title">Email 채널 확대</div>
-            </div>
-            <div class="action-content">
-                <p><b>목표:</b> Email 비중 5% → 15%</p>
-                <p><b>예상 전환:</b> +312명 Champions</p>
-                <p><b>예상 매출:</b> <span style="color: #10b981; font-weight: 700;">+$53,000/년</span></p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col3:
-        st.markdown("""
-        <div class="action-box">
-            <div class="action-header">
-                <div class="action-icon" style="background: #e0e7ff;">⏰</div>
-                <div class="action-title">조기 전환 촉진</div>
-            </div>
-            <div class="action-content">
-                <p><b>목표:</b> 1주 내 첫 구매 비율 1% → 5%</p>
-                <p><b>예상 전환:</b> +180명 Champions</p>
-                <p><b>예상 매출:</b> <span style="color: #10b981; font-weight: 700;">+$34,000/년</span></p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
 # ============================================
 # 페이지 2: 문제 정의 & 가설
 # ============================================
