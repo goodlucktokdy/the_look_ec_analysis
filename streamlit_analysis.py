@@ -1834,7 +1834,6 @@ elif pages[selected_page] == "action":
         st.markdown("""
         <div class="action-box">
             <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🟣 대상: Promising High 미활동 고객 1,643명 (구매 횟수 = 1회)</div>
-            
             <b>현황:</b><br>
             • 총 Promising High: 3,555명 (<b>모두 구매 1회</b>)<br>
             • 미활동률: 46.22% (1,643명 세션 활동 없음)<br>
@@ -1891,7 +1890,6 @@ elif pages[selected_page] == "action":
         st.markdown("""
         <div class="action-box">
             <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🟠 대상: Promising Low 미활동 고객 4,275명 (구매 횟수 = 1회)</div>
-            
             <b>현황:</b><br>
             • 총 Promising Low: 4,891명 (<b>모두 구매 1회</b>)<br>
             • 미활동률: <b>87.41%</b> (4,275명 세션 활동 없음) - 심각<br>
@@ -1950,7 +1948,6 @@ elif pages[selected_page] == "action":
         st.markdown("""
         <div class="action-box">
             <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🎯 대상: VIP  1,531명</div>
-            
             <b>구체적 액션:</b><br>
             • <b>VIP 전용 멤버십 프로그램:</b> 포인트 적립, 전용 할인, 얼리 액세스<br>
             • <b>개인화 리마인더:</b> 구매 주기 기반 자동 알림 (보충형 상품)<br>
@@ -1996,7 +1993,6 @@ elif pages[selected_page] == "action":
         st.markdown("""
         <div class="action-box">
             <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🎯 대상: At Risk + Hibernating 16,344명</div>
-            
             <b>세그먼트별 차별화 전략:</b><br><br>
             
             <b>Need Attention (730명) - 긴급 윈백:</b><br>
@@ -2048,7 +2044,6 @@ elif pages[selected_page] == "action":
         st.markdown("""
         <div class="action-box">
             <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🎯 대상: 전 채널 마케팅 예산</div>
-            
             <b>채널 예산 재배분:</b><br>
             • <b>Facebook:</b> 예산 20% 증액 (VIP 전환율 17.8% 최고)<br>
             • <b>Display:</b> 예산 15% 감축 (VIP 전환율 12.8% 최저)<br>
