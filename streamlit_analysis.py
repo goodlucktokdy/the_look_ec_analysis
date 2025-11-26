@@ -463,11 +463,13 @@ selected_page = st.sidebar.radio("", list(pages.keys()), label_visibility="colla
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("""
-<div style="font-size: 0.8rem; color: #9ca3af;">
-    <p><strong>분석 기간:</strong> 2023.01 - 2024.12</p>
-    <p><strong>총 고객 수:</strong> 29,795명</p>
-    <p><strong>총 매출:</strong> $3,063,495</p>
-    <p><strong>데이터:</strong> BigQuery thelook</p>
+<div style="font-size: 0.8rem;">
+    <h2 style="margin: 0; color: #667eea;">
+        <p><strong>분석 기간:</strong> 2023.01 - 2024.12</p>
+        <p><strong>총 고객 수:</strong> 29,795명</p>
+        <p><strong>총 매출:</strong> $3,063,495</p>
+        <p><strong>데이터:</strong> BigQuery Public Dataset thelook e-commerce</p>
+    </h2>
 </div>
 """, unsafe_allow_html=True)
 
@@ -2139,9 +2141,7 @@ st.markdown("""
 <div style="text-align: center; color: #9ca3af; font-size: 0.85rem; padding: 2rem 0; border-top: 1px solid #e5e7eb;">
     <p><b>TheLook E-commerce RFM 분석 포트폴리오 (Complete Version v3)</b></p>
     <p>분석 기간: 2023.01 - 2024.12 | 총 고객: 29,795명 | 총 매출: $3,063,495</p>
-    <p>데이터: BigQuery thelook_ecommerce | RFM 세그먼트: 9개</p>
-    <p><b>핵심 발견:</b> Promising 고객 구매 1회 + 세션 활동에 따른 LTV 차이</p>
-    <p>전략: 세션 활동 유도 → 재구매 시 높은 객단가 → VIP 전환</p>
+    <p>데이터: BigQuery thelook_ecommerce</p>
     <p style="margin-top: 0.5rem;">Built with Streamlit & Plotly</p>
 </div>
 """, unsafe_allow_html=True)
