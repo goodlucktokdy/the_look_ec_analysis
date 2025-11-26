@@ -1165,23 +1165,31 @@ elif pages[selected_page] == "problems":
             </div>
         </div>
         """, unsafe_allow_html=True)
-    
-    # 해결방안 (High/Low 차별화) - 세션 활동 유도 중심
-    st.markdown("""
-<div style="line-height: 1.7; color: #444">
-<b>🟣 Promising High Value 전략 (세션 활동 유도 → 고가 상품 재구매):</b><br>
-• D+1: "구매하신 상품과 어울리는 프리미엄 아이템" 이메일 (사이트 방문 유도)<br>
-• D+3: "나만의 스타일 큐레이션" 개인화 추천 (브라우징 유도)<br>
-• D+7: 신상품 프리뷰 + VIP 전용 얼리 액세스 (세션 증가 유도)<br>
-• D+14: "VIP까지 1회 남았습니다" + 고가 상품 20% 할인 (재구매 전환)<br><br>
 
-<b>🟠 Promising Low Value 전략 (세션 활동 유도 → 업셀링):</b><br>
-• D+1: "이 상품을 본 고객이 함께 구매한 아이템" (사이트 방문 유도)<br>
-• D+3: 베스트셀러 큐레이션 + "무료배송까지 $XX" (브라우징 유도)<br>
-• D+7: 번들/세트 상품 30% 할인 (업셀링 + 세션 유도)<br>
-• D+14: 리뷰 하이라이트 + 한정 시간 15% 쿠폰 (재구매 전환)
-</div>
-""", unsafe_allow_html=True)
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    col1, col2 = st.columns([1, 1])
+    # 해결방안 (High/Low 차별화) - 세션 활동 유도 중심
+    with col1:
+        st.markdown("""
+            <div style="color: #4b5563;"line-height: 1.7; color: #444">
+                <b>🟣 Promising High Value 전략 (세션 활동 유도 → 고가 상품 재구매):</b><br>
+                • D+1: "구매하신 상품과 어울리는 프리미엄 아이템" 이메일 (사이트 방문 유도)<br>
+                • D+3: "나만의 스타일 큐레이션" 개인화 추천 (브라우징 유도)<br>
+                • D+7: 신상품 프리뷰 + VIP 전용 얼리 액세스 (세션 증가 유도)<br>
+                • D+14: "VIP까지 1회 남았습니다" + 고가 상품 20% 할인 (재구매 전환)<br><br>
+            </div>
+            """, unsafe_allow_html=True)
+    with col2: 
+        st.markdown("""
+            <div style="color: #4b5563;"line-height: 1.7; color: #444">
+                <b>🟠 Promising Low Value 전략 (세션 활동 유도 → 업셀링):</b><br>
+                • D+1: "이 상품을 본 고객이 함께 구매한 아이템" (사이트 방문 유도)<br>
+                • D+3: 베스트셀러 큐레이션 + "무료배송까지 $XX" (브라우징 유도)<br>
+                • D+7: 번들/세트 상품 30% 할인 (업셀링 + 세션 유도)<br>
+                • D+14: 리뷰 하이라이트 + 한정 시간 15% 쿠폰 (재구매 전환)
+            </div>
+            """, unsafe_allow_html=True)
+    
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
