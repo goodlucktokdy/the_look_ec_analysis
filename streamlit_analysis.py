@@ -1679,7 +1679,8 @@ elif pages[selected_page] == "channel":
     # 채널별 VIP 전환율
     st.markdown("""
         ### 📊 가입시 유입 트래픽 소스별 VIP 전환율  
-        ##### _ Recency 180일 이내에 속하는 VIP Champion/(Promising High/Low + VIP Champion) _ 
+        ##### 지표정의: Recency 180일 이내에 속하는 VIP Champion, Promising High&Low 대상
+        ##### 지표계산: VIP Champion/(Promising High&Low + VIP Champion)
         """)
 
     
