@@ -1500,7 +1500,11 @@ elif pages[selected_page] == "promising":
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
     # 첫 구매 카테고리별 VIP 전환율
-    st.subheader("🏷️ 첫 구매 카테고리별 VIP 전환율")
+    st.markdown("""
+        ### 📊 첫 구매 카테고리별 VIP 전환율  
+        ##### 지표정의: Recency 180일 이내에 속하는 VIP Champion, Promising High&Low 대상
+        ##### 지표계산: VIP Champion/(Promising High&Low + VIP Champion)
+        """)
     
     fig = px.bar(
         category_vip_conversion.head(10),
@@ -1611,11 +1615,11 @@ elif pages[selected_page] == "vip":
     
     st.markdown("""
     <div class="insight-box warning">
-        <div class="insight-title">⚠️ 문제: VIP의 71.4%가 3개월+ 후 재구매</div>
+        <div class="insight-title">⚠️ 문제: VIP의 71.4%가 3개월 이후 재구매</div>
         <div class="insight-text">
             • 3개월 이내 재구매: <b>28.6%</b> (438명)<br>
             • 3개월+ 재구매: <b>71.4%</b> (1,093명)<br>
-            • 빠른 재구매(1주 내) 시 LTV <b>$303.42</b> vs 3개월+ <b>$275.30</b> (+10.2%)
+            • 빠른 재구매(1주 내) 시 LTV <b>$303.42</b> vs 3개월 이후 <b>$275.30</b> (+10.2%)
         </div>
     </div>
     """, unsafe_allow_html=True)
