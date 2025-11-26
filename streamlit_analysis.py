@@ -1,320 +1,1940 @@
-import pandas as pd
+"""
+TheLook E-commerce RFM 분석 포트폴리오
+=====================================
+분석 기간: 2023-01-01 ~ 2024-12-31
+총 분석 고객: 29,795명
+"""
+
 import streamlit as st
-import json
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+import numpy as np
 
-# --- 1. Raw Data Input (Provided from SQL Query Results) ---
+# ============================================
+# 페이지 설정
+# ============================================
+st.set_page_config(
+    page_title="TheLook RFM 분석 포트폴리오",
+    page_icon="📊",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
 
-# 1. RFM Segment Analysis (Final Table)
-rfm_final_data = [{"customer_segment": "At Risk", "user_count": "6637", "pct": "22.28", "avg_recency_days": "270.2", "avg_frequency": "1.0", "avg_monetary": "85.36", "avg_r_score": "3.0", "avg_f_score": "3.0", "avg_m_score": "2.36", "avg_rfm_total": "8.36", "total_revenue": "566558.73", "revenue_contribution_pct": "18.49"}, {"customer_segment": "Hibernating", "user_count": "9707", "pct": "32.58", "avg_recency_days": "538.5", "avg_frequency": "1.0", "avg_monetary": "86.38", "avg_r_score": "1.53", "avg_f_score": "3.0", "avg_m_score": "2.35", "avg_rfm_total": "6.88", "total_revenue": "838519.26", "revenue_contribution_pct": "27.37"}, {"customer_segment": "Loyal High Value", "user_count": "2026", "pct": "6.8", "avg_recency_days": "185.3", "avg_frequency": "2.15", "avg_monetary": "162.27", "avg_r_score": "3.67", "avg_f_score": "4.14", "avg_m_score": "3.47", "avg_rfm_total": "11.28", "total_revenue": "328759.12", "revenue_contribution_pct": "10.73"}, {"customer_segment": "Loyal Low Value", "user_count": "587", "pct": "1.97", "avg_recency_days": "143.1", "avg_frequency": "2.03", "avg_monetary": "48.4", "avg_r_score": "4.05", "avg_f_score": "4.03", "avg_m_score": "1.84", "avg_rfm_total": "9.92", "total_revenue": "28410.78", "revenue_contribution_pct": "0.93"}, {"customer_segment": "Need Attention", "user_count": "730", "pct": "2.45", "avg_recency_days": "476.2", "avg_frequency": "2.08", "avg_monetary": "206.51", "avg_r_score": "1.78", "avg_f_score": "4.08", "avg_m_score": "3.78", "avg_rfm_total": "9.64", "total_revenue": "150755.89", "revenue_contribution_pct": "4.92"}, {"customer_segment": "Others", "user_count": "131", "pct": "0.44", "avg_recency_days": "490.2", "avg_frequency": "2.02", "avg_monetary": "48.79", "avg_r_score": "1.73", "avg_f_score": "4.02", "avg_m_score": "1.85", "avg_rfm_total": "7.6", "total_revenue": "6391.18", "revenue_contribution_pct": "0.21"}, {"customer_segment": "Promising High Value", "user_count": "3555", "pct": "11.93", "avg_recency_days": "84.2", "avg_frequency": "1.0", "avg_monetary": "155.86", "avg_r_score": "4.55", "avg_f_score": "3.0", "avg_m_score": "3.51", "avg_rfm_total": "11.06", "total_revenue": "554081.87", "revenue_contribution_pct": "18.09"}, {"customer_segment": "Promising Low Value", "user_count": "4891", "pct": "16.42", "avg_recency_days": "85.3", "avg_frequency": "1.0", "avg_monetary": "34.28", "avg_r_score": "4.55", "avg_f_score": "3.0", "avg_m_score": "1.49", "avg_rfm_total": "9.04", "total_revenue": "167640.62", "revenue_contribution_pct": "5.47"}, {"customer_segment": "VIP Champions", "user_count": "1531", "pct": "5.14", "avg_recency_days": "79.5", "avg_frequency": "2.32", "avg_monetary": "275.88", "avg_r_score": "4.59", "avg_f_score": "4.28", "avg_m_score": "4.3", "avg_rfm_total": "13.17", "total_revenue": "422377.78", "revenue_contribution_pct": "13.79"}]
-df_rfm_final = pd.DataFrame(rfm_final_data).apply(pd.to_numeric, errors='ignore')
-
-# 2. Traffic Source Analysis (VIP/Promising Conversion)
-traffic_source_data = [{"customer_segment": "Promising Low Value", "traffic_source": "Facebook", "user_count": "290", "pct_within_source": "46.93", "avg_frequency": "1.0", "avg_monetary": "34.19", "avg_m_score": "1.48", "vip_conversion_rate_pct": "17.8", "promising_high_share_pct": "35.28", "promising_low_share_pct": "46.93"}, {"customer_segment": "Promising High Value", "traffic_source": "Facebook", "user_count": "218", "pct_within_source": "35.28", "avg_frequency": "1.0", "avg_monetary": "152.57", "avg_m_score": "3.49", "vip_conversion_rate_pct": "17.8", "promising_high_share_pct": "35.28", "promising_low_share_pct": "46.93"}, {"customer_segment": "VIP Champions", "traffic_source": "Facebook", "user_count": "110", "pct_within_source": "17.8", "avg_frequency": "2.34", "avg_monetary": "268.85", "avg_m_score": "4.32", "vip_conversion_rate_pct": "17.8", "promising_high_share_pct": "35.28", "promising_low_share_pct": "46.93"}, {"customer_segment": "Promising Low Value", "traffic_source": "Search", "user_count": "3401", "pct_within_source": "49.1", "avg_frequency": "1.0", "avg_monetary": "34.49", "avg_m_score": "1.5", "vip_conversion_rate_pct": "15.37", "promising_high_share_pct": "35.53", "promising_low_share_pct": "49.1"}, {"customer_segment": "Promising High Value", "traffic_source": "Search", "user_count": "2461", "pct_within_source": "35.53", "avg_frequency": "1.0", "avg_monetary": "156.85", "avg_m_score": "3.51", "vip_conversion_rate_pct": "15.37", "promising_high_share_pct": "35.53", "promising_low_share_pct": "49.1"}, {"customer_segment": "VIP Champions", "traffic_source": "Search", "user_count": "1065", "pct_within_source": "15.37", "avg_frequency": "2.33", "avg_monetary": "272.92", "avg_m_score": "4.29", "vip_conversion_rate_pct": "15.37", "promising_high_share_pct": "35.53", "promising_low_share_pct": "49.1"}, {"customer_segment": "Promising Low Value", "traffic_source": "Organic", "user_count": "734", "pct_within_source": "48.07", "avg_frequency": "1.0", "avg_monetary": "33.95", "avg_m_score": "1.5", "vip_conversion_rate_pct": "15.06", "promising_high_share_pct": "36.87", "promising_low_share_pct": "48.07"}, {"customer_segment": "Promising High Value", "traffic_source": "Organic", "user_count": "563", "pct_within_source": "36.87", "avg_frequency": "1.0", "avg_monetary": "150.85", "avg_m_score": "3.5", "vip_conversion_rate_pct": "15.06", "promising_high_share_pct": "36.87", "promising_low_share_pct": "48.07"}, {"customer_segment": "VIP Champions", "traffic_source": "Organic", "user_count": "230", "pct_within_source": "15.06", "avg_frequency": "2.28", "avg_monetary": "295.01", "avg_m_score": "4.37", "vip_conversion_rate_pct": "15.06", "promising_high_share_pct": "36.87", "promising_low_share_pct": "48.07"}, {"customer_segment": "Promising Low Value", "traffic_source": "Email", "user_count": "263", "pct_within_source": "53.46", "avg_frequency": "1.0", "avg_monetary": "34.02", "avg_m_score": "1.49", "vip_conversion_rate_pct": "14.84", "promising_high_share_pct": "31.71", "promising_low_share_pct": "53.46"}, {"customer_segment": "Promising High Value", "traffic_source": "Email", "user_count": "156", "pct_within_source": "31.71", "avg_frequency": "1.0", "avg_monetary": "164.58", "avg_m_score": "3.55", "vip_conversion_rate_pct": "14.84", "promising_high_share_pct": "31.71", "promising_low_share_pct": "53.46"}, {"customer_segment": "VIP Champions", "traffic_source": "Email", "user_count": "73", "pct_within_source": "14.84", "avg_frequency": "2.3", "avg_monetary": "262.42", "avg_m_score": "4.26", "vip_conversion_rate_pct": "14.84", "promising_high_share_pct": "31.71", "promising_low_share_pct": "53.46"}, {"customer_segment": "Promising Low Value", "traffic_source": "Display", "user_count": "203", "pct_within_source": "49.15", "avg_frequency": "1.0", "avg_monetary": "32.35", "avg_m_score": "1.42", "vip_conversion_rate_pct": "12.83", "promising_high_share_pct": "38.01", "promising_low_share_pct": "49.15"}, {"customer_segment": "Promising High Value", "traffic_source": "Display", "user_count": "157", "pct_within_source": "38.01", "avg_frequency": "1.0", "avg_monetary": "154.17", "avg_m_score": "3.51", "vip_conversion_rate_pct": "12.83", "promising_high_share_pct": "38.01", "promising_low_share_pct": "49.15"}, {"customer_segment": "VIP Champions", "traffic_source": "Display", "user_count": "53", "pct_within_source": "12.83", "avg_frequency": "2.36", "avg_monetary": "285.63", "avg_m_score": "4.36", "vip_conversion_rate_pct": "12.83", "promising_high_share_pct": "38.01", "promising_low_share_pct": "49.15"}]
-df_traffic_source = pd.DataFrame(traffic_source_data).apply(pd.to_numeric, errors='ignore')
-
-# 3. Promising High/Low Post-Purchase Activity
-post_purchase_data = [{"customer_segment": "Promising High Value", "activity_level": "0. No Activity", "user_count": "1643", "pct_within_segment": "46.22", "avg_events": "0.0", "avg_product_views": "0.0", "avg_cart_adds": "0.0", "avg_days_inactive": None, "avg_monetary": "131.06"}, {"customer_segment": "Promising High Value", "activity_level": "1. 1 Session", "user_count": "473", "pct_within_segment": "13.31", "avg_events": "1.2", "avg_product_views": "0.0", "avg_cart_adds": "0.0", "avg_days_inactive": "78.8", "avg_monetary": "153.98"}, {"customer_segment": "Promising High Value", "activity_level": "2. 2-3 Sessions", "user_count": "1268", "pct_within_segment": "35.67", "avg_events": "2.4", "avg_product_views": "0.0", "avg_cart_adds": "0.0", "avg_days_inactive": "82.2", "avg_monetary": "176.89"}, {"customer_segment": "Promising High Value", "activity_level": "3. 4-5 Sessions", "user_count": "170", "pct_within_segment": "4.78", "avg_events": "5.4", "avg_product_views": "0.4", "avg_cart_adds": "0.4", "avg_days_inactive": "82.7", "avg_monetary": "244.25"}, {"customer_segment": "Promising High Value", "activity_level": "4. 6+ Sessions", "user_count": "1", "pct_within_segment": "0.03", "avg_events": "55.0", "avg_product_views": "16.0", "avg_cart_adds": "16.0", "avg_days_inactive": "0.0", "avg_monetary": "98.98"}, {"customer_segment": "Promising Low Value", "activity_level": "0. No Activity", "user_count": "4275", "pct_within_segment": "87.41", "avg_events": "0.0", "avg_product_views": "0.0", "avg_cart_adds": "0.0", "avg_days_inactive": None, "avg_monetary": "32.59"}, {"customer_segment": "Promising Low Value", "activity_level": "1. 1 Session", "user_count": "227", "pct_within_segment": "4.64", "avg_events": "2.0", "avg_product_views": "0.3", "avg_cart_adds": "0.3", "avg_days_inactive": "74.5", "avg_monetary": "44.13"}, {"customer_segment": "Promising Low Value", "activity_level": "2. 2-3 Sessions", "user_count": "384", "pct_within_segment": "7.85", "avg_events": "3.2", "avg_product_views": "0.4", "avg_cart_adds": "0.4", "avg_days_inactive": "83.0", "avg_monetary": "47.18"}, {"customer_segment": "Promising Low Value", "activity_level": "3. 4-5 Sessions", "user_count": "5", "pct_within_segment": "0.1", "avg_events": "29.0", "avg_product_views": "8.4", "avg_cart_adds": "8.4", "avg_days_inactive": "43.2", "avg_monetary": "35.21"}]
-df_post_purchase = pd.DataFrame(post_purchase_data).apply(pd.to_numeric, errors='ignore')
-
-# 4. RFM Segment First Session Behavior
-first_session_data = [{"customer_segment": "At Risk", "user_count": "6637", "pct": "22.28", "avg_events_per_session": "6.07", "avg_products_viewed": "1.0", "cart_usage_rate_pct": "99.95", "purchase_rate_pct": "100.0", "cancel_page_hit_rate_pct": "0.0", "avg_recency": "270.2", "avg_frequency": "1.0", "avg_monetary": "85.36", "avg_m_score": "2.36"}, {"customer_segment": "Hibernating", "user_count": "9705", "pct": "32.57", "avg_events_per_session": "6.05", "avg_products_viewed": "1.0", "cart_usage_rate_pct": "99.96", "purchase_rate_pct": "100.0", "cancel_page_hit_rate_pct": "0.0", "avg_recency": "538.4", "avg_frequency": "1.0", "avg_monetary": "86.39", "avg_m_score": "2.35"}, {"customer_segment": "Loyal High Value", "user_count": "2026", "pct": "6.8", "avg_events_per_session": "5.89", "avg_products_viewed": "1.0", "cart_usage_rate_pct": "99.85", "purchase_rate_pct": "100.0", "cancel_page_hit_rate_pct": "0.0", "avg_recency": "185.3", "avg_frequency": "2.15", "avg_monetary": "162.27", "avg_m_score": "3.47"}, {"customer_segment": "Loyal Low Value", "user_count": "587", "pct": "1.97", "avg_events_per_session": "5.2", "avg_products_viewed": "1.0", "cart_usage_rate_pct": "100.0", "purchase_rate_pct": "100.0", "cancel_page_hit_rate_pct": "0.0", "avg_recency": "143.1", "avg_frequency": "2.03", "avg_monetary": "48.4", "avg_m_score": "1.84"}, {"customer_segment": "Need Attention", "user_count": "730", "pct": "2.45", "avg_events_per_session": "6.24", "avg_products_viewed": "1.0", "cart_usage_rate_pct": "100.0", "purchase_rate_pct": "100.0", "cancel_page_hit_rate_pct": "0.0", "avg_recency": "476.2", "avg_frequency": "2.08", "avg_monetary": "206.51", "avg_m_score": "3.78"}, {"customer_segment": "Others", "user_count": "131", "pct": "0.44", "avg_events_per_session": "5.15", "avg_products_viewed": "1.0", "cart_usage_rate_pct": "100.0", "purchase_rate_pct": "100.0", "cancel_page_hit_rate_pct": "0.0", "avg_recency": "490.2", "avg_frequency": "2.02", "avg_monetary": "48.79", "avg_m_score": "1.85"}, {"customer_segment": "Promising High Value", "user_count": "3555", "pct": "11.93", "avg_events_per_session": "7.05", "avg_products_viewed": "1.0", "cart_usage_rate_pct": "100.0", "purchase_rate_pct": "99.16", "cancel_page_hit_rate_pct": "0.0", "avg_recency": "84.2", "avg_frequency": "1.0", "avg_monetary": "155.86", "avg_m_score": "3.51"}, {"customer_segment": "Promising Low Value", "user_count": "4891", "pct": "16.42", "avg_events_per_session": "5.29", "avg_products_viewed": "1.0", "cart_usage_rate_pct": "99.94", "purchase_rate_pct": "99.94", "cancel_page_hit_rate_pct": "0.0", "avg_recency": "85.3", "avg_frequency": "1.0", "avg_monetary": "34.28", "avg_m_score": "1.49"}, {"customer_segment": "VIP Champions", "user_count": "1531", "pct": "5.14", "avg_events_per_session": "6.64", "avg_products_viewed": "1.0", "cart_usage_rate_pct": "100.0", "purchase_rate_pct": "100.0", "cancel_page_hit_rate_pct": "0.0", "avg_recency": "79.5", "avg_frequency": "2.32", "avg_monetary": "275.88", "avg_m_score": "4.3"}]
-df_first_session = pd.DataFrame(first_session_data).apply(pd.to_numeric, errors='ignore')
-
-# 5. Champions Conversion Speed & Activity
-champions_speed_data = [{"conversion_speed": "1. Quick (≤30 days)", "champions_count": "165", "avg_days_between": "14.4", "avg_sessions": "0.9", "avg_events": "1.7", "avg_product_views": "0.2", "avg_cart_adds": "0.2", "avg_home_visits": "0.1", "avg_sessions_first_7days": "0.8", "avg_product_views_first_7days": "0.1", "avg_total_ltv": "282.5", "avg_m_score": "4.35"}, {"conversion_speed": "2. Medium (31-60 days)", "champions_count": "129", "avg_days_between": "45.5", "avg_sessions": "1.1", "avg_events": "1.9", "avg_product_views": "0.3", "avg_cart_adds": "0.3", "avg_home_visits": "0.0", "avg_sessions_first_7days": "1.0", "avg_product_views_first_7days": "0.0", "avg_total_ltv": "279.96", "avg_m_score": "4.31"}, {"conversion_speed": "3. Slow (61+ days)", "champions_count": "1237", "avg_days_between": "273.2", "avg_sessions": "1.1", "avg_events": "2.7", "avg_product_views": "0.5", "avg_cart_adds": "0.5", "avg_home_visits": "0.1", "avg_sessions_first_7days": "0.9", "avg_product_views_first_7days": "0.0", "avg_total_ltv": "274.58", "avg_m_score": "4.3", "cumulative_pct_within_segment": "100.0"}]
-df_champions_speed = pd.DataFrame(champions_speed_data).apply(pd.to_numeric, errors='ignore')
-
-# 6. Signup to First Purchase Timing (LTV Potential)
-signup_timing_data = [{"first_purchase_timing": "1. 1주일 이내", "user_count": "307", "repurchased_users": "80", "repurchase_rate": "26.06", "avg_days_to_repurchase": "203.4", "avg_monetary": "112.28", "avg_m_score": "2.62", "avg_r_score": "3.39", "avg_f_score": "3.31", "vip_champions_rate": "10.42", "promising_high_rate": "12.05", "promising_low_rate": "18.89", "vip_champions_count": "32", "promising_high_count": "37", "promising_low_count": "58", "at_risk_hibernate_count": "132"}, {"first_purchase_timing": "2. 1개월 이내", "user_count": "901", "repurchased_users": "226", "repurchase_rate": "25.08", "avg_days_to_repurchase": "179.6", "avg_monetary": "116.92", "avg_m_score": "2.71", "avg_r_score": "3.34", "avg_f_score": "3.3", "vip_champions_rate": "9.32", "promising_high_rate": "13.1", "promising_low_rate": "16.98", "vip_champions_count": "84", "promising_high_count": "118", "promising_low_count": "153", "at_risk_hibernate_count": "404"}, {"first_purchase_timing": "3. 2개월 이내", "user_count": "1161", "repurchased_users": "286", "repurchase_rate": "24.63", "avg_days_to_repurchase": "181.6", "avg_monetary": "110.41", "avg_m_score": "2.65", "avg_r_score": "3.37", "avg_f_score": "3.3", "vip_champions_rate": "9.47", "promising_high_rate": "12.14", "promising_low_rate": "19.47", "vip_champions_count": "110", "promising_high_count": "141", "promising_low_count": "226", "at_risk_hibernate_count": "508"}, {"first_purchase_timing": "4. 3개월 이내", "user_count": "1058", "repurchased_users": "250", "repurchase_rate": "23.63", "avg_days_to_repurchase": "170.7", "avg_monetary": "113.97", "avg_m_score": "2.63", "avg_r_score": "3.28", "avg_f_score": "3.28", "vip_champions_rate": "7.75", "promising_high_rate": "12.0", "promising_low_rate": "18.34", "vip_champions_count": "82", "promising_high_count": "127", "promising_low_count": "194", "at_risk_hibernate_count": "487"}, {"first_purchase_timing": "5. 3개월+", "user_count": "26368", "repurchased_users": "4163", "repurchase_rate": "15.79", "avg_days_to_repurchase": "204.5", "avg_monetary": "101.45", "avg_m_score": "2.53", "avg_r_score": "3.04", "avg_f_score": "3.18", "vip_champions_rate": "4.64", "promising_high_rate": "11.88", "promising_low_rate": "16.16", "vip_champions_count": "1223", "promising_high_count": "3132", "promising_low_count": "4260", "at_risk_hibernate_count": "14813"}]
-df_signup_timing = pd.DataFrame(signup_timing_data).apply(pd.to_numeric, errors='ignore')
-
-# 7. Category VIP Conversion Rate (from Promising Pool)
-category_vip_conversion_data = [{"customer_segment": "Promising High Value", "first_category": "Jeans", "user_count": "401", "pct_within_segment": "11.32", "avg_first_item_price": "123.54", "avg_total_ltv": "165.24", "conversion_to_vip_champions_pct": "18.88"}, {"customer_segment": "Promising High Value", "first_category": "Outerwear & Coats", "user_count": "355", "pct_within_segment": "10.03", "avg_first_item_price": "161.37", "avg_total_ltv": "196.8", "conversion_to_vip_champions_pct": "22.46"}, {"customer_segment": "Promising High Value", "first_category": "Sweaters", "user_count": "285", "pct_within_segment": "8.05", "avg_first_item_price": "102.02", "avg_total_ltv": "149.6", "conversion_to_vip_champions_pct": "16.5"}, {"customer_segment": "Promising High Value", "first_category": "Fashion Hoodies & Sweatshirts", "user_count": "246", "pct_within_segment": "6.95", "avg_first_item_price": "73.73", "avg_total_ltv": "129.92", "conversion_to_vip_champions_pct": "15.36"}, {"customer_segment": "Promising High Value", "first_category": "Swim", "user_count": "219", "pct_within_segment": "6.18", "avg_first_item_price": "74.22", "avg_total_ltv": "127.1", "conversion_to_vip_champions_pct": "14.1"}, {"customer_segment": "Promising High Value", "first_category": "Sleep & Lounge", "user_count": "205", "pct_within_segment": "5.79", "avg_first_item_price": "71.25", "avg_total_ltv": "140.93", "conversion_to_vip_champions_pct": "15.52"}, {"customer_segment": "Promising High Value", "first_category": "Suits & Sport Coats", "user_count": "177", "pct_within_segment": "5.0", "avg_first_item_price": "148.64", "avg_total_ltv": "181.08", "conversion_to_vip_champions_pct": "17.75"}, {"customer_segment": "Promising High Value", "first_category": "Shorts", "user_count": "175", "pct_within_segment": "4.94", "avg_first_item_price": "59.2", "avg_total_ltv": "140.28", "conversion_to_vip_champions_pct": "13.42"}, {"customer_segment": "Promising High Value", "first_category": "Intimates", "user_count": "167", "pct_within_segment": "4.72", "avg_first_item_price": "54.95", "avg_total_ltv": "140.02", "conversion_to_vip_champions_pct": "10.6"}, {"customer_segment": "Promising High Value", "first_category": "Tops & Tees", "user_count": "163", "pct_within_segment": "4.6", "avg_first_item_price": "65.04", "avg_total_ltv": "145.35", "conversion_to_vip_champions_pct": "14.87"}, {"customer_segment": "Promising High Value", "first_category": "Accessories", "user_count": "154", "pct_within_segment": "4.35", "avg_first_item_price": "83.56", "avg_total_ltv": "150.06", "conversion_to_vip_champions_pct": "17.17"}, {"customer_segment": "Promising High Value", "first_category": "Dresses", "user_count": "147", "pct_within_segment": "4.15", "avg_first_item_price": "116.41", "avg_total_ltv": "169.13", "conversion_to_vip_champions_pct": "16.67"}, {"customer_segment": "Promising High Value", "first_category": "Active", "user_count": "137", "pct_within_segment": "3.87", "avg_first_item_price": "98.43", "avg_total_ltv": "162.07", "conversion_to_vip_champions_pct": "12.32"}, {"customer_segment": "Promising High Value", "first_category": "Pants", "user_count": "126", "pct_within_segment": "3.56", "avg_first_item_price": "81.32", "avg_total_ltv": "152.34", "conversion_to_vip_champions_pct": "15.96"}, {"customer_segment": "Promising High Value", "first_category": "Maternity", "user_count": "103", "pct_within_segment": "2.91", "avg_first_item_price": "78.73", "avg_total_ltv": "129.07", "conversion_to_vip_champions_pct": "13.68"}, {"customer_segment": "Promising High Value", "first_category": "Blazers & Jackets", "user_count": "82", "pct_within_segment": "2.32", "avg_first_item_price": "158.95", "avg_total_ltv": "201.74", "conversion_to_vip_champions_pct": "21.56"}, {"customer_segment": "Promising High Value", "first_category": "Plus", "user_count": "75", "pct_within_segment": "2.12", "avg_first_item_price": "62.29", "avg_total_ltv": "152.64", "conversion_to_vip_champions_pct": "16.36"}, {"customer_segment": "Promising High Value", "first_category": "Underwear", "user_count": "67", "pct_within_segment": "1.89", "avg_first_item_price": "32.79", "avg_total_ltv": "143.35", "conversion_to_vip_champions_pct": "13.07"}, {"customer_segment": "Promising High Value", "first_category": "Socks", "user_count": "62", "pct_within_segment": "1.75", "avg_first_item_price": "23.13", "avg_total_ltv": "174.79", "conversion_to_vip_champions_pct": "11.53"}, {"customer_segment": "Promising High Value", "first_category": "Pants & Capris", "user_count": "57", "pct_within_segment": "1.61", "avg_first_item_price": "88.67", "avg_total_ltv": "168.66", "conversion_to_vip_champions_pct": "15.43"}, {"customer_segment": "Promising High Value", "first_category": "Suits", "user_count": "44", "pct_within_segment": "1.24", "avg_first_item_price": "124.45", "avg_total_ltv": "164.36", "conversion_to_vip_champions_pct": "25.0"}, {"customer_segment": "Promising High Value", "first_category": "Leggings", "user_count": "32", "pct_within_segment": "0.9", "avg_first_item_price": "59.17", "avg_total_ltv": "128.44", "conversion_to_vip_champions_pct": "10.43"}, {"customer_segment": "Promising High Value", "first_category": "Skirts", "user_count": "26", "pct_within_segment": "0.73", "avg_first_item_price": "74.65", "avg_total_ltv": "121.6", "conversion_to_vip_champions_pct": "16.41"}, {"customer_segment": "Promising High Value", "first_category": "Socks & Hosiery", "user_count": "25", "pct_within_segment": "0.71", "avg_first_item_price": "21.05", "avg_total_ltv": "167.0", "conversion_to_vip_champions_pct": "9.64"}, {"customer_segment": "Promising High Value", "first_category": "Jumpsuits & Rompers", "user_count": "9", "pct_within_segment": "0.25", "avg_first_item_price": "73.68", "avg_total_ltv": "137.94", "conversion_to_vip_champions_pct": "17.31"}, {"customer_segment": "Promising High Value", "first_category": "Clothing Sets", "user_count": "2", "pct_within_segment": "0.06", "avg_first_item_price": "128.56", "avg_total_ltv": "128.56", "conversion_to_vip_champions_pct": "36.36"}, {"customer_segment": "Promising Low Value", "first_category": "Intimates", "user_count": "474", "pct_within_segment": "9.69", "avg_first_item_price": "27.36", "avg_total_ltv": "30.56", "conversion_to_vip_champions_pct": "10.6"}, {"customer_segment": "Promising Low Value", "first_category": "Tops & Tees", "user_count": "421", "pct_within_segment": "8.61", "avg_first_item_price": "31.67", "avg_total_ltv": "35.23", "conversion_to_vip_champions_pct": "14.87"}, {"customer_segment": "Promising Low Value", "first_category": "Shorts", "user_count": "367", "pct_within_segment": "7.5", "avg_first_item_price": "33.75", "avg_total_ltv": "35.84", "conversion_to_vip_champions_pct": "13.42"}, {"customer_segment": "Promising Low Value", "first_category": "Sleep & Lounge", "user_count": "323", "pct_within_segment": "6.6", "avg_first_item_price": "32.58", "avg_total_ltv": "34.48", "conversion_to_vip_champions_pct": "15.52"}, {"customer_segment": "Promising Low Value", "first_category": "Fashion Hoodies & Sweatshirts", "user_count": "305", "pct_within_segment": "6.24", "avg_first_item_price": "39.9", "avg_total_ltv": "41.73", "conversion_to_vip_champions_pct": "15.36"}, {"customer_segment": "Promising Low Value", "first_category": "Swim", "user_count": "299", "pct_within_segment": "6.11", "avg_first_item_price": "41.4", "avg_total_ltv": "43.02", "conversion_to_vip_champions_pct": "14.1"}, {"customer_segment": "Promising Low Value", "first_category": "Accessories", "user_count": "285", "pct_within_segment": "5.83", "avg_first_item_price": "22.26", "avg_total_ltv": "25.67", "conversion_to_vip_champions_pct": "17.17"}, {"customer_segment": "Promising Low Value", "first_category": "Active", "user_count": "283", "pct_within_segment": "5.79", "avg_first_item_price": "31.49", "avg_total_ltv": "33.72", "conversion_to_vip_champions_pct": "12.32"}, {"customer_segment": "Promising Low Value", "first_category": "Underwear", "user_count": "259", "pct_within_segment": "5.3", "avg_first_item_price": "25.59", "avg_total_ltv": "28.31", "conversion_to_vip_champions_pct": "13.07"}, {"customer_segment": "Promising Low Value", "first_category": "Sweaters", "user_count": "231", "pct_within_segment": "4.72", "avg_first_item_price": "38.97", "avg_total_ltv": "41.64", "conversion_to_vip_champions_pct": "16.5"}, {"customer_segment": "Promising Low Value", "first_category": "Socks", "user_count": "222", "pct_within_segment": "4.54", "avg_first_item_price": "17.25", "avg_total_ltv": "23.23", "conversion_to_vip_champions_pct": "11.53"}, {"customer_segment": "Promising Low Value", "first_category": "Pants", "user_count": "211", "pct_within_segment": "4.31", "avg_first_item_price": "39.4", "avg_total_ltv": "41.2", "conversion_to_vip_champions_pct": "15.96"}, {"customer_segment": "Promising Low Value", "first_category": "Jeans", "user_count": "166", "pct_within_segment": "3.39", "avg_first_item_price": "43.1", "avg_total_ltv": "44.8", "conversion_to_vip_champions_pct": "18.88"}, {"customer_segment": "Promising Low Value", "first_category": "Maternity", "user_count": "162", "pct_within_segment": "3.31", "avg_first_item_price": "32.84", "avg_total_ltv": "35.13", "conversion_to_vip_champions_pct": "13.68"}, {"customer_segment": "Promising Low Value", "first_category": "Socks & Hosiery", "user_count": "153", "pct_within_segment": "3.13", "avg_first_item_price": "16.2", "avg_total_ltv": "21.22", "conversion_to_vip_champions_pct": "9.64"}, {"customer_segment": "Promising Low Value", "first_category": "Leggings", "user_count": "114", "pct_within_segment": "2.33", "avg_first_item_price": "19.62", "avg_total_ltv": "23.72", "conversion_to_vip_champions_pct": "10.43"}, {"customer_segment": "Promising Low Value", "first_category": "Plus", "user_count": "109", "pct_within_segment": "2.23", "avg_first_item_price": "23.96", "avg_total_ltv": "27.42", "conversion_to_vip_champions_pct": "16.36"}, {"customer_segment": "Promising Low Value", "first_category": "Pants & Capris", "user_count": "102", "pct_within_segment": "2.09", "avg_first_item_price": "35.32", "avg_total_ltv": "38.55", "conversion_to_vip_champions_pct": "15.43"}, {"customer_segment": "Promising Low Value", "first_category": "Dresses", "user_count": "98", "pct_within_segment": "2.0", "avg_first_item_price": "34.2", "avg_total_ltv": "35.06", "conversion_to_vip_champions_pct": "16.67"}, {"customer_segment": "Promising Low Value", "first_category": "Skirts", "user_count": "81", "pct_within_segment": "1.66", "avg_first_item_price": "30.5", "avg_total_ltv": "32.6", "conversion_to_vip_champions_pct": "16.41"}, {"customer_segment": "Promising Low Value", "first_category": "Outerwear & Coats", "user_count": "73", "pct_within_segment": "1.49", "avg_first_item_price": "47.13", "avg_total_ltv": "46.69", "conversion_to_vip_champions_pct": "22.46"}, {"customer_segment": "Promising Low Value", "first_category": "Suits & Sport Coats", "user_count": "64", "pct_within_segment": "1.31", "avg_first_item_price": "36.61", "avg_total_ltv": "39.64", "conversion_to_vip_champions_pct": "17.75"}, {"customer_segment": "Promising Low Value", "first_category": "Blazers & Jackets", "user_count": "49", "pct_within_segment": "1.0", "avg_first_item_price": "27.09", "avg_total_ltv": "31.2", "conversion_to_vip_champions_pct": "21.56"}, {"customer_segment": "Promising Low Value", "first_category": "Jumpsuits & Rompers", "user_count": "34", "pct_within_segment": "0.7", "avg_first_item_price": "21.58", "avg_total_ltv": "27.35", "conversion_to_vip_champions_pct": "17.31"}, {"customer_segment": "Promising Low Value", "first_category": "Clothing Sets", "user_count": "5", "pct_within_segment": "0.1", "avg_first_item_price": "55.39", "avg_total_ltv": "57.74", "conversion_to_vip_champions_pct": "36.36"}, {"customer_segment": "Promising Low Value", "first_category": "Suits", "user_count": "1", "pct_within_segment": "0.02", "avg_first_item_price": "13.99", "avg_total_ltv": "13.99", "conversion_to_vip_champions_pct": "25.0"}, {"customer_segment": "VIP Champions", "first_category": "Jeans", "user_count": "132", "pct_within_segment": "8.62", "avg_first_item_price": "115.87", "avg_total_ltv": "282.84", "conversion_to_vip_champions_pct": "18.88"}, {"customer_segment": "VIP Champions", "first_category": "Outerwear & Coats", "user_count": "124", "pct_within_segment": "8.1", "avg_first_item_price": "177.41", "avg_total_ltv": "345.31", "conversion_to_vip_champions_pct": "22.46"}, {"customer_segment": "VIP Champions", "first_category": "Tops & Tees", "user_count": "102", "pct_within_segment": "6.66", "avg_first_item_price": "53.83", "avg_total_ltv": "266.36", "conversion_to_vip_champions_pct": "14.87"}, {"customer_segment": "VIP Champions", "first_category": "Sweaters", "user_count": "102", "pct_within_segment": "6.66", "avg_first_item_price": "88.76", "avg_total_ltv": "270.27", "conversion_to_vip_champions_pct": "16.5"}, {"customer_segment": "VIP Champions", "first_category": "Fashion Hoodies & Sweatshirts", "user_count": "100", "pct_within_segment": "6.53", "avg_first_item_price": "64.28", "avg_total_ltv": "253.17", "conversion_to_vip_champions_pct": "15.36"}, {"customer_segment": "VIP Champions", "first_category": "Sleep & Lounge", "user_count": "97", "pct_within_segment": "6.34", "avg_first_item_price": "66.05", "avg_total_ltv": "271.84", "conversion_to_vip_champions_pct": "15.52"}, {"customer_segment": "VIP Champions", "first_category": "Accessories", "user_count": "91", "pct_within_segment": "5.94", "avg_first_item_price": "59.15", "avg_total_ltv": "271.72", "conversion_to_vip_champions_pct": "17.17"}, {"customer_segment": "VIP Champions", "first_category": "Swim", "user_count": "85", "pct_within_segment": "5.55", "avg_first_item_price": "67.89", "avg_total_ltv": "276.61", "conversion_to_vip_champions_pct": "14.1"}, {"customer_segment": "VIP Champions", "first_category": "Shorts", "user_count": "84", "pct_within_segment": "5.49", "avg_first_item_price": "60.2", "avg_total_ltv": "273.79", "conversion_to_vip_champions_pct": "13.42"}, {"customer_segment": "VIP Champions", "first_category": "Intimates", "user_count": "76", "pct_within_segment": "4.96", "avg_first_item_price": "41.82", "avg_total_ltv": "253.21", "conversion_to_vip_champions_pct": "10.6"}, {"customer_segment": "VIP Champions", "first_category": "Pants", "user_count": "64", "pct_within_segment": "4.18", "avg_first_item_price": "65.89", "avg_total_ltv": "273.03", "conversion_to_vip_champions_pct": "15.96"}, {"customer_segment": "VIP Champions", "first_category": "Active", "user_count": "59", "pct_within_segment": "3.85", "avg_first_item_price": "70.18", "avg_total_ltv": "261.33", "conversion_to_vip_champions_pct": "12.32"}, {"customer_segment": "VIP Champions", "first_category": "Suits & Sport Coats", "user_count": "52", "pct_within_segment": "3.4", "avg_first_item_price": "123.26", "avg_total_ltv": "280.37", "conversion_to_vip_champions_pct": "17.75"}, {"customer_segment": "VIP Champions", "first_category": "Underwear", "user_count": "49", "pct_within_segment": "3.2", "avg_first_item_price": "27.03", "avg_total_ltv": "270.32", "conversion_to_vip_champions_pct": "13.07"}, {"customer_segment": "VIP Champions", "first_category": "Dresses", "user_count": "49", "pct_within_segment": "3.2", "avg_first_item_price": "100.75", "avg_total_ltv": "276.64", "conversion_to_vip_champions_pct": "16.67"}, {"customer_segment": "VIP Champions", "first_category": "Maternity", "user_count": "42", "pct_within_segment": "2.74", "avg_first_item_price": "72.53", "avg_total_ltv": "288.59", "conversion_to_vip_champions_pct": "13.68"}, {"customer_segment": "VIP Champions", "first_category": "Socks", "user_count": "37", "pct_within_segment": "2.42", "avg_first_item_price": "20.73", "avg_total_ltv": "246.76", "conversion_to_vip_champions_pct": "11.53"}, {"customer_segment": "VIP Champions", "first_category": "Plus", "user_count": "36", "pct_within_segment": "2.35", "avg_first_item_price": "84.05", "avg_total_ltv": "262.79", "conversion_to_vip_champions_pct": "16.36"}, {"customer_segment": "VIP Champions", "first_category": "Blazers & Jackets", "user_count": "36", "pct_within_segment": "2.35", "avg_first_item_price": "135.05", "avg_total_ltv": "261.14", "conversion_to_vip_champions_pct": "21.56"}, {"customer_segment": "VIP Champions", "first_category": "Pants & Capris", "user_count": "29", "pct_within_segment": "1.89", "avg_first_item_price": "55.81", "avg_total_ltv": "335.0", "conversion_to_vip_champions_pct": "15.43"}, {"customer_segment": "VIP Champions", "first_category": "Skirts", "user_count": "21", "pct_within_segment": "1.37", "avg_first_item_price": "56.94", "avg_total_ltv": "270.55", "conversion_to_vip_champions_pct": "16.41"}, {"customer_segment": "VIP Champions", "first_category": "Socks & Hosiery", "user_count": "19", "pct_within_segment": "1.24", "avg_first_item_price": "15.22", "avg_total_ltv": "251.4", "conversion_to_vip_champions_pct": "9.64"}, {"customer_segment": "VIP Champions", "first_category": "Leggings", "user_count": "17", "pct_within_segment": "1.11", "avg_first_item_price": "32.77", "avg_total_ltv": "238.16", "conversion_to_vip_champions_pct": "10.43"}, {"customer_segment": "VIP Champions", "first_category": "Suits", "user_count": "15", "pct_within_segment": "0.98", "avg_first_item_price": "139.13", "avg_total_ltv": "248.88", "conversion_to_vip_champions_pct": "25.0"}, {"customer_segment": "VIP Champions", "first_category": "Jumpsuits & Rompers", "user_count": "9", "pct_within_segment": "0.59", "avg_first_item_price": "47.09", "avg_total_ltv": "215.66", "conversion_to_vip_champions_pct": "17.31"}, {"customer_segment": "VIP Champions", "first_category": "Clothing Sets", "user_count": "4", "pct_within_segment": "0.26", "avg_first_item_price": "94.0", "avg_total_ltv": "259.81", "conversion_to_vip_champions_pct": "36.36"}]
-df_category_conversion = pd.DataFrame(category_vip_conversion_data).apply(pd.to_numeric, errors='ignore')
-
-# 8. Category Pair Analysis (VIP/Promising)
-category_pair_data = [{"customer_segment": "VIP Champions", "first_category": "Accessories", "second_category": "Tops & Tees", "pair_count": "10", "pct_of_first_category_in_segment": "100.0", "avg_first_item_price": "49.81", "avg_second_item_price": "35.52", "avg_total_ltv": "232.75", "avg_m_score": "4.2"}, {"customer_segment": "VIP Champions", "first_category": "Fashion Hoodies & Sweatshirts", "second_category": "Jeans", "pair_count": "15", "pct_of_first_category_in_segment": "60.0", "avg_first_item_price": "65.43", "avg_second_item_price": "93.83", "avg_total_ltv": "253.31", "avg_m_score": "4.27"}, {"customer_segment": "VIP Champions", "first_category": "Fashion Hoodies & Sweatshirts", "second_category": "Sweaters", "pair_count": "10", "pct_of_first_category_in_segment": "40.0", "avg_first_item_price": "58.08", "avg_second_item_price": "64.06", "avg_total_ltv": "207.61", "avg_m_score": "4.1"}, {"customer_segment": "VIP Champions", "first_category": "Intimates", "second_category": "Intimates", "pair_count": "13", "pct_of_first_category_in_segment": "100.0", "avg_first_item_price": "49.38", "avg_second_item_price": "31.62", "avg_total_ltv": "289.6", "avg_m_score": "4.31"}, {"customer_segment": "VIP Champions", "first_category": "Jeans", "second_category": "Fashion Hoodies & Sweatshirts", "pair_count": "13", "pct_of_first_category_in_segment": "28.26", "avg_first_item_price": "123.98", "avg_second_item_price": "68.43", "avg_total_ltv": "244.65", "avg_m_score": "4.31"}, {"customer_segment": "VIP Champions", "first_category": "Jeans", "second_category": "Jeans", "pair_count": "12", "pct_of_first_category_in_segment": "26.09", "avg_first_item_price": "110.9", "avg_second_item_price": "139.76", "avg_total_ltv": "324.09", "avg_m_score": "4.58"}, {"customer_segment": "VIP Champions", "first_category": "Jeans", "second_category": "Intimates", "pair_count": "11", "pct_of_first_category_in_segment": "23.91", "avg_first_item_price": "110.27", "avg_second_item_price": "44.56", "avg_total_ltv": "228.6", "avg_m_score": "4.18"}, {"customer_segment": "VIP Champions", "first_category": "Jeans", "second_category": "Sweaters", "pair_count": "10", "pct_of_first_category_in_segment": "21.74", "avg_first_item_price": "115.03", "avg_second_item_price": "69.23", "avg_total_ltv": "301.27", "avg_m_score": "4.4"}, {"customer_segment": "VIP Champions", "first_category": "Outerwear & Coats", "second_category": "Sweaters", "pair_count": "14", "pct_of_first_category_in_segment": "30.43", "avg_first_item_price": "130.55", "avg_second_item_price": "116.72", "avg_total_ltv": "304.51", "avg_m_score": "4.36"}, {"customer_segment": "VIP Champions", "first_category": "Outerwear & Coats", "second_category": "Fashion Hoodies & Sweatshirts", "pair_count": "11", "pct_of_first_category_in_segment": "23.91", "avg_first_item_price": "169.03", "avg_second_item_price": "67.81", "avg_total_ltv": "359.26", "avg_m_score": "4.55"}, {"customer_segment": "VIP Champions", "first_category": "Outerwear & Coats", "second_category": "Tops & Tees", "pair_count": "11", "pct_of_first_category_in_segment": "23.91", "avg_first_item_price": "207.94", "avg_second_item_price": "58.75", "avg_total_ltv": "363.81", "avg_m_score": "4.36"}, {"customer_segment": "VIP Champions", "first_category": "Outerwear & Coats", "second_category": "Swim", "pair_count": "10", "pct_of_first_category_in_segment": "21.74", "avg_first_item_price": "179.36", "avg_second_item_price": "48.64", "avg_total_ltv": "303.31", "avg_m_score": "4.4"}, {"customer_segment": "VIP Champions", "first_category": "Pants", "second_category": "Jeans", "pair_count": "10", "pct_of_first_category_in_segment": "100.0", "avg_first_item_price": "72.94", "avg_second_item_price": "140.35", "avg_total_ltv": "295.47", "avg_m_score": "4.4"}, {"customer_segment": "VIP Champions", "first_category": "Shorts", "second_category": "Jeans", "pair_count": "10", "pct_of_first_category_in_segment": "100.0", "avg_first_item_price": "134.92", "avg_second_item_price": "119.05", "avg_total_ltv": "344.79", "avg_m_score": "4.2"}, {"customer_segment": "VIP Champions", "first_category": "Sleep & Lounge", "second_category": "Sleep & Lounge", "pair_count": "15", "pct_of_first_category_in_segment": "57.69", "avg_first_item_price": "46.02", "avg_second_item_price": "58.0", "avg_total_ltv": "299.66", "avg_m_score": "4.33"}, {"customer_segment": "VIP Champions", "first_category": "Sleep & Lounge", "second_category": "Jeans", "pair_count": "11", "pct_of_first_category_in_segment": "42.31", "avg_first_item_price": "82.13", "avg_second_item_price": "102.33", "avg_total_ltv": "289.46", "avg_m_score": "4.09"}, {"customer_segment": "VIP Champions", "first_category": "Sweaters", "second_category": "Jeans", "pair_count": "10", "pct_of_first_category_in_segment": "50.0", "avg_first_item_price": "76.71", "avg_second_item_price": "129.68", "avg_total_ltv": "283.4", "avg_m_score": "4.3"}, {"customer_segment": "VIP Champions", "first_category": "Sweaters", "second_category": "Outerwear & Coats", "pair_count": "10", "pct_of_first_category_in_segment": "50.0", "avg_first_item_price": "60.94", "avg_second_item_price": "143.49", "avg_total_ltv": "402.26", "avg_m_score": "4.5"}, {"customer_segment": "VIP Champions", "first_category": "Tops & Tees", "second_category": "Fashion Hoodies & Sweatshirts", "pair_count": "11", "pct_of_first_category_in_segment": "100.0", "avg_first_item_price": "76.56", "avg_second_item_price": "59.07", "avg_total_ltv": "238.11", "avg_m_score": "4.18"}]
-df_category_pair = pd.DataFrame(category_pair_data).apply(pd.to_numeric, errors='ignore')
-
-# --------------------------------------------------------------------------------------
-# Helper Functions for Streamlit Visualization
-# --------------------------------------------------------------------------------------
-
-def create_segment_summary_chart(df):
-    """Segment User Count and Revenue Contribution Bar/Line Chart."""
-    df_chart = df.sort_values('user_count', ascending=False).head(9)
-    df_chart['User Percentage'] = df_chart['user_count'] / df_chart['user_count'].sum()
-    df_chart['Revenue Percentage'] = df_chart['total_revenue'] / df_chart['total_revenue'].sum()
-
-    import altair as alt
+# ============================================
+# 커스텀 CSS
+# ============================================
+st.markdown("""
+<style>
+    /* 메인 헤더 */
+    .main-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 2rem 2.5rem;
+        border-radius: 16px;
+        margin-bottom: 2rem;
+        color: white;
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+    }
+    .main-header h1 {
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+    .main-header p {
+        opacity: 0.9;
+        font-size: 1.1rem;
+    }
     
-    base = alt.Chart(df_chart).encode(
-        x=alt.X('customer_segment:N', title='Customer Segment', sort='-y'),
-        tooltip=['customer_segment', alt.Tooltip('user_count', format=',d'), 'pct', alt.Tooltip('total_revenue', format=',.2f'), 'revenue_contribution_pct']
+    /* 메트릭 카드 */
+    .metric-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        border-left: 4px solid;
+        transition: transform 0.2s ease;
+    }
+    .metric-card:hover {
+        transform: translateY(-2px);
+    }
+    .metric-card.blue { border-color: #667eea; }
+    .metric-card.green { border-color: #10b981; }
+    .metric-card.orange { border-color: #f59e0b; }
+    .metric-card.red { border-color: #ef4444; }
+    .metric-card.purple { border-color: #8b5cf6; }
+    
+    .metric-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1f2937;
+    }
+    .metric-label {
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+    }
+    .metric-delta {
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+    }
+    .delta-positive { color: #10b981; }
+    .delta-negative { color: #ef4444; }
+    
+    /* 인사이트 박스 */
+    .insight-box {
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+        border-left: 4px solid #0ea5e9;
+        padding: 1.25rem 1.5rem;
+        border-radius: 0 12px 12px 0;
+        margin: 1rem 0;
+    }
+    .insight-box.warning {
+        background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+        border-color: #f59e0b;
+    }
+    .insight-box.success {
+        background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+        border-color: #10b981;
+    }
+    .insight-box.danger {
+        background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+        border-color: #ef4444;
+    }
+    .insight-title {
+        font-weight: 600;
+        font-size: 1rem;
+        color: #1f2937;
+        margin-bottom: 0.5rem;
+    }
+    .insight-text {
+        color: #4b5563;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+    
+    /* 액션 플랜 박스 */
+    .action-box {
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+        transition: all 0.2s ease;
+    }
+    .action-box:hover {
+        border-color: #667eea;
+        box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    }
+    .action-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+    .action-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+    .action-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: #1f2937;
+    }
+    .action-content {
+        color: #4b5563;
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+    
+    /* 세그먼트 카드 */
+    .segment-card {
+        background: white;
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        margin-bottom: 1rem;
+        border-top: 4px solid;
+    }
+    .segment-champions { border-color: #10b981; }
+    .segment-loyal { border-color: #3b82f6; }
+    .segment-promising { border-color: #8b5cf6; }
+    .segment-attention { border-color: #f59e0b; }
+    .segment-risk { border-color: #f97316; }
+    .segment-hibernating { border-color: #6b7280; }
+    
+    /* 테이블 스타일 */
+    .styled-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+    }
+    .styled-table th {
+        background: #f8fafc;
+        padding: 12px 16px;
+        text-align: left;
+        font-weight: 600;
+        color: #374151;
+        border-bottom: 2px solid #e5e7eb;
+    }
+    .styled-table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    .styled-table tr:hover {
+        background: #f9fafb;
+    }
+    
+    /* 프로세스 플로우 */
+    .process-flow {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 2rem 0;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .process-step {
+        flex: 1;
+        min-width: 120px;
+        text-align: center;
+        padding: 1rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+    }
+    .process-number {
+        width: 36px;
+        height: 36px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.75rem;
+        font-weight: 600;
+    }
+    .process-label {
+        font-size: 0.85rem;
+        color: #4b5563;
+        font-weight: 500;
+    }
+    
+    /* 사이드바 */
+    .css-1d391kg {
+        background: #f8fafc;
+    }
+    
+    /* 섹션 디바이더 */
+    .section-divider {
+        height: 2px;
+        background: linear-gradient(90deg, #667eea, #764ba2, #667eea);
+        margin: 2rem 0;
+        border-radius: 1px;
+    }
+    
+    /* KPI 그리드 */
+    .kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin: 1.5rem 0;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# ============================================
+# 데이터 정의
+# ============================================
+
+# RFM 세그먼트 데이터
+segment_data = pd.DataFrame([
+    {"segment": "Champions", "user_count": 2787, "pct": 9.35, "avg_recency": 80.4, 
+     "avg_frequency": 2.22, "avg_monetary": 189.56, "revenue_pct": 17.25, 
+     "r_score": 4.58, "f_score": 4.19, "m_score": 3.55},
+    {"segment": "Loyal Customers", "user_count": 1357, "pct": 4.55, "avg_recency": 263.1, 
+     "avg_frequency": 2.16, "avg_monetary": 185.14, "revenue_pct": 8.20,
+     "r_score": 3.0, "f_score": 4.14, "m_score": 3.54},
+    {"segment": "Promising", "user_count": 8446, "pct": 28.35, "avg_recency": 84.9, 
+     "avg_frequency": 1.0, "avg_monetary": 85.45, "revenue_pct": 23.56,
+     "r_score": 4.55, "f_score": 3.0, "m_score": 2.34},
+    {"segment": "Need Attention", "user_count": 861, "pct": 2.89, "avg_recency": 478.3, 
+     "avg_frequency": 2.07, "avg_monetary": 182.52, "revenue_pct": 5.13,
+     "r_score": 1.77, "f_score": 4.07, "m_score": 3.49},
+    {"segment": "At Risk", "user_count": 6637, "pct": 22.28, "avg_recency": 270.2, 
+     "avg_frequency": 1.0, "avg_monetary": 85.36, "revenue_pct": 18.49,
+     "r_score": 3.0, "f_score": 3.0, "m_score": 2.36},
+    {"segment": "Hibernating", "user_count": 9707, "pct": 32.58, "avg_recency": 538.5, 
+     "avg_frequency": 1.0, "avg_monetary": 86.38, "revenue_pct": 27.37,
+     "r_score": 1.53, "f_score": 3.0, "m_score": 2.35}
+])
+
+# 채널별 전환율 데이터
+channel_data = pd.DataFrame([
+    {"channel": "Email", "conversion_rate": 27.13, "promising": 419, "champions": 156, 
+     "avg_monetary_p": 82.63, "avg_monetary_c": 170.70},
+    {"channel": "Facebook", "conversion_rate": 26.27, "promising": 508, "champions": 181,
+     "avg_monetary_p": 84.99, "avg_monetary_c": 195.52},
+    {"channel": "Search", "conversion_rate": 24.92, "promising": 5862, "champions": 1946,
+     "avg_monetary_p": 85.86, "avg_monetary_c": 187.32},
+    {"channel": "Display", "conversion_rate": 24.05, "promising": 360, "champions": 114,
+     "avg_monetary_p": 85.48, "avg_monetary_c": 180.54},
+    {"channel": "Organic", "conversion_rate": 23.12, "promising": 1297, "champions": 390,
+     "avg_monetary_p": 84.69, "avg_monetary_c": 208.17}
+])
+
+# 첫 구매 타이밍별 재구매율
+timing_data = pd.DataFrame([
+    {"timing": "1주일 이내", "user_count": 307, "repurchase_rate": 26.06, 
+     "champions_rate": 16.94, "avg_monetary": 112.28},
+    {"timing": "1개월 이내", "user_count": 901, "repurchase_rate": 25.08, 
+     "champions_rate": 16.32, "avg_monetary": 116.92},
+    {"timing": "2개월 이내", "user_count": 1161, "repurchase_rate": 24.63, 
+     "champions_rate": 15.42, "avg_monetary": 110.41},
+    {"timing": "3개월 이내", "user_count": 1058, "repurchase_rate": 23.63, 
+     "champions_rate": 14.08, "avg_monetary": 113.97},
+    {"timing": "3개월+", "user_count": 26368, "repurchase_rate": 15.79, 
+     "champions_rate": 8.57, "avg_monetary": 101.45}
+])
+
+# Promising 구매 후 활동
+promising_activity = pd.DataFrame([
+    {"activity": "활동 없음", "user_count": 5918, "pct": 70.07, "avg_monetary": 59.93},
+    {"activity": "1회 세션", "user_count": 700, "pct": 8.29, "avg_monetary": 118.36},
+    {"activity": "2-3회 세션", "user_count": 1652, "pct": 19.56, "avg_monetary": 146.74},
+    {"activity": "4-5회 세션", "user_count": 175, "pct": 2.07, "avg_monetary": 238.28}
+])
+
+# Champions 재구매 타이밍
+repurchase_timing = pd.DataFrame([
+    {"bucket": "1주 이내", "count": 72, "pct": 2.58, "avg_days": 3.7, "avg_ltv": 225.77},
+    {"bucket": "2주 이내", "count": 62, "pct": 2.22, "avg_days": 10.9, "avg_ltv": 210.16},
+    {"bucket": "1개월 이내", "count": 131, "pct": 4.70, "avg_days": 22.6, "avg_ltv": 194.73},
+    {"bucket": "2개월 이내", "count": 239, "pct": 8.58, "avg_days": 44.9, "avg_ltv": 189.17},
+    {"bucket": "3개월 이내", "count": 246, "pct": 8.83, "avg_days": 75.6, "avg_ltv": 194.99},
+    {"bucket": "3개월+", "count": 2037, "pct": 73.09, "avg_days": 302.4, "avg_ltv": 186.72}
+])
+
+# ============================================
+# 사이드바 네비게이션
+# ============================================
+st.sidebar.markdown("""
+<div style="text-align: center; padding: 1rem 0 2rem;">
+    <h2 style="color: #667eea; margin-bottom: 0.5rem;">📊 RFM Analysis</h2>
+    <p style="color: #6b7280; font-size: 0.9rem;">TheLook E-commerce</p>
+</div>
+""", unsafe_allow_html=True)
+
+pages = {
+    "🏠 Executive Summary": "executive",
+    "🎯 문제 정의 & 가설": "problem",
+    "📐 RFM 등급 설계": "rfm_design",
+    "👥 세그먼트 분석": "segment",
+    "🌱 Promising 전환 분석": "promising",
+    "🏆 Champions 행동 분석": "champions",
+    "📢 채널 & 카테고리 분석": "channel",
+    "🚀 Action Plan": "action"
+}
+
+selected_page = st.sidebar.radio("", list(pages.keys()))
+
+st.sidebar.markdown("---")
+st.sidebar.markdown("""
+<div style="padding: 1rem; background: #f8fafc; border-radius: 8px;">
+    <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 0.5rem;">📅 분석 기간</p>
+    <p style="font-weight: 600; color: #1f2937;">2023.01 - 2024.12</p>
+    <p style="font-size: 0.85rem; color: #6b7280; margin: 1rem 0 0.5rem;">👥 총 고객 수</p>
+    <p style="font-weight: 600; color: #1f2937;">29,795명</p>
+    <p style="font-size: 0.85rem; color: #6b7280; margin: 1rem 0 0.5rem;">💰 총 매출</p>
+    <p style="font-weight: 600; color: #1f2937;">$3,063,495</p>
+</div>
+""", unsafe_allow_html=True)
+
+# ============================================
+# 페이지 1: Executive Summary
+# ============================================
+if pages[selected_page] == "executive":
+    st.markdown("""
+    <div class="main-header">
+        <h1>🏠 Executive Summary</h1>
+        <p>김동윤의 TheLook E-commerce RFM 기반 고객 세그먼트 분석 및 전략 제안</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 데이터셋 ERD 섹션
+    st.subheader("🗄️ TheLook E-commerce 데이터셋 ERD")
+    
+    col_erd1, col_erd2 = st.columns([1.3, 1])
+    
+    with col_erd1:
+        # Graphviz ERD
+        erd_code = """
+        digraph TheLook_ERD {
+            rankdir=LR;
+            node [shape=record, fontname="Helvetica", fontsize=10];
+            edge [fontname="Helvetica", fontsize=9];
+            
+            users [label="{users|id (PK)\\nfirst_name\\nlast_name\\nemail\\ntraffic_source\\ncreated_at\\ncountry, city}"];
+            orders [label="{orders|order_id (PK)\\nuser_id (FK)\\nstatus\\ncreated_at\\nnum_of_item}"];
+            order_items [label="{order_items|id (PK)\\norder_id (FK)\\nuser_id (FK)\\nproduct_id (FK)\\nsale_price ★\\nstatus\\ncreated_at}"];
+            products [label="{products|id (PK)\\nname\\ncategory\\ndepartment\\nretail_price\\nbrand}"];
+            events [label="{events|id (PK)\\nuser_id (FK)\\nsession_id\\nevent_type\\nuri\\ncreated_at}"];
+            
+            users -> orders [label="1:N"];
+            users -> events [label="1:N"];
+            orders -> order_items [label="1:N"];
+            products -> order_items [label="1:N"];
+        }
+        """
+        st.graphviz_chart(erd_code, use_container_width=True)
+    
+    with col_erd2:
+        st.markdown("""
+        <div class="insight-box">
+            <div class="insight-title">📊 분석에 사용된 테이블</div>
+            <div class="insight-text">
+                <table style="width:100%; font-size: 0.85rem;">
+                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                        <td style="padding: 8px 0;"><b>users</b></td>
+                        <td>고객 정보, 유입 채널</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                        <td style="padding: 8px 0;"><b>orders</b></td>
+                        <td>주문 헤더, 상태</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                        <td style="padding: 8px 0;"><b>order_items</b></td>
+                        <td>주문 상세, <span style="color:#10b981;">sale_price</span></td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #e5e7eb;">
+                        <td style="padding: 8px 0;"><b>products</b></td>
+                        <td>상품, 카테고리</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 0;"><b>events</b></td>
+                        <td>사이트 행동 로그</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <div class="insight-box warning" style="margin-top: 1rem;">
+            <div class="insight-title">💡 Key Point</div>
+            <div class="insight-text" style="font-size: 0.85rem;">
+                Monetary 계산 시 <code>orders.num_of_item</code>이 아닌
+                <code>order_items.sale_price</code>의 <b>실제 매출 합계</b>를 사용하여
+                정확한 고객 가치 측정
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # 핵심 지표
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.markdown("""
+        <div class="metric-card blue">
+            <div class="metric-value">29,795</div>
+            <div class="metric-label">분석 고객 수</div>
+            <div class="metric-delta delta-positive">2년간 구매 고객</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="metric-card green">
+            <div class="metric-value">$102.82</div>
+            <div class="metric-label">평균 고객 가치</div>
+            <div class="metric-delta">LTV 기준</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="metric-card orange">
+            <div class="metric-value">9.35%</div>
+            <div class="metric-label">Champions 비율</div>
+            <div class="metric-delta delta-positive">2,787명</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col4:
+        st.markdown("""
+        <div class="metric-card red">
+            <div class="metric-value">70.07%</div>
+            <div class="metric-label">Promising 이탈률</div>
+            <div class="metric-delta delta-negative">재방문 없음</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # 핵심 발견사항
+    st.subheader("🔍 핵심 발견사항")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div class="insight-box danger">
+            <div class="insight-title">🚨 Critical Issue: Promising 이탈 위기</div>
+            <div class="insight-text">
+                전체 고객의 <b>28.35%</b>를 차지하는 Promising 세그먼트 중 
+                <b>70.07%(5,918명)</b>이 첫 구매 후 재방문하지 않음.<br>
+                이는 연간 <b>약 $505,000</b>의 잠재 매출 손실로 추정됨.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="insight-box warning">
+            <div class="insight-title">⚡ 빠른 첫 구매 = 높은 전환율</div>
+            <div class="insight-text">
+                가입 후 <b>1주일 내 첫 구매</b> 고객의 재구매율은 <b>26.06%</b>,<br>
+                Champions 전환율은 <b>16.94%</b>로 3개월+ 대비 <b>2배</b> 높음.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="insight-box success">
+            <div class="insight-title">✅ Email 채널 최고 품질</div>
+            <div class="insight-text">
+                Email 채널의 Champions 전환율 <b>27.13%</b>로 전 채널 중 최고.<br>
+                Organic 채널 대비 <b>+4%p</b> 높은 전환율 기록.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+        
+        st.markdown("""
+        <div class="insight-box">
+            <div class="insight-title">📊 Champions의 빠른 재구매 = 높은 LTV</div>
+            <div class="insight-text">
+                1주 내 재구매 Champions의 평균 LTV는 <b>$225.77</b>,<br>
+                3개월+ 재구매 대비 <b>+20.9%</b> 높음.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # 세그먼트 개요
+    st.subheader("👥 고객 세그먼트 개요")
+    
+    col1, col2 = st.columns([1.2, 1])
+    
+    with col1:
+        fig = px.treemap(
+            segment_data,
+            path=['segment'],
+            values='user_count',
+            color='avg_monetary',
+            color_continuous_scale='RdYlGn',
+            title='세그먼트별 고객 분포 및 평균 LTV'
+        )
+        fig.update_layout(height=400, margin=dict(t=50, l=0, r=0, b=0))
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        fig = px.pie(
+            segment_data,
+            values='revenue_pct',
+            names='segment',
+            title='세그먼트별 매출 기여도',
+            color_discrete_sequence=px.colors.qualitative.Set2
+        )
+        fig.update_layout(height=400)
+        fig.update_traces(textposition='inside', textinfo='percent+label')
+        st.plotly_chart(fig, use_container_width=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+# ============================================
+# 페이지 2: 문제 정의 & 가설
+# ============================================
+elif pages[selected_page] == "problem":
+    st.markdown("""
+    <div class="main-header">
+        <h1>🎯 문제 정의 & 가설</h1>
+        <p>데이터 기반 비즈니스 문제 정의 및 검증 가설 수립</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 비즈니스 컨텍스트
+    st.subheader("📋 비즈니스 컨텍스트")
+    
+    st.markdown("""
+    <div class="insight-box">
+        <div class="insight-title">TheLook E-commerce 현황</div>
+        <div class="insight-text">
+            TheLook은 의류 중심 이커머스 플랫폼으로, 2년간 약 <b>30,000명</b>의 구매 고객을 확보했습니다.
+            그러나 고객당 평균 구매 빈도는 <b>1.2회</b>에 불과하며, 75%의 고객이 단 1회만 구매하고 있습니다.
+            이는 신규 고객 획득에는 성공했으나, <b>고객 유지(Retention)에 심각한 문제</b>가 있음을 시사합니다.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # 핵심 문제
+    st.subheader("🚨 핵심 문제 정의")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div class="segment-card segment-risk">
+            <h4 style="margin-bottom: 1rem;">📉 Problem 1: 낮은 재구매율</h4>
+            <ul style="color: #4b5563; line-height: 1.8;">
+                <li>전체 고객의 <b>75%가 1회 구매</b> 후 이탈</li>
+                <li>평균 구매 빈도 1.2회로 업계 평균(2.5회) 대비 52% 낮음</li>
+                <li>고객 획득 비용 대비 낮은 LTV로 수익성 저하</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="segment-card segment-attention">
+            <h4 style="margin-bottom: 1rem;">📉 Problem 2: Promising 전환 실패</h4>
+            <ul style="color: #4b5563; line-height: 1.8;">
+                <li>최근 구매 신규 고객의 <b>70%가 무활동</b> 상태</li>
+                <li>Champions로의 전환율 24.92%에 불과</li>
+                <li>잠재 고가치 고객을 놓치는 기회 비용 발생</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # 가설 설정
+    st.subheader("🔬 검증 가설")
+    
+    st.markdown("""
+    <div class="action-box">
+        <div class="action-header">
+            <div class="action-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">H1</div>
+            <div class="action-title">가설 1: 조기 전환 가설</div>
+        </div>
+        <div class="action-content">
+            <p><b>가설:</b> 가입 후 빠른 시일 내 첫 구매를 유도하면 재구매율과 Champions 전환율이 높아질 것이다.</p>
+            <p><b>측정 지표:</b> 가입-첫구매 기간별 재구매율, Champions 전환율</p>
+            <p style="color: #10b981;"><b>✅ 검증 결과:</b> 1주 내 첫 구매 시 재구매율 26.06% vs 3개월+ 15.79% (1.65배 차이)</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="action-box">
+        <div class="action-header">
+            <div class="action-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">H2</div>
+            <div class="action-title">가설 2: 활동 기반 전환 가설</div>
+        </div>
+        <div class="action-content">
+            <p><b>가설:</b> 첫 구매 후 사이트 재방문 활동이 많은 Promising 고객일수록 Champions로 전환될 가능성이 높다.</p>
+            <p><b>측정 지표:</b> 구매 후 세션 수별 평균 LTV, M Score</p>
+            <p style="color: #10b981;"><b>✅ 검증 결과:</b> 4-5회 세션 유저의 avg LTV $238.28 vs 무활동 $59.93 (4배 차이)</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="action-box">
+        <div class="action-header">
+            <div class="action-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">H3</div>
+            <div class="action-title">가설 3: 채널 품질 가설</div>
+        </div>
+        <div class="action-content">
+            <p><b>가설:</b> 유입 채널에 따라 고객 품질(전환율, LTV)에 유의미한 차이가 있을 것이다.</p>
+            <p><b>측정 지표:</b> 채널별 Champions 전환율, 평균 LTV</p>
+            <p style="color: #10b981;"><b>✅ 검증 결과:</b> Email 전환율 27.13% > Organic 23.12% (+4%p 차이)</p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # 분석 프레임워크
+    st.subheader("📊 분석 프레임워크")
+    
+    st.markdown("""
+    <div style="text-align: center; margin: 2rem 0;">
+        <div class="process-flow">
+            <div class="process-step">
+                <div class="process-number">1</div>
+                <div class="process-label">데이터 수집</div>
+                <div style="font-size: 0.75rem; color: #9ca3af;">Orders, Items, Events</div>
+            </div>
+            <div style="color: #d1d5db; font-size: 1.5rem;">→</div>
+            <div class="process-step">
+                <div class="process-number">2</div>
+                <div class="process-label">RFM 계산</div>
+                <div style="font-size: 0.75rem; color: #9ca3af;">분포 기반 점수화</div>
+            </div>
+            <div style="color: #d1d5db; font-size: 1.5rem;">→</div>
+            <div class="process-step">
+                <div class="process-number">3</div>
+                <div class="process-label">세그먼트 분류</div>
+                <div style="font-size: 0.75rem; color: #9ca3af;">6개 그룹</div>
+            </div>
+            <div style="color: #d1d5db; font-size: 1.5rem;">→</div>
+            <div class="process-step">
+                <div class="process-number">4</div>
+                <div class="process-label">심화 분석</div>
+                <div style="font-size: 0.75rem; color: #9ca3af;">행동, 채널, 카테고리</div>
+            </div>
+            <div style="color: #d1d5db; font-size: 1.5rem;">→</div>
+            <div class="process-step">
+                <div class="process-number">5</div>
+                <div class="process-label">전략 도출</div>
+                <div style="font-size: 0.75rem; color: #9ca3af;">세그먼트별 액션</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+# ============================================
+# 페이지 3: RFM 등급 설계
+# ============================================
+elif pages[selected_page] == "rfm_design":
+    st.markdown("""
+    <div class="main-header">
+        <h1>📐 RFM 등급 설계</h1>
+        <p>데이터 분포 기반 RFM 스코어링 기준 및 세그먼트 정의</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 데이터 분포 요약
+    st.subheader("📊 데이터 분포 분석")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div class="segment-card segment-champions">
+            <h4>Recency (최근성)</h4>
+            <table class="styled-table" style="margin-top: 1rem;">
+                <tr><td>P10</td><td style="text-align:right;"><b>40일</b></td></tr>
+                <tr><td>P25</td><td style="text-align:right;"><b>111일</b></td></tr>
+                <tr><td>P50 (중앙값)</td><td style="text-align:right;"><b>259일</b></td></tr>
+                <tr><td>P75</td><td style="text-align:right;"><b>455일</b></td></tr>
+                <tr><td>P90</td><td style="text-align:right;"><b>610일</b></td></tr>
+                <tr><td>평균 ± 표준편차</td><td style="text-align:right;"><b>293 ± 207일</b></td></tr>
+            </table>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="segment-card segment-loyal">
+            <h4>Frequency (빈도)</h4>
+            <table class="styled-table" style="margin-top: 1rem;">
+                <tr><td>P10 ~ P75</td><td style="text-align:right;"><b>1회</b></td></tr>
+                <tr><td>P90</td><td style="text-align:right;"><b>2회</b></td></tr>
+                <tr><td>P95</td><td style="text-align:right;"><b>2회</b></td></tr>
+                <tr><td>최대값</td><td style="text-align:right;"><b>4회</b></td></tr>
+                <tr><td>평균 ± 표준편차</td><td style="text-align:right;"><b>1.2 ± 0.47회</b></td></tr>
+                <tr><td style="color:#ef4444;">⚠️ 75% 고객</td><td style="text-align:right;"><b>1회 구매</b></td></tr>
+            </table>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="segment-card segment-promising">
+            <h4>Monetary (금액)</h4>
+            <table class="styled-table" style="margin-top: 1rem;">
+                <tr><td>P10</td><td style="text-align:right;"><b>$18.02</b></td></tr>
+                <tr><td>P25</td><td style="text-align:right;"><b>$34.00</b></td></tr>
+                <tr><td>P50 (중앙값)</td><td style="text-align:right;"><b>$66.50</b></td></tr>
+                <tr><td>P75</td><td style="text-align:right;"><b>$134.72</b></td></tr>
+                <tr><td>P90 / P95</td><td style="text-align:right;"><b>$228 / $302</b></td></tr>
+                <tr><td>평균 ± 표준편차</td><td style="text-align:right;"><b>$102.82 ± $109.77</b></td></tr>
+            </table>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # RFM 스코어 기준
+    st.subheader("🎯 RFM 스코어 기준 설정")
+    
+    st.markdown("""
+    <div class="insight-box">
+        <div class="insight-title">💡 스코어링 원칙</div>
+        <div class="insight-text">
+            RFM 스코어는 <b>데이터 분포 기반</b>으로 설계되었습니다. 
+            백분위(Percentile) 분포를 분석하여 비즈니스적으로 의미 있는 구간을 정의했으며,
+            각 지표의 특성을 고려하여 차별화된 기준을 적용했습니다.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("#### Recency Score 기준")
+        r_score_data = pd.DataFrame({
+            "Score": [5, 4, 3, 2, 1],
+            "기준": ["≤ 90일", "91-180일", "181-365일", "366-545일", "546일+"],
+            "의미": ["3개월 내 활성", "6개월 내 활성", "1년 내 활성", "1.5년 내 활성", "휴면"],
+            "근거": ["P10(40일) 기준", "분기 단위", "연간 사이클", "관찰 기간 고려", "P90(610일) 이상"]
+        })
+        st.dataframe(r_score_data, hide_index=True, use_container_width=True)
+        
+        st.markdown("""
+        <div class="insight-box success">
+            <div class="insight-text" style="font-size: 0.85rem;">
+                <b>설계 의도:</b> 의류 구매 주기(3-6개월)를 고려하여 90일 이내를 최상위로 설정.
+                6개월 이내 활동 고객을 핵심 타겟으로 분류.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("#### Frequency Score 기준")
+        f_score_data = pd.DataFrame({
+            "Score": [5, 4, 3],
+            "기준": ["≥ 3회", "2회", "1회"],
+            "의미": ["충성 고객", "재구매 고객", "신규/일회성"],
+            "근거": ["상위 5%", "P90(상위 10%)", "75% 해당"]
+        })
+        st.dataframe(f_score_data, hide_index=True, use_container_width=True)
+        
+        st.markdown("""
+        <div class="insight-box warning">
+            <div class="insight-text" style="font-size: 0.85rem;">
+                <b>설계 의도:</b> 데이터상 75%가 1회 구매자로, F=3을 기본값으로 설정.
+                2회 구매만으로도 상위 10%에 해당하므로 F=4 부여.
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("#### Monetary Score 기준")
+    m_score_data = pd.DataFrame({
+        "Score": [5, 4, 3, 2, 1],
+        "기준": ["≥ $300", "$135-299", "$67-134", "$34-66", "< $34"],
+        "백분위": ["P95+", "P75-P95", "P50-P75", "P25-P50", "P25 미만"],
+        "의미": ["VIP", "고가치", "중간", "저가치", "저액"],
+        "고객 비율": ["~5%", "~20%", "~25%", "~25%", "~25%"]
+    })
+    st.dataframe(m_score_data, hide_index=True, use_container_width=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # 세그먼트 정의
+    st.subheader("👥 세그먼트 정의 로직")
+    
+    st.code("""
+-- RFM 세그먼트 정의 SQL
+CASE 
+  WHEN r_score >= 4 AND f_score >= 4 THEN 'Champions'      -- 최근 활동 + 재구매
+  WHEN r_score >= 3 AND f_score >= 4 THEN 'Loyal Customers' -- 활동 중 + 재구매
+  WHEN r_score >= 4 AND f_score = 3 THEN 'Promising'       -- 최근 활동 + 1회 구매
+  WHEN r_score <= 2 AND f_score >= 4 THEN 'Need Attention' -- 휴면 + 과거 충성
+  WHEN r_score = 3 AND f_score = 3 THEN 'At Risk'          -- 이탈 위험
+  WHEN r_score <= 2 AND f_score = 3 THEN 'Hibernating'     -- 장기 휴면
+END as customer_segment
+    """, language="sql")
+    
+    # 세그먼트 매트릭스
+    st.markdown("#### RF 세그먼트 매트릭스")
+    
+    matrix_data = [
+        ["", "F=5 (3회+)", "F=4 (2회)", "F=3 (1회)"],
+        ["R=5 (≤90일)", "🏆 Champions", "🏆 Champions", "🌱 Promising"],
+        ["R=4 (91-180일)", "🏆 Champions", "🏆 Champions", "🌱 Promising"],
+        ["R=3 (181-365일)", "💙 Loyal", "💙 Loyal", "⚠️ At Risk"],
+        ["R=2 (366-545일)", "🔔 Need Attention", "🔔 Need Attention", "😴 Hibernating"],
+        ["R=1 (546일+)", "🔔 Need Attention", "🔔 Need Attention", "😴 Hibernating"]
+    ]
+    
+    matrix_df = pd.DataFrame(matrix_data[1:], columns=matrix_data[0])
+    st.dataframe(matrix_df, hide_index=True, use_container_width=True)
+
+# ============================================
+# 페이지 4: 세그먼트 분석
+# ============================================
+elif pages[selected_page] == "segment":
+    st.markdown("""
+    <div class="main-header">
+        <h1>👥 세그먼트 분석</h1>
+        <p>6개 고객 세그먼트의 특성, 규모, 매출 기여도 분석</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 세그먼트 개요 시각화
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        fig = px.bar(
+            segment_data,
+            x='segment',
+            y='user_count',
+            color='segment',
+            title='세그먼트별 고객 수',
+            color_discrete_sequence=px.colors.qualitative.Set2
+        )
+        fig.update_layout(showlegend=False, xaxis_tickangle=-45)
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        fig = px.bar(
+            segment_data,
+            x='segment',
+            y='avg_monetary',
+            color='segment',
+            title='세그먼트별 평균 LTV ($)',
+            color_discrete_sequence=px.colors.qualitative.Set2
+        )
+        fig.update_layout(showlegend=False, xaxis_tickangle=-45)
+        st.plotly_chart(fig, use_container_width=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # 세그먼트 상세
+    st.subheader("📋 세그먼트 상세 분석")
+    
+    # Champions
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        st.markdown("""
+        <div class="segment-card segment-champions">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0;">🏆 Champions</h3>
+                <span style="background: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem;">9.35%</span>
+            </div>
+            <p style="color: #6b7280; margin: 0.5rem 0;">최근 활동 + 2회 이상 구매 (R≥4 & F≥4)</p>
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 1rem 0;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0;">고객 수</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin: 0;">2,787명</p>
+                </div>
+                <div>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0;">매출 기여</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin: 0; color: #10b981;">17.25%</p>
+                </div>
+                <div>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0;">평균 LTV</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin: 0;">$189.56</p>
+                </div>
+                <div>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0;">평균 Recency</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin: 0;">80.4일</p>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="segment-card segment-promising">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0;">🌱 Promising</h3>
+                <span style="background: #8b5cf6; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem;">28.35%</span>
+            </div>
+            <p style="color: #6b7280; margin: 0.5rem 0;">최근 활동 + 1회 구매 (R≥4 & F=3)</p>
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 1rem 0;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0;">고객 수</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin: 0;">8,446명</p>
+                </div>
+                <div>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0;">매출 기여</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin: 0; color: #8b5cf6;">23.56%</p>
+                </div>
+                <div>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0;">평균 LTV</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin: 0;">$85.45</p>
+                </div>
+                <div>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0;">평균 Recency</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin: 0;">84.9일</p>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        st.markdown("""
+        <div class="segment-card segment-risk">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0;">⚠️ At Risk</h3>
+                <span style="background: #f97316; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem;">22.28%</span>
+            </div>
+            <p style="color: #6b7280; margin: 0.5rem 0;">이탈 위험 (R=3 & F=3)</p>
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 1rem 0;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0;">고객 수</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin: 0;">6,637명</p>
+                </div>
+                <div>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0;">매출 기여</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin: 0; color: #f97316;">18.49%</p>
+                </div>
+                <div>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0;">평균 LTV</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin: 0;">$85.36</p>
+                </div>
+                <div>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0;">평균 Recency</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin: 0; color: #f97316;">270.2일</p>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="segment-card segment-hibernating">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="margin: 0;">😴 Hibernating</h3>
+                <span style="background: #6b7280; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.85rem;">32.58%</span>
+            </div>
+            <p style="color: #6b7280; margin: 0.5rem 0;">장기 휴면 (R≤2 & F=3)</p>
+            <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 1rem 0;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0;">고객 수</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin: 0;">9,707명</p>
+                </div>
+                <div>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0;">매출 기여</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin: 0; color: #6b7280;">27.37%</p>
+                </div>
+                <div>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0;">평균 LTV</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin: 0;">$86.38</p>
+                </div>
+                <div>
+                    <p style="color: #6b7280; font-size: 0.85rem; margin: 0;">평균 Recency</p>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin: 0; color: #ef4444;">538.5일</p>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # RFM 스코어 레이더 차트
+    st.subheader("📊 세그먼트별 RFM 프로필")
+    
+    categories = ['R Score', 'F Score', 'M Score']
+    
+    fig = go.Figure()
+    
+    colors = ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b', '#f97316', '#6b7280']
+    
+    for i, row in segment_data.iterrows():
+        fig.add_trace(go.Scatterpolar(
+            r=[row['r_score'], row['f_score'], row['m_score']],
+            theta=categories,
+            fill='toself',
+            name=row['segment'],
+            line_color=colors[i],
+            opacity=0.7
+        ))
+    
+    fig.update_layout(
+        polar=dict(
+            radialaxis=dict(visible=True, range=[0, 5])
+        ),
+        showlegend=True,
+        title="세그먼트별 RFM 스코어 비교",
+        height=500
     )
+    
+    st.plotly_chart(fig, use_container_width=True)
 
-    bar = base.mark_bar().encode(
-        y=alt.Y('pct:Q', title='User Share (%)'),
-        color=alt.Color('customer_segment', legend=None),
-        order=alt.Order('pct', sort='descending')
+# ============================================
+# 페이지 5: Promising 전환 분석
+# ============================================
+elif pages[selected_page] == "promising":
+    st.markdown("""
+    <div class="main-header">
+        <h1>🌱 Promising 전환 분석</h1>
+        <p>신규 고객의 Champions 전환 요인 및 이탈 원인 분석</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 핵심 문제
+    st.markdown("""
+    <div class="insight-box danger">
+        <div class="insight-title">🚨 핵심 문제: Promising 이탈 위기</div>
+        <div class="insight-text">
+            Promising 세그먼트(8,446명)의 <b>70.07%(5,918명)</b>이 첫 구매 후 
+            사이트에 <b>단 한 번도 재방문하지 않음</b>. 이들의 평균 LTV는 $59.93으로,
+            재방문 고객($146.74) 대비 <b>59% 낮음</b>.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 구매 후 활동 분석
+    st.subheader("📊 구매 후 활동 분석")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        fig = px.pie(
+            promising_activity,
+            values='pct',
+            names='activity',
+            title='Promising 구매 후 활동 분포',
+            color_discrete_sequence=['#ef4444', '#fbbf24', '#10b981', '#3b82f6']
+        )
+        fig.update_traces(textposition='inside', textinfo='percent+label')
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        fig = px.bar(
+            promising_activity,
+            x='activity',
+            y='avg_monetary',
+            title='활동 수준별 평균 LTV',
+            color='avg_monetary',
+            color_continuous_scale='Greens'
+        )
+        fig.update_layout(showlegend=False)
+        st.plotly_chart(fig, use_container_width=True)
+    
+    st.markdown("""
+    <div class="insight-box success">
+        <div class="insight-title">💡 인사이트: 활동량과 LTV의 강한 상관관계</div>
+        <div class="insight-text">
+            구매 후 4-5회 세션 방문자의 평균 LTV는 <b>$238.28</b>로, 
+            무활동 고객($59.93) 대비 <b>4배 높음</b>.
+            단 1회 재방문만으로도 LTV가 <b>2배</b>($118.36) 증가.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # 첫 구매 타이밍 분석
+    st.subheader("⏰ 가입-첫구매 타이밍의 영향")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        fig = px.bar(
+            timing_data,
+            x='timing',
+            y='repurchase_rate',
+            title='첫 구매 타이밍별 재구매율 (%)',
+            color='repurchase_rate',
+            color_continuous_scale='Blues'
+        )
+        fig.update_layout(showlegend=False)
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        fig = px.bar(
+            timing_data,
+            x='timing',
+            y='champions_rate',
+            title='첫 구매 타이밍별 Champions 전환율 (%)',
+            color='champions_rate',
+            color_continuous_scale='Greens'
+        )
+        fig.update_layout(showlegend=False)
+        st.plotly_chart(fig, use_container_width=True)
+    
+    st.markdown("""
+    <div class="insight-box warning">
+        <div class="insight-title">⚡ 인사이트: 빠른 첫 구매 = 높은 전환율</div>
+        <div class="insight-text">
+            가입 후 <b>1주일 내</b> 첫 구매 고객의 재구매율은 <b>26.06%</b>, Champions 전환율은 <b>16.94%</b>로,
+            3개월+ 고객(15.79%, 8.57%) 대비 각각 <b>65%, 98% 높음</b>.<br><br>
+            <b>시사점:</b> 신규 가입 후 7일 이내 첫 구매를 유도하는 캠페인이 효과적
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # 액션 플랜
+    st.subheader("🎯 Promising 전환 전략")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div class="action-box">
+            <div class="action-header">
+                <div class="action-icon" style="background: #dcfce7;">📧</div>
+                <div class="action-title">Day 1-3-7 이메일 시퀀스</div>
+            </div>
+            <div class="action-content">
+                <p><b>Day 1:</b> 구매 감사 + 관련 상품 추천</p>
+                <p><b>Day 3:</b> 리뷰 요청 + 10% 재구매 쿠폰</p>
+                <p><b>Day 7:</b> 미방문 시 긴급 할인 알림</p>
+                <p style="color: #10b981; margin-top: 1rem;"><b>예상 효과:</b> 재방문율 +15%p</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="action-box">
+            <div class="action-header">
+                <div class="action-icon" style="background: #e0f2fe;">🎁</div>
+                <div class="action-title">첫 구매 후 재방문 인센티브</div>
+            </div>
+            <div class="action-content">
+                <p><b>대상:</b> 첫 구매 후 7일 내 미재방문 고객</p>
+                <p><b>혜택:</b> 무료배송 + 15% 할인 콤보</p>
+                <p><b>조건:</b> 14일 내 사용 시에만 적용</p>
+                <p style="color: #10b981; margin-top: 1rem;"><b>예상 효과:</b> 이탈률 70% → 55%</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+# ============================================
+# 페이지 6: Champions 행동 분석
+# ============================================
+elif pages[selected_page] == "champions":
+    st.markdown("""
+    <div class="main-header">
+        <h1>🏆 Champions 행동 분석</h1>
+        <p>최고 가치 고객의 구매 패턴 및 재구매 타이밍 분석</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Champions 프로필
+    col1, col2, col3, col4 = st.columns(4)
+    
+    with col1:
+        st.markdown("""
+        <div class="metric-card green">
+            <div class="metric-value">2,787</div>
+            <div class="metric-label">Champions 수</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="metric-card green">
+            <div class="metric-value">$189.56</div>
+            <div class="metric-label">평균 LTV</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="metric-card green">
+            <div class="metric-value">17.25%</div>
+            <div class="metric-label">매출 기여도</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col4:
+        st.markdown("""
+        <div class="metric-card green">
+            <div class="metric-value">2.22회</div>
+            <div class="metric-label">평균 구매 횟수</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("<br>", unsafe_allow_html=True)
+    
+    # 재구매 타이밍 분석
+    st.subheader("⏰ 재구매 타이밍 분석")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        fig = px.bar(
+            repurchase_timing,
+            x='bucket',
+            y='pct',
+            title='1차→2차 구매 간격 분포 (%)',
+            color='pct',
+            color_continuous_scale='Purples'
+        )
+        fig.update_layout(showlegend=False)
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        fig = px.scatter(
+            repurchase_timing,
+            x='avg_days',
+            y='avg_ltv',
+            size='count',
+            color='bucket',
+            title='재구매 타이밍 vs LTV',
+            labels={'avg_days': '평균 재구매 일수', 'avg_ltv': '평균 LTV ($)'}
+        )
+        st.plotly_chart(fig, use_container_width=True)
+    
+    st.markdown("""
+    <div class="insight-box success">
+        <div class="insight-title">💡 인사이트: 빠른 재구매 = 높은 LTV</div>
+        <div class="insight-text">
+            <b>1주 내</b> 재구매 Champions의 평균 LTV는 <b>$225.77</b>로,
+            3개월+ 재구매자($186.72) 대비 <b>20.9% 높음</b>.<br>
+            그러나 전체 Champions의 <b>73%</b>가 3개월 이상 소요되어 재구매.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # 전환 속도별 활동 분석
+    st.subheader("📊 전환 속도별 구매 간 활동")
+    
+    conversion_speed = pd.DataFrame([
+        {"speed": "Quick (≤30일)", "count": 265, "avg_ltv": 206.77, "avg_sessions": 0.7},
+        {"speed": "Medium (31-60일)", "count": 239, "avg_ltv": 189.17, "avg_sessions": 0.8},
+        {"speed": "Slow (61일+)", "count": 2283, "avg_ltv": 187.61, "avg_sessions": 0.8}
+    ])
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        fig = px.bar(
+            conversion_speed,
+            x='speed',
+            y='count',
+            title='전환 속도별 Champions 수',
+            color='count',
+            color_continuous_scale='Oranges'
+        )
+        fig.update_layout(showlegend=False)
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        fig = px.bar(
+            conversion_speed,
+            x='speed',
+            y='avg_ltv',
+            title='전환 속도별 평균 LTV ($)',
+            color='avg_ltv',
+            color_continuous_scale='Greens'
+        )
+        fig.update_layout(showlegend=False)
+        st.plotly_chart(fig, use_container_width=True)
+    
+    st.markdown("""
+    <div class="insight-box warning">
+        <div class="insight-title">⚡ 인사이트: 빠른 전환자의 행동 특성</div>
+        <div class="insight-text">
+            Quick 전환자(30일 이내)는 구매 사이 평균 <b>0.7회</b> 세션만 기록,
+            이는 <b>즉각적인 구매 결정</b>을 내리는 고객임을 시사.<br>
+            반면 Slow 전환자는 더 많은 탐색(0.8회)을 하지만 LTV는 낮음.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # Champions 전략
+    st.subheader("🎯 Champions 유지 전략")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div class="action-box">
+            <div class="action-header">
+                <div class="action-icon" style="background: #fef3c7;">👑</div>
+                <div class="action-title">VIP 프로그램</div>
+            </div>
+            <div class="action-content">
+                <p><b>대상:</b> M Score 4+ Champions (상위 25%)</p>
+                <p><b>혜택:</b></p>
+                <ul style="margin: 0.5rem 0; padding-left: 1.2rem;">
+                    <li>신상품 Early Access</li>
+                    <li>전용 고객센터</li>
+                    <li>생일 특별 할인 30%</li>
+                </ul>
+                <p style="color: #10b981;"><b>예상 효과:</b> LTV +15%</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="action-box">
+            <div class="action-header">
+                <div class="action-icon" style="background: #e0e7ff;">⏰</div>
+                <div class="action-title">재구매 타이밍 캠페인</div>
+            </div>
+            <div class="action-content">
+                <p><b>대상:</b> 마지막 구매 후 60일 경과 Champions</p>
+                <p><b>액션:</b></p>
+                <ul style="margin: 0.5rem 0; padding-left: 1.2rem;">
+                    <li>개인화된 상품 추천</li>
+                    <li>한정 시간 할인 (48시간)</li>
+                    <li>무료배송 쿠폰</li>
+                </ul>
+                <p style="color: #10b981;"><b>예상 효과:</b> 재구매 주기 단축 20%</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+# ============================================
+# 페이지 7: 채널 & 카테고리 분석
+# ============================================
+elif pages[selected_page] == "channel":
+    st.markdown("""
+    <div class="main-header">
+        <h1>📢 채널 & 카테고리 분석</h1>
+        <p>유입 채널 및 첫 구매 카테고리별 고객 품질 분석</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 채널별 전환율
+    st.subheader("📊 채널별 Champions 전환율")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        fig = px.bar(
+            channel_data.sort_values('conversion_rate', ascending=True),
+            x='conversion_rate',
+            y='channel',
+            orientation='h',
+            title='채널별 Champions 전환율 (%)',
+            color='conversion_rate',
+            color_continuous_scale='Greens'
+        )
+        fig.update_layout(showlegend=False, yaxis={'categoryorder': 'total ascending'})
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        fig = px.bar(
+            channel_data,
+            x='channel',
+            y=['promising', 'champions'],
+            title='채널별 세그먼트 분포',
+            barmode='group',
+            color_discrete_sequence=['#8b5cf6', '#10b981']
+        )
+        st.plotly_chart(fig, use_container_width=True)
+    
+    st.markdown("""
+    <div class="insight-box success">
+        <div class="insight-title">✅ 인사이트: Email 채널이 최고 품질</div>
+        <div class="insight-text">
+            Email 채널의 Champions 전환율은 <b>27.13%</b>로 전 채널 중 최고.
+            Organic(23.12%) 대비 <b>+4%p</b> 높은 전환율.<br>
+            <b>시사점:</b> Email 마케팅 비중 확대 및 Newsletter 구독 유도 필요.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # 카테고리별 전환율
+    st.subheader("👗 카테고리별 Champions 전환율")
+    
+    category_conversion = pd.DataFrame([
+        {"category": "Clothing Sets", "conversion_rate": 41.67, "avg_ltv": 231.84},
+        {"category": "Jumpsuits & Rompers", "conversion_rate": 29.51, "avg_ltv": 136.60},
+        {"category": "Plus", "conversion_rate": 28.40, "avg_ltv": 161.37},
+        {"category": "Accessories", "conversion_rate": 28.38, "avg_ltv": 180.63},
+        {"category": "Suits", "conversion_rate": 27.42, "avg_ltv": 234.22},
+        {"category": "Blazers & Jackets", "conversion_rate": 27.62, "avg_ltv": 211.27},
+        {"category": "Outerwear & Coats", "conversion_rate": 26.96, "avg_ltv": 292.54},
+    ])
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        fig = px.bar(
+            category_conversion.sort_values('conversion_rate', ascending=True),
+            x='conversion_rate',
+            y='category',
+            orientation='h',
+            title='카테고리별 Champions 전환율 (%)',
+            color='conversion_rate',
+            color_continuous_scale='Blues'
+        )
+        fig.update_layout(showlegend=False, height=400)
+        st.plotly_chart(fig, use_container_width=True)
+    
+    with col2:
+        fig = px.scatter(
+            category_conversion,
+            x='conversion_rate',
+            y='avg_ltv',
+            size='avg_ltv',
+            color='category',
+            title='전환율 vs LTV',
+            labels={'conversion_rate': '전환율 (%)', 'avg_ltv': '평균 LTV ($)'}
+        )
+        fig.update_layout(height=400)
+        st.plotly_chart(fig, use_container_width=True)
+    
+    st.markdown("""
+    <div class="insight-box warning">
+        <div class="insight-title">💡 인사이트: 고가 카테고리의 높은 LTV</div>
+        <div class="insight-text">
+            <b>Outerwear & Coats</b>로 첫 구매한 고객의 평균 LTV는 <b>$292.54</b>로 최고.
+            전환율(26.96%)도 상위권으로, <b>고가 아이템 첫 구매 유도가 효과적</b>.<br>
+            반면 Clothing Sets는 전환율(41.67%)이 가장 높지만 샘플 수가 적어 주의 필요.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # 채널×카테고리 히트맵
+    st.subheader("🗺️ 채널 × 카테고리 LTV 히트맵")
+    
+    # 히트맵 데이터
+    heatmap_data = pd.DataFrame({
+        'Email': [287.38, 145.06, 147.13, 176.32, 147.07],
+        'Facebook': [313.49, 211.36, 142.48, 200.25, 211.55],
+        'Search': [266.62, 260.71, 156.94, 208.86, 185.25],
+        'Display': [211.96, 199.41, None, 155.30, 148.38],
+        'Organic': [307.85, 171.98, 228.45, 229.55, 187.61]
+    }, index=['Outerwear', 'Jeans', 'Accessories', 'Sweaters', 'Sleep & Lounge'])
+    
+    fig = px.imshow(
+        heatmap_data.values,
+        x=heatmap_data.columns,
+        y=heatmap_data.index,
+        color_continuous_scale='RdYlGn',
+        title='채널 × 카테고리별 평균 LTV ($)',
+        labels=dict(color="LTV ($)")
     )
+    fig.update_layout(height=400)
+    st.plotly_chart(fig, use_container_width=True)
     
-    line = base.mark_line(point=True, color='red').encode(
-        y=alt.Y('revenue_contribution_pct:Q', title='Revenue Share (%)', axis=alt.Axis(titleColor='red')),
-        order=alt.Order('pct', sort='descending')
-    )
+    st.markdown("""
+    <div class="insight-box">
+        <div class="insight-title">🎯 최적 채널×카테고리 조합</div>
+        <div class="insight-text">
+            <b>Top 3 조합:</b><br>
+            1. Facebook × Outerwear: <b>$313.49</b><br>
+            2. Organic × Outerwear: <b>$307.85</b><br>
+            3. Email × Outerwear: <b>$287.38</b><br><br>
+            <b>시사점:</b> Outerwear 카테고리의 광고 타겟팅 강화
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+# ============================================
+# 페이지 8: Action Plan
+# ============================================
+elif pages[selected_page] == "action":
+    st.markdown("""
+    <div class="main-header">
+        <h1>🚀 Action Plan</h1>
+        <p>RFM 분석 기반 세그먼트별 마케팅 전략 및 실행 로드맵</p>
+    </div>
+    """, unsafe_allow_html=True)
     
-    chart = alt.layer(bar, line).resolve_scale(
-        y='independent'
-    ).properties(
-        title='Segment Distribution (User Count vs. Revenue Contribution)'
-    ).interactive()
+    # Phase 1
+    st.subheader("📅 Phase 1: Promising 리텐션 (Week 1-2)")
     
-    st.altair_chart(chart, use_container_width=True)
-
-def create_traffic_source_chart(df):
-    """Traffic Source VIP/Promising Conversion Rate Stacked Bar Chart."""
-    df_traffic = df.drop_duplicates(subset=['traffic_source']).sort_values('vip_conversion_rate_pct', ascending=False).set_index('traffic_source')[['vip_conversion_rate_pct', 'promising_high_share_pct', 'promising_low_share_pct']]
-    df_traffic.columns = ['VIP Champions', 'Promising High Value', 'Promising Low Value']
-    df_traffic = df_traffic.stack().reset_index()
-    df_traffic.columns = ['traffic_source', 'segment_type', 'share_pct']
+    col1, col2 = st.columns(2)
     
-    chart = alt.Chart(df_traffic).mark_bar().encode(
-        x=alt.X('share_pct:Q', title='Share within Segmented Traffic (%)'),
-        y=alt.Y('traffic_source:N', title='Traffic Source', sort='-x'),
-        color=alt.Color('segment_type:N', title='Segment Type', 
-                        scale=alt.Scale(domain=['VIP Champions', 'Promising High Value', 'Promising Low Value'],
-                                        range=['#10b981', '#f59e0b', '#ef4444'])),
-        order=alt.Order('segment_type', sort='descending'),
-        tooltip=['traffic_source', 'segment_type', 'share_pct']
-    ).properties(
-        title="Traffic Source Segmentation Mix (VIP/Promising Only)"
-    ).interactive()
+    with col1:
+        st.markdown("""
+        <div class="action-box" style="border-color: #8b5cf6;">
+            <div class="action-header">
+                <div class="action-icon" style="background: #ede9fe; color: #8b5cf6;">🌱</div>
+                <div class="action-title">구매 후 이메일 시퀀스</div>
+            </div>
+            <div class="action-content">
+                <p><b>목표:</b> Promising 이탈률 70% → 55%</p>
+                <hr style="margin: 1rem 0;">
+                <p><b>Day 1:</b> 구매 감사 + 연관 상품 추천</p>
+                <p><b>Day 3:</b> 리뷰 요청 + 10% 재구매 쿠폰</p>
+                <p><b>Day 7:</b> 재방문 유도 + 15% 할인</p>
+                <p><b>Day 14:</b> 마지막 기회 + 무료배송</p>
+                <hr style="margin: 1rem 0;">
+                <p style="color: #10b981;"><b>예상 ROI:</b> +$101,000/년</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     
-    st.altair_chart(chart, use_container_width=True)
-
-def create_post_purchase_chart(df):
-    """Promising High/Low Post-Purchase Activity Comparison."""
-    df_chart = df.copy()
+    with col2:
+        st.markdown("""
+        <div class="action-box" style="border-color: #8b5cf6;">
+            <div class="action-header">
+                <div class="action-icon" style="background: #ede9fe; color: #8b5cf6;">⏰</div>
+                <div class="action-title">신규 가입 조기 전환</div>
+            </div>
+            <div class="action-content">
+                <p><b>목표:</b> 1주 내 첫 구매 비율 1% → 5%</p>
+                <hr style="margin: 1rem 0;">
+                <p><b>Welcome 이메일:</b> 가입 즉시 15% 할인 코드</p>
+                <p><b>Push 알림:</b> 인기 상품 알림 (Day 1, 3)</p>
+                <p><b>리타겟팅:</b> 장바구니 이탈 고객 대상</p>
+                <p><b>한정 혜택:</b> 7일 내 구매 시 추가 5% 할인</p>
+                <hr style="margin: 1rem 0;">
+                <p style="color: #10b981;"><b>예상 ROI:</b> +$34,000/년</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
     
-    base = alt.Chart(df_chart).encode(
-        y=alt.Y('activity_level:N', title='Sessions After Purchase', sort=['0. No Activity', '1. 1 Session', '2. 2-3 Sessions', '3. 4-5 Sessions', '4. 6+ Sessions']),
-        tooltip=['customer_segment', alt.Tooltip('user_count', format=',d'), 'pct_within_segment', alt.Tooltip('avg_monetary', format='$,.2f')]
-    )
-
-    bar = base.mark_bar().encode(
-        x=alt.X('pct_within_segment:Q', title='Share within Segment (%)'),
-        color=alt.Color('customer_segment:N', title='Segment', 
-                        scale=alt.Scale(domain=['Promising High Value', 'Promising Low Value'], range=['#f59e0b', '#ef4444'])),
-        column=alt.Column('customer_segment:N', title='Segment')
-    ).properties(
-        title='Post-Purchase Activity Drop-Off (Promising Segments)'
-    )
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
-    st.altair_chart(bar, use_container_width=True)
-
-def create_category_conversion_chart(df):
-    """Category VIP Conversion Rate Heatmap/Bar Chart."""
-    df_chart = df[df['customer_segment'].isin(['Promising High Value', 'Promising Low Value'])].drop_duplicates(subset=['first_category', 'conversion_to_vip_champions_pct']).sort_values('conversion_to_vip_champions_pct', ascending=False).head(15)
+    # Phase 2
+    st.subheader("📅 Phase 2: Champions VIP 프로그램 (Week 3-4)")
     
-    chart = alt.Chart(df_chart).mark_bar().encode(
-        x=alt.X('conversion_to_vip_champions_pct:Q', title='VIP Champions Conversion Rate (%)'),
-        y=alt.Y('first_category:N', title='First Purchase Category', sort='-x'),
-        color=alt.Color('conversion_to_vip_champions_pct:Q', title='Conversion Rate', scale=alt.Scale(range='heatmap')),
-        tooltip=['first_category', 'conversion_to_vip_champions_pct', alt.Tooltip('avg_first_item_price', format='$,.2f'), alt.Tooltip('avg_total_ltv', format='$,.2f')]
-    ).properties(
-        title="Category VIP Conversion Potential (Top 15 Categories)"
-    ).interactive()
+    col1, col2 = st.columns(2)
     
-    st.altair_chart(chart, use_container_width=True)
+    with col1:
+        st.markdown("""
+        <div class="action-box" style="border-color: #10b981;">
+            <div class="action-header">
+                <div class="action-icon" style="background: #dcfce7; color: #10b981;">👑</div>
+                <div class="action-title">Champions VIP 혜택</div>
+            </div>
+            <div class="action-content">
+                <p><b>목표:</b> Champions LTV +15%</p>
+                <hr style="margin: 1rem 0;">
+                <p><b>Tier 1 (M≥4):</b></p>
+                <ul style="margin: 0.5rem 0; padding-left: 1.2rem;">
+                    <li>신상품 48시간 Early Access</li>
+                    <li>전용 고객센터 라인</li>
+                    <li>연 2회 VIP 세일 (30% 할인)</li>
+                </ul>
+                <p><b>Tier 2 (M=3):</b></p>
+                <ul style="margin: 0.5rem 0; padding-left: 1.2rem;">
+                    <li>신상품 알림 우선 발송</li>
+                    <li>생일 20% 할인</li>
+                </ul>
+                <hr style="margin: 1rem 0;">
+                <p style="color: #10b981;"><b>예상 ROI:</b> +$79,000/년</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="action-box" style="border-color: #10b981;">
+            <div class="action-header">
+                <div class="action-icon" style="background: #dcfce7; color: #10b981;">🔄</div>
+                <div class="action-title">재구매 주기 단축</div>
+            </div>
+            <div class="action-content">
+                <p><b>목표:</b> 평균 재구매 주기 300일 → 240일</p>
+                <hr style="margin: 1rem 0;">
+                <p><b>D+30 알림:</b> "새로운 상품이 도착했어요"</p>
+                <p><b>D+60 알림:</b> "오래 기다리셨죠?" + 쿠폰</p>
+                <p><b>D+90 알림:</b> "보고 싶었어요" + 특별 할인</p>
+                <p><b>개인화:</b> 이전 구매 기반 추천</p>
+                <hr style="margin: 1rem 0;">
+                <p style="color: #10b981;"><b>예상 효과:</b> 재구매 주기 20% 단축</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # Phase 3
+    st.subheader("📅 Phase 3: At Risk/Hibernating 윈백 (Month 2)")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.markdown("""
+        <div class="action-box" style="border-color: #f97316;">
+            <div class="action-header">
+                <div class="action-icon" style="background: #ffedd5; color: #f97316;">⚠️</div>
+                <div class="action-title">At Risk 윈백</div>
+            </div>
+            <div class="action-content">
+                <p><b>대상:</b> 6,637명 (마지막 구매 181-365일)</p>
+                <p><b>목표:</b> 1,000명 재활성화</p>
+                <hr style="margin: 1rem 0;">
+                <p><b>전략:</b></p>
+                <ul style="margin: 0.5rem 0; padding-left: 1.2rem;">
+                    <li>"우리가 그리웠어요" 캠페인</li>
+                    <li>20% 복귀 환영 쿠폰</li>
+                    <li>과거 구매 기반 개인화 추천</li>
+                </ul>
+                <hr style="margin: 1rem 0;">
+                <p style="color: #10b981;"><b>예상 ROI:</b> +$85,000</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="action-box" style="border-color: #6b7280;">
+            <div class="action-header">
+                <div class="action-icon" style="background: #f3f4f6; color: #6b7280;">😴</div>
+                <div class="action-title">Hibernating 재활성화</div>
+            </div>
+            <div class="action-content">
+                <p><b>대상:</b> 9,707명 (마지막 구매 365일+)</p>
+                <p><b>목표:</b> 500명 재활성화</p>
+                <hr style="margin: 1rem 0;">
+                <p><b>전략:</b></p>
+                <ul style="margin: 0.5rem 0; padding-left: 1.2rem;">
+                    <li>"많이 달라졌어요" 신상품 소개</li>
+                    <li>30% 복귀 특별 할인</li>
+                    <li>무료배송 + 반품 무료</li>
+                </ul>
+                <hr style="margin: 1rem 0;">
+                <p style="color: #10b981;"><b>예상 ROI:</b> +$43,000</p>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # 채널 전략
+    st.subheader("📢 채널 최적화 전략")
+    
+    st.markdown("""
+    <div class="action-box" style="border-color: #3b82f6;">
+        <div class="action-header">
+            <div class="action-icon" style="background: #dbeafe; color: #3b82f6;">📧</div>
+            <div class="action-title">Email 채널 강화</div>
+        </div>
+        <div class="action-content">
+            <p><b>현황:</b> Email 전환율 27.13% (최고) but 비중은 5% 미만</p>
+            <p><b>목표:</b> Email 마케팅 비중 5% → 15%</p>
+            <hr style="margin: 1rem 0;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                <div>
+                    <p><b>액션:</b></p>
+                    <ul style="margin: 0.5rem 0; padding-left: 1.2rem;">
+                        <li>Newsletter 구독 팝업 강화</li>
+                        <li>구독 시 15% 할인 제공</li>
+                        <li>개인화된 콘텐츠 발송</li>
+                    </ul>
+                </div>
+                <div>
+                    <p><b>예상 효과:</b></p>
+                    <ul style="margin: 0.5rem 0; padding-left: 1.2rem;">
+                        <li>+312명 Champions</li>
+                        <li>+$53,000/년 매출</li>
+                        <li>CAC 20% 절감</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # KPI 대시보드
+    st.subheader("📈 KPI 모니터링")
+    
+    kpi_data = pd.DataFrame({
+        "KPI": ["Promising 이탈률", "Champions 비율", "평균 LTV", "재구매율", "Email 전환율"],
+        "현재": ["70.07%", "9.35%", "$102.82", "16.85%", "27.13%"],
+        "목표 (6개월)": ["55%", "12%", "$120", "22%", "35%"],
+        "목표 (1년)": ["45%", "15%", "$140", "28%", "35%"]
+    })
+    
+    st.dataframe(kpi_data, hide_index=True, use_container_width=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # ROI 계산 로직 상세
+    st.subheader("🧮 ROI 계산 로직")
+    
+    st.markdown("""
+    <div class="insight-box">
+        <div class="insight-title">📐 ROI 산출 방법론</div>
+        <div class="insight-text">
+            모든 ROI는 <b>실제 분석 데이터 기반</b>으로 보수적인 가정 하에 산출되었습니다.
+            업계 평균 캠페인 성공률과 TheLook 데이터의 전환율을 혼합 적용했습니다.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # Phase 1 ROI 계산
+    with st.expander("📊 Phase 1: Promising 리텐션 ROI 계산", expanded=True):
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("""
+            **🌱 구매 후 이메일 시퀀스 (+$101,000)**
+            
+            | 항목 | 수치 | 근거 |
+            |------|------|------|
+            | Promising 총 고객 | 8,446명 | RFM 분석 결과 |
+            | 현재 이탈률 | 70.07% | 재방문 없는 비율 |
+            | 목표 이탈률 | 55% | 업계 평균 기준 |
+            | 이탈 감소 | 15%p | 70% → 55% |
+            | 추가 유지 고객 | **1,267명** | 8,446 × 15% |
+            | 재구매 시 추가 수익 | $80/인 | avg_monetary 기준 |
+            | **예상 ROI** | **$101,360** | 1,267 × $80 |
+            """)
+        
+        with col2:
+            st.markdown("""
+            **⏰ 신규 가입 조기 전환 (+$34,000)**
+            
+            | 항목 | 수치 | 근거 |
+            |------|------|------|
+            | 연간 신규 가입자 | ~15,000명 | 2년간 29,795명 기준 |
+            | 현재 1주 내 구매 | 1% (150명) | timing 분석 결과 |
+            | 목표 1주 내 구매 | 5% (750명) | 캠페인 효과 가정 |
+            | 추가 조기 전환자 | **600명** | 750 - 150 |
+            | LTV 차이 | +$11/인 | $112 vs $101 |
+            | Champions 전환 차이 | 8.4%p | 16.94% vs 8.57% |
+            | 추가 Champions | 50명 | 600 × 8.4% |
+            | **예상 ROI** | **$34,050** | 600×$11 + 50×$189×2 |
+            """)
+    
+    # Phase 2 ROI 계산
+    with st.expander("📊 Phase 2: Champions VIP ROI 계산"):
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("""
+            **👑 Champions VIP 혜택 (+$79,000)**
+            
+            | 항목 | 수치 | 근거 |
+            |------|------|------|
+            | Champions 총 고객 | 2,787명 | RFM 분석 결과 |
+            | 현재 평균 LTV | $189.56 | segment 분석 |
+            | LTV 증가 목표 | +15% | VIP 프로그램 효과 |
+            | 추가 수익/인 | $28.43 | $189.56 × 15% |
+            | **예상 ROI** | **$79,233** | 2,787 × $28.43 |
+            
+            *VIP 프로그램 운영 비용 제외 Gross ROI 기준*
+            """)
+        
+        with col2:
+            st.markdown("""
+            **🔄 재구매 주기 단축 (LTV 포함)**
+            
+            | 항목 | 수치 | 근거 |
+            |------|------|------|
+            | 현재 재구매 주기 | 302.4일 | 3개월+ 버킷 평균 |
+            | 목표 재구매 주기 | 240일 | 20% 단축 |
+            | 2년 내 추가 구매 | +0.3회/인 | 주기 단축 효과 |
+            | 추가 수익/인 | ~$28 | $85 × 0.3 |
+            
+            *Champions VIP ROI에 포함하여 계산*
+            """)
+    
+    # Phase 3 ROI 계산
+    with st.expander("📊 Phase 3: Winback ROI 계산"):
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("""
+            **⚠️ At Risk 윈백 (+$85,000)**
+            
+            | 항목 | 수치 | 근거 |
+            |------|------|------|
+            | At Risk 총 고객 | 6,637명 | RFM 분석 결과 |
+            | 윈백 캠페인 응답률 | 15% | 업계 평균 |
+            | 재활성화 목표 | **1,000명** | 6,637 × 15% |
+            | 평균 LTV | $85.36 | segment 분석 |
+            | **예상 ROI** | **$85,360** | 1,000 × $85.36 |
+            
+            *윈백 쿠폰 비용(~20%) 포함 시 Net ROI ~$68,000*
+            """)
+        
+        with col2:
+            st.markdown("""
+            **😴 Hibernating 재활성화 (+$43,000)**
+            
+            | 항목 | 수치 | 근거 |
+            |------|------|------|
+            | Hibernating 총 고객 | 9,707명 | RFM 분석 결과 |
+            | 윈백 캠페인 응답률 | 5% | 휴면 고객 낮은 응답률 |
+            | 재활성화 목표 | **500명** | 9,707 × 5% |
+            | 평균 LTV | $86.38 | segment 분석 |
+            | **예상 ROI** | **$43,190** | 500 × $86.38 |
+            
+            *30% 할인 적용 시 Net ROI ~$30,000*
+            """)
+    
+    # Channel ROI 계산
+    with st.expander("📊 채널 최적화 ROI 계산"):
+        st.markdown("""
+        **📧 Email 채널 강화 (+$53,000)**
+        
+        | 항목 | 수치 | 근거 |
+        |------|------|------|
+        | 현재 Email 비중 | 5% | 575명 (Promising+Champions) |
+        | 목표 Email 비중 | 15% | 3배 확대 |
+        | 현재 Email Champions | 156명 | 채널 분석 결과 |
+        | Email 전환율 | 27.13% | 전 채널 최고 |
+        | 추가 확보 Champions | **312명** | 156 × 2 (비중 3배) |
+        | Champions 평균 LTV | $170.70 | Email Champions 평균 |
+        | **예상 ROI** | **$53,258** | 312 × $170.70 |
+        
+        **계산 로직:**
+        - Email 비중을 5% → 15%로 확대하면 기존 대비 3배의 고객 유입
+        - Email 채널의 높은 전환율(27.13%) 유지 가정
+        - 추가 Champions 수 = 기존 156명 × (3-1) = 312명
+        """)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # 최종 ROI 요약
+    st.markdown("""
+    <div class="insight-box success">
+        <div class="insight-title">💰 예상 총 ROI 요약</div>
+        <div class="insight-text">
+            <table style="width: 100%; font-size: 0.95rem;">
+                <tr style="border-bottom: 2px solid #10b981;">
+                    <th style="text-align: left; padding: 8px;">Phase</th>
+                    <th style="text-align: right; padding: 8px;">Gross ROI</th>
+                    <th style="text-align: right; padding: 8px;">Net ROI (추정)</th>
+                </tr>
+                <tr style="border-bottom: 1px solid #e5e7eb;">
+                    <td style="padding: 8px;">Phase 1: Promising 리텐션</td>
+                    <td style="text-align: right; padding: 8px;">$135,000</td>
+                    <td style="text-align: right; padding: 8px;">$108,000</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #e5e7eb;">
+                    <td style="padding: 8px;">Phase 2: Champions VIP</td>
+                    <td style="text-align: right; padding: 8px;">$79,000</td>
+                    <td style="text-align: right; padding: 8px;">$63,000</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #e5e7eb;">
+                    <td style="padding: 8px;">Phase 3: Winback</td>
+                    <td style="text-align: right; padding: 8px;">$128,000</td>
+                    <td style="text-align: right; padding: 8px;">$98,000</td>
+                </tr>
+                <tr style="border-bottom: 1px solid #e5e7eb;">
+                    <td style="padding: 8px;">Channel Optimization</td>
+                    <td style="text-align: right; padding: 8px;">$53,000</td>
+                    <td style="text-align: right; padding: 8px;">$42,000</td>
+                </tr>
+                <tr style="background: #ecfdf5;">
+                    <td style="padding: 12px; font-weight: 700;">Total</td>
+                    <td style="text-align: right; padding: 12px; font-weight: 700; color: #10b981;">$395,000</td>
+                    <td style="text-align: right; padding: 12px; font-weight: 700; color: #10b981;">$311,000</td>
+                </tr>
+            </table>
+            <p style="margin-top: 1rem; font-size: 0.85rem; color: #6b7280;">
+                * Net ROI = Gross ROI - 예상 캠페인 비용 (쿠폰, 할인, 운영비 등 약 20% 가정)<br>
+                * 현재 총 매출 $3,063,495 대비 <b>+12.9% 성장</b> (Gross 기준)
+            </p>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-
-# --------------------------------------------------------------------------------------
-# Streamlit App Layout
-# --------------------------------------------------------------------------------------
-
-st.set_page_config(layout="wide", page_title="RFM 기반 고객 전환 전략 분석")
-
-st.title("💰 RFM 기반 고객 전환 전략 분석 리포트 (Sale Price 기준)")
-st.caption("기간: 2023-01-01 ~ 2024-12-31 | Monetary 기준: Sale Price")
-
-# --------------------------------------------------------------------------------------
-# Executive Summary
-# --------------------------------------------------------------------------------------
-
-st.header("1. 엑세큐티브 요약 (Executive Summary)")
+# ============================================
+# 푸터
+# ============================================
+st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("""
-### 핵심 문제 정의: 신규 고가치 고객의 빠른 이탈 위험
-현재 고객 기반의 **54.86%**가 장기 휴면(`Hibernating`) 또는 이탈 위험(`At Risk`) 상태입니다. 특히 최근 1회 구매 고객인 **Promising High Value** 그룹 (전체 사용자 **11.93%**, 매출 기여 **18.09%**)이 VIP Champion으로 전환되는 과정에서 **46.22%가 첫 구매 후 재방문하지 않는** 심각한 드롭오프 현상이 관찰되었습니다.
-
-### 핵심 인사이트 및 전략 방향
-1.  **전환 골든 타임**을 놓치고 있습니다. 가입 후 **30일 이내**에 첫 구매를 완료한 그룹의 VIP 전환율(10.42%)이 3개월 이상 걸린 그룹(4.64%)보다 **2배 이상 높습니다.**
-2.  **첫 구매 카테고리**가 LTV를 결정합니다. **`Clothing Sets` (36.36%), `Suits` (25.0%)**, **`Outerwear & Coats` (22.46%)** 등 고가치 상품 구매자 풀에서 VIP로 전환될 잠재력이 가장 높습니다.
-3.  **Post-Purchase 마케팅**에 치명적인 구멍이 있습니다. Promising High Value 고객 중 재방문(`2-3 Sessions` 이상)한 그룹의 LTV($\text{176.89}$ 이상)는 활동이 없는 그룹($\text{131.06}$)보다 훨씬 높습니다. 즉, **재방문 자체**가 LTV를 높이는 핵심 동인입니다.
-
-### 3대 핵심 액션 플랜
-| 우선순위 | 영역 | 액션 플랜 | 목표 및 측정 지표 |
-| :---: | :---: | :---: | :---: |
-| **🥇 1순위** | **CRM/온보딩** | **'Post-Purchase 7-Day Engagement Drip'** 구축. PHV 고객 대상 첫 구매 후 7일 이내에 개인화된 재방문 유도 콘텐츠(리뷰 작성, 스타일링 팁, 다음 카테고리 추천)를 발송하여 2차 세션 유도. | PHV 그룹의 '0. No Activity' 비율을 30% 이하로 감소. |
-| **🥈 2순위** | **Acquisition/마케팅** | 유입 후 **30일 이내 첫 구매 완료**를 목표로 하는 '신규 고객 한정 $1$회 번들 할인' 캠페인 강화. 특히 고전환 카테고리(Outerwear, Suits) 중심의 광고 노출 우선순위 설정. | 가입 후 30일 이내 첫 구매 비율 3% $\rightarrow$ 5% 달성. |
-| **🥉 3순위** | **Product Strategy** | VIP Champions가 선호하는 카테고리 전환 경로(`Outerwear` $\rightarrow$ `Sweaters`, `Jeans` $\rightarrow$ `Fashion Hoodies`)를 Promising High Value 고객에게 **자동 추천 로직**으로 적용하여 2차 구매 상품을 유도. | Promising High Value 그룹의 2차 구매 평균 금액 $10\%$ 증가. |
-""")
-
-# --------------------------------------------------------------------------------------
-# 2. RFM Segmentation Rationale and Overview
-# --------------------------------------------------------------------------------------
-
-st.header("2. RFM 세그먼테이션 기준 및 개요")
-st.markdown("""
-### 2.1. RFM 등급 기준 및 근거
-
-이번 분석의 Monetary(M) 기준은 총매출액(Sale Price)의 분포(분위수)에 기반하여 설정되었습니다. 이는 순수한 거래 건수(Frequency)가 아닌, 고객의 **실질적인 수익 기여도**를 반영하는 데 목적이 있습니다.
-
-| 지표 | $5$점 (최상) | $4$점 | $3$점 (중앙값) | $2$점 | $1$점 (최하) | 근거 (29,795명 기준) |
-| :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| **R**ecency (최근성) | $\le 90$일 | $\le 180$일 | $\le 365$일 | $\le 545$일 | $> 545$일 | 구매 사이클 기반 |
-| **F**requency (빈도) | $\ge 3$회 | $2$회 | $1$회 | $0$회 | $0$회 | P95/P90/P75 (1회 구매 고객이 전체의 75% 차지) |
-| **M**onetary (금액) | $\ge \$300$ | $\ge \$135$ | $\ge \$67$ | $\ge \$34$ | $<\$34$ | **P95 / P75 / P50 / P25 분위수 적용** |
-
-### 2.2. 주요 세그먼트 정의 (Promising 그룹 중심)
-| 세그먼트 | RFM 기준 | 특징 및 기대 행동 |
-| :---: | :---: | :---: |
-| **VIP Champions** | R$\ge 4$, F$\ge 4$, M$\ge 4$ | 최근 구매/고빈도/고액. 전체 매출의 $13.79\%$ 기여. **최우선 유지 대상.** |
-| **Promising High Value** | R$\ge 4$, F$= 3$, M$\ge 3$ | 최근 구매($\le 180$일) $\mathbf{1}$회, **중/고액** 지출. **최고의 잠재 VIP 그룹.** |
-| **Promising Low Value** | R$\ge 4$, F$= 3$, M$\le 2$ | 최근 구매($\le 180$일) $\mathbf{1}$회, **저액** 지출. 구매 경험은 있으나 추가 유도가 필요한 그룹. |
-| **At Risk** | R$= 3$, F$= 3$ | 최근성($180 \sim 365$일)이 떨어지기 시작. 과거 1회 구매 경험. 이탈 방지 마케팅 필요. |
-
-### 2.3. 전체 세그먼트 분포 
+<div style="text-align: center; color: #9ca3af; font-size: 0.85rem; padding: 2rem 0; border-top: 1px solid #e5e7eb;">
+    <p>TheLook E-commerce RFM 분석 포트폴리오</p>
+    <p>분석 기간: 2023.01 - 2024.12 | 데이터: BigQuery thelook_ecommerce</p>
+    <p style="margin-top: 0.5rem;">Built with Streamlit & Plotly</p>
+</div>
 """, unsafe_allow_html=True)
-create_segment_summary_chart(df_rfm_final)
-st.dataframe(df_rfm_final.sort_values('user_count', ascending=False).reset_index(drop=True))
-
-# --------------------------------------------------------------------------------------
-# 3. Traffic Source Analysis (전환 구조 분석)
-# --------------------------------------------------------------------------------------
-
-st.header("3. 트래픽 소스별 VIP / Promising 전환 구조 분석")
-st.markdown("""
-### 3.1. 인사이트: Facebook의 양면성과 Search의 대규모 잠재력 
-유입된 고객 중 VIP Champion으로 전환되는 비율(VIP / (VIP + Promising High + Promising Low))은 **Facebook이 $17.8\%$로 가장 높습니다.** 이는 Facebook 유입 고객이 재구매와 고가치 구매에 가장 효율적임을 시사합니다.
-
-그러나 **Search**는 VIP와 Promising High Value 고객의 **절대 수(Count)**가 압도적으로 많습니다.
-
-* **Facebook (17.8% VIP):** 고효율. 적은 규모에서 높은 VIP 비율을 달성.
-* **Search (15.37% VIP):** 대규모. Promising High Value (2,461명) 풀이 가장 커서, 대규모 VIP 육성 잠재력이 높음.
-
-### 3.2. 문제 정의 및 액션 플랜
-* **문제:** Facebook과 Organic 소스에서 **Promising Low Value**(`PLV`, $46 \sim 48\%$) 고객의 비중이 높아, **대량의 저가치 첫 구매자**를 유입시키고 있습니다. 이들을 PHV나 VIP로 전환하지 못하면 마케팅 비용이 낭비됩니다.
-* **액션 플랜 (Facebook/Organic):** 해당 채널 유입 고객 중 PLV(저액 구매) 그룹을 대상으로 **AOV 증진 캠페인**을 즉시 실행해야 합니다. 예를 들어, 두 번째 구매 시 특정 금액($100$ 이상) 충족 시 파격적인 할인/무료배송 혜택을 제공하여 M-Score 3점 이상으로 끌어올려야 합니다.
-* **액션 플랜 (Search):** Search를 통한 Promising High Value (PHV) 고객($2,461$명)에게 2차 구매 유도 마케팅을 집중하여 **대규모 VIP 전환**을 가속화해야 합니다.
-""", unsafe_allow_html=True)
-
-df_traffic_display = df_traffic_source.drop_duplicates(subset=['traffic_source']).sort_values('vip_conversion_rate_pct', ascending=False)
-st.dataframe(df_traffic_display.drop(columns=['promising_high_share_pct', 'promising_low_share_pct']).set_index('traffic_source'))
-create_traffic_source_chart(df_traffic_source)
-
-
-# --------------------------------------------------------------------------------------
-# 4. Promising High/Low 재구매 활동 분석 (Post-Purchase Drop-Off)
-# --------------------------------------------------------------------------------------
-
-st.header("4. Promising High/Low 유저 구매 후 활동 분석 (Post-Purchase Drop-Off)")
-st.markdown("""
-### 4.1. 인사이트: 구매 후 활동 부재의 심각성 
-Promising 세그먼트의 가장 심각한 문제는 **첫 구매 후 활동 부재**입니다.
-
-* **Promising Low Value (PLV):** 무려 **$87.41\%$**가 첫 구매 이후 재방문하지 않았습니다.
-* **Promising High Value (PHV):** **$46.22\%$**가 활동이 없습니다. 이들이 LTV 잠재력이 가장 높음에도 불구하고, 절반 가까이가 첫 구매 후 바로 이탈하고 있습니다.
-
-활동을 **4-5회 세션 이상**으로 늘린 PHV 고객의 평균 LTV는 **$\mathbf{\$244.25}$**로, 활동이 없는 고객($\text{\$131.06}$) 대비 **$86\%$ 이상** 높습니다. 이는 **'재구매'보다 '재방문/재참여'가 LTV를 결정하는 선행 지표**임을 명확히 보여줍니다.
-
-### 4.2. 문제 정의 및 액션 플랜
-* **문제:** 첫 구매를 성공적으로 이끌었으나, 이후 단계에서 고객 온보딩 및 참여 유도에 실패하고 있습니다. 구매 직후의 **'관성(Momentum)'**을 살리지 못하고 있습니다.
-* **액션 플랜:** **'Post-Purchase 7일차 온보딩 자동화'**를 최우선으로 실행해야 합니다.
-    * **Day 1 (구매 직후):** 감사 이메일, 다음 구매를 위한 개인화된 스타일링 가이드 제공.
-    * **Day 3:** 구매한 상품의 리뷰 작성 유도 (포인트 지급).
-    * **Day 7:** **두 번째 구매 유도를 위한 큐레이션된 상품 추천** (Category Pair 분석 결과 활용)을 제공하여, 강제로 **2차 세션(재방문)**을 유도해야 합니다. 목표는 PHV 그룹의 **'0. No Activity' 비율을 30% 이하로 낮추는 것**입니다.
-""", unsafe_allow_html=True)
-create_post_purchase_chart(df_post_purchase)
-
-# --------------------------------------------------------------------------------------
-# 5. LTV 기여 분석: 카테고리 VIP 전환율
-# --------------------------------------------------------------------------------------
-
-st.header("5. 첫 구매 카테고리별 VIP Champions 전환율 분석")
-st.markdown("""
-### 5.1. 인사이트: 고가치 첫 구매의 중요성 
-Promising High Value와 Promising Low Value 풀을 포함한 전체 잠재 VIP 고객(VIP + PHV + PLV) 중 **VIP Champion으로 최종 전환되는 비율**이 높은 카테고리는 다음과 같습니다.
-
-| 카테고리 | VIP 전환율 (%) | 특징 |
-| :---: | :---: | :---: |
-| **Clothing Sets** | $\mathbf{36.36\%}$ | 매우 높은 단가와 의류 세트에 대한 선호가 LTV 잠재력을 극대화. |
-| **Suits** | $\mathbf{25.00\%}$ | 전문적/고가치 아이템에 대한 초기 투자가 고객 신뢰도를 높임. |
-| **Outerwear & Coats** | $\mathbf{22.46\%}$ | 높은 객단가(`avg_first_item_price`: $\text{\$177.41}$)로 인해 첫 구매부터 M-Score가 높게 시작. |
-| **Intimates / Socks & Hosiery** | $\mathbf{\approx 10\%}$ | 필수재지만 저가치 상품. VIP 전환율이 가장 낮음.
-
-### 5.2. 문제 정의 및 액션 플랜
-* **문제:** 첫 구매 상품의 **가격대**와 **상품 유형(고관여/저관여)**이 미래 VIP 전환율을 강력하게 결정합니다. 저가치 카테고리(`Socks`, `Intimates`)를 통한 유입은 대규모의 Promising Low Value 고객을 생성할 위험이 높습니다.
-* **액션 플랜 (고전환 카테고리):** `Suits`, `Outerwear & Coats` 구매자에게는 VIP 혜택을 미리 보여주거나, **프리미엄 세그먼트 전용 추천 시스템**을 즉시 가동하여 2차 구매까지의 시간을 단축시켜야 합니다.
-* **액션 플랜 (저전환 카테고리):** `Socks`, `Intimates` 구매자에게는 **'스타일링 완성' 번들 캠페인**을 통해 다음 구매에서 객단가를 높여야 합니다. (예: `Intimates` 구매 시, $50$ 이상 Activewear 구매 시 $10$ 할인).
-
-""", unsafe_allow_html=True)
-create_category_conversion_chart(df_category_conversion)
-
-
-# --------------------------------------------------------------------------------------
-# 6. LTV 기여 분석: 카테고리 페어 및 재구매 타이밍
-# --------------------------------------------------------------------------------------
-
-st.header("6. 재구매 동선 및 속도 분석 (VIP / LTV 전략)")
-
-# 6.1. 재구매 동선 (Category Pair)
-st.subheader("6.1. VIP Champions 카테고리 전환 경로")
-st.markdown("""
-VIP Champions의 성공적인 2차 구매 경로는 **주요 의류(Jeans, Outerwear) $\rightarrow$ 보완재/필수재(Sweaters, Hoodies)**의 흐름을 보입니다.
-
-| 1차 카테고리 | 2차 카테고리 (가장 높은 전환) | 비중 (%) | 1차 품목 평균가 ($) | 2차 품목 평균가 ($) |
-| :---: | :---: | :---: | :---: | :---: |
-| **Outerwear & Coats** | Sweaters | $30.43$ | $\text{130.55}$ | $\mathbf{116.72}$ |
-| **Sweaters** | Outerwear & Coats | $50.0$ | $\text{60.94}$ | $\mathbf{143.49}$ |
-| **Fashion Hoodies** | Jeans | $60.0$ | $\text{65.43}$ | $\mathbf{93.83}$ |
-| **Jeans** | Fashion Hoodies | $28.26$ | $\text{123.98}$ | $\text{68.43}$ |
-
-* **인사이트:** `Sweaters` $\rightarrow$ `Outerwear & Coats` 전환 시 **$143.49$**의 높은 2차 구매 단가가 발생했습니다. 이는 성공적인 **Upsell (저가치 $\rightarrow$ 고가치)** 시나리오입니다.
-* **액션 플랜:** Promising High Value 고객의 첫 구매 카테고리를 기반으로 **성공적인 VIP의 Upsell 경로**를 예측하여 2차 구매 상품을 추천해야 합니다. (예: PHV가 `Sweaters` 구매 시, 다음으로 `Outerwear & Coats`를 추천).
-""", unsafe_allow_html=True)
-st.dataframe(df_category_pair.sort_values('pair_count', ascending=False).head(10).reset_index(drop=True))
-
-
-# 6.2. 고객 생애 초기 구매 타이밍
-st.subheader("6.2. 가입 시점 $\rightarrow$ 첫 구매 타이밍별 LTV 잠재력 분석")
-st.markdown("""
-
-
-고객이 **가입 후 얼마나 빨리 첫 구매를 하느냐**가 미래의 LTV 잠재력을 결정하는 가장 강력한 요인입니다.
-* **골든 타임:** 가입 후 **1개월 이내** 첫 구매 그룹(`1. 1주일 이내`, `2. 1개월 이내`)의 재구매율($25.08\% \sim 26.06\%$) 및 VIP Champions 전환율($9.32\% \sim 10.42\%$)이 가장 높습니다.
-* **위험 구간:** 3개월 이상 걸린 그룹(`5. 3개월+`, 전체의 $88.5\%$)은 VIP 전환율이 **$4.64\%$**로, 골든 타임 그룹 대비 절반 이하로 급감합니다.
-
-### 액션 플랜: 첫 구매 가속화
-* **해결 방안:** 신규 가입자 대상 **'Fast Buyer' 인센티브 프로그램**을 도입해야 합니다. 가입 후 30일 이내에 $1$회 구매 시, $\mathbf{2}$차 구매 시 사용할 수 있는 특별 크레딧($20 \sim 30$)을 제공하여 첫 구매를 가속화해야 합니다.
-""", unsafe_allow_html=True)
-
-df_signup_timing_chart = df_signup_timing[['first_purchase_timing', 'repurchase_rate', 'vip_champions_rate']].set_index('first_purchase_timing')
-st.bar_chart(df_signup_timing_chart)
-st.dataframe(df_signup_timing.drop(columns=['avg_days_to_repurchase', 'avg_monetary', 'avg_m_score', 'avg_r_score', 'avg_f_score']).reset_index(drop=True))
-
-
-# 6.3. Champions 재구매 속도
-st.subheader("6.3. VIP Champions 재구매 전환 속도와 활동")
-st.markdown("""
-* **인사이트:** VIP Champions의 $\mathbf{71.39\%}$는 2차 구매까지 $61$일 이상(평균 $273$일)이 소요됩니다. 재구매 속도가 느려도 최종 LTV(평균 $\mathbf{\$274.58}$)에는 큰 차이가 없습니다. (Quick 그룹 $\mathbf{\$282.50}$).
-* **액션 플랜:** VIP 고객은 장기적인 관점에서 접근해야 하며, 빠른 재구매를 강요하기보다는 **'Quick Converters' (30일 이내)** 그룹을 별도로 식별하여 가장 반응성이 높은 **초고가치 고객**으로 집중 관리해야 합니다. 그 외 고객에게는 부담 없는 장기적인 브랜딩/신제품 업데이트 위주의 커뮤니케이션을 유지해야 합니다.
-""", unsafe_allow_html=True)
-st.dataframe(df_champions_speed.set_index('conversion_speed'))
-
-st.markdown("---")
-st.markdown("## 📊 원본 데이터 테이블 (참고)")
-st.dataframe(df_rfm_final)
-st.dataframe(df_traffic_source)
-st.dataframe(df_post_purchase)
-st.dataframe(df_first_session)
