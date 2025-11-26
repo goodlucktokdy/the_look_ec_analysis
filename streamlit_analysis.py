@@ -1045,20 +1045,21 @@ elif pages[selected_page] == "problems":
     # 문제 1: Promising 미활동 (High/Low 분리)
     st.subheader("🚨 문제 #1: Promising 고객 대다수 미활동 (구매 횟수 = 모두 1회)")
     
-    # 핵심 특성 강조
-    st.markdown("""
-    <div class="insight-box navy">
-        <div class="insight-title">⚠️ 핵심 특성: Promising 세그먼트는 모두 구매 횟수 1회</div>
-        <div class="insight-text">
-            • Promising High Value: 평균 구매 횟수 <b>1.0회</b> (F Score = 3)<br>
-            • Promising Low Value: 평균 구매 횟수 <b>1.0회</b> (F Score = 3)<br>
-            • <b>아직 재구매가 발생하지 않은 "잠재 충성 고객"</b> → 2차 구매 유도가 핵심 과제
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+
     
     col1, col2 = st.columns([1, 1])
-    
+    with col1:
+            # 핵심 특성 강조
+        st.markdown("""
+        <div class="insight-box navy">
+            <div class="insight-title">⚠️ 핵심 특성: Promising 세그먼트는 모두 구매 횟수 1회</div>
+            <div class="insight-text">
+                • Promising High Value: 평균 구매 횟수 <b>1.0회</b> (F Score = 3)<br>
+                • Promising Low Value: 평균 구매 횟수 <b>1.0회</b> (F Score = 3)<br>
+                • <b>아직 재구매가 발생하지 않은 "잠재 충성 고객"</b> → 2차 구매 유도가 핵심 과제
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
   
     with col2:
         promising_no_activity = pd.DataFrame([
