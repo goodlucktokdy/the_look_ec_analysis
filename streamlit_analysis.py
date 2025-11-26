@@ -444,7 +444,7 @@ channel_category_ltv = pd.DataFrame([
 st.sidebar.markdown("""
 <div style="text-align: center; padding: 1rem 0;">
     <h2 style="margin: 0; color: #667eea;">📊 RFM 분석</h2>
-    <p style="color: #6b7280; font-size: 0.9rem;">TheLook E-commerce</p>
+    <p style="color: #6b7280; font-size: 0.9rem;">김동윤의 빅쿼리 TheLook E-commerce 데이터셋 분석</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -766,7 +766,7 @@ elif pages[selected_page] == "rfm_criteria":
             <div class="insight-text">
                 • P50(중앙값) = 259일 → 3등급 기준<br>
                 • 일반적 리텐션 주기 고려 (90일 단위)<br>
-                • P75(455일) ≈ 1.5년 → 휴면 기준
+                • P75(455일) ≈ 1.5년
             </div>
         </div>
         """, unsafe_allow_html=True)
