@@ -1745,12 +1745,11 @@ elif pages[selected_page] == "vip":
     """, unsafe_allow_html=True)
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
-    
+
 # -------------------------------------------------------------------------
-    # 전환 속도 분석
+    # 전환 속도 분석 (SQL 로직: 첫 구매 ~ 두 번째 구매 간격)
     # -------------------------------------------------------------------------
-    # [수정] 헤더에 구체적인 정의(첫 구매 -> VIP 달성) 명시
-    st.subheader("🚀 VIP 전환 속도 분석 (첫 구매 시점 → VIP 등급 달성까지 소요 기간)")
+    st.subheader("🚀 VIP 초기 안착 속도 분석 (첫 구매 시점 → 두 번째 구매까지 소요 기간)")
     
     col1, col2 = st.columns(2)
     
@@ -1761,8 +1760,8 @@ elif pages[selected_page] == "vip":
             y='count',
             color='avg_ltv',
             color_continuous_scale='Greens',
-            title='전환 속도별 VIP 수 분포',
-            labels={'count': 'VIP 수', 'speed': '달성 소요 기간 (Bucket)'}
+            title='첫 재구매 소요 기간별 VIP 분포',
+            labels={'count': 'VIP 수', 'speed': '재구매 소요 기간 (Speed Bucket)'}
         )
         fig.update_layout(height=350)
         st.plotly_chart(fig, use_container_width=True)
@@ -1774,42 +1773,48 @@ elif pages[selected_page] == "vip":
             y='avg_sessions',
             color='avg_sessions',
             color_continuous_scale='Blues',
-            title='전환 속도별 평균 세션 활동 수',
-            labels={'avg_sessions': '평균 세션 수', 'speed': '달성 소요 기간 (Bucket)'}
+            title='구간별 구매 사이 평균 세션 활동 수',
+            labels={'avg_sessions': '평균 세션 수', 'speed': '재구매 소요 기간 (Speed Bucket)'}
         )
         fig.update_layout(height=350)
         st.plotly_chart(fig, use_container_width=True)
     
-    # [수정/추가] 분석 모수 및 산출 근거 (Expander)
-    with st.expander("📊 분석 대상 모집단 및 선정 근거 (Methodology)"):
+    # [수정] 분석 모수 및 산출 근거 (Expander) - SQL 로직 반영
+    with st.expander("📊 분석 방법론 및 지표 정의 (Methodology)"):
         st.markdown("""
         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; font-size: 0.9rem;">
             <h4 style="margin-top:0;">1. 분석 대상 (Population)</h4>
             <ul>
-                <li><b>대상 세그먼트:</b> Promising (High/Low) + VIP</li>
-                <li><b>공통 기준:</b> <code>Recency ≤ 180일</code> (최근 6개월 내 구매 이력 보유)</li>
+                <li><b>분석 데이터:</b> 현재 <b>Champions(VIP)</b> 등급 유저들의 과거 구매 이력</li>
+                <li><b>타겟 적용 대상:</b> 재구매 유도가 필요한 <b>Promising(1회 구매)</b> 세그먼트</li>
+                <li><b>공통 기준:</b> <code>Recency ≤ 180일</code> (최근 트렌드를 반영하기 위해 활성 유저 한정)</li>
             </ul>    
             <h4 style="margin-top:15px;">2. 선정 근거 (Rationale)</h4>
             <ul>
-                <li><b>타겟팅 적합성:</b> 이탈(Churn)하지 않고, 최근 우리 브랜드를 경험하여 리텐션 유도가 가능한 <b>'활성 고객군(Active Users)'</b>만을 대상으로 함.</li>
-                <li><b>전환 가능성:</b> Promising 그룹(구매 1회)은 VIP(구매 N회)로 전환될 잠재 고객이며, VIP는 이미 전환된 롤모델 그룹이므로 <b>두 그룹을 비교 분석하는 것이 유효함.</b></li>
+                <li><b>롤모델 분석:</b> 현재 VIP인 고객들이 <b>"과거에 얼마나 빨리 첫 재구매를 했는지"</b> 분석하여, 현재 Promising 고객의 골든타임을 도출함.</li>
+                <li><b>타겟팅 전략:</b> VIP가 되는 길(Track)이 '빠른 재구매' 하나뿐인지, '느린 재구매'도 유효한지 파악하여 캠페인 기간을 설정하기 위함.</li>
             </ul>
             <h4 style="margin-top:15px;">3. 지표 정의 (Definition)</h4>
             <ul>
-                <li><b>전환 속도 (Conversion Speed):</b> <code>VIP 달성일 - 첫 구매일</code></li>
-                <li>Quick: 30일 이내 달성 / Slow: 61일 이후 달성</li>
+                <li><b>전환 속도 (Conversion Speed):</b> <code>2번째 구매일 - 1번째 구매일</code> (Time to First Repeat Purchase)</li>
+                <li><b>Quick:</b> 30일 이내 재구매 / <b>Slow:</b> 61일 이후 재구매</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
 
+    # [수정] 인사이트 박스 - 데이터 해석 논리 수정
     st.markdown("""
     <div class="insight-box">
-        <div class="insight-title">💡 Quick Converters의 특징 및 시사점</div>
+        <div class="insight-title">💡 Insight: VIP가 되는 두 가지 길 (Quick vs Slow)</div>
         <div class="insight-text">
             • <b>Quick (≤30일):</b> 165명, 평균 14.4일 만에 재구매, LTV $282.50<br>
-            • <b>Slow (61+일):</b> 1,237명, 평균 273.2일 후 재구매, LTV $274.58<br>
-            • <b>Insight:</b> Quick Converters가 LTV가 $8 더 높지만, 큰 차이는 아님.<br>
-            • <b>Action Item:</b> 속도보다 중요한 것은 <b>"전환 자체"</b>임. Promising(1회 구매) 고객을 포기하지 않고 <b>Slow Track이라도 VIP로 안착시키는 것</b>이 전체 매출 볼륨에 핵심.
+            • <b>Slow (61+일):</b> 1,237명, 평균 273.2일 후 재구매, LTV $274.58<br><br>
+            <b>🔍 핵심 발견:</b><br>
+            1. <b>대다수는 Slow Starter:</b> VIP의 <b>88%</b>는 첫 재구매까지 2달 이상 걸린 <b>Slow Track</b> 출신입니다.<br>
+            2. <b>LTV 차이는 미미함:</b> 빨리 재구매한 고객의 LTV가 $8 더 높지만, 늦게 재구매한 고객도 충분히 높은 가치를 유지합니다.<br><br>
+            <b>🚀 Action Item:</b><br>
+            • <b>단기 전략:</b> 구매 후 30일 내(Quick) 재구매 유도 캠페인으로 'Early VIP' 확보<br>
+            • <b>장기 전략:</b> <u>"한 달 안에 안 샀다고 포기하지 말 것."</u> Promising 고객에게는 <b>최대 6개월까지</b> 꾸준한 관리(Nurturing)가 들어가야 VIP로 전환됨.
         </div>
     </div>
     """, unsafe_allow_html=True)
@@ -1821,92 +1826,156 @@ elif pages[selected_page] == "channel":
     st.markdown("""
     <div class="main-header">
         <h1>📢 채널 & 카테고리 분석</h1>
-        <p>트래픽 소스별 VIP 전환율 및 고LTV 카테고리 분석</p>
+        <p>활성 고객(Recency 180일 이내)의 가입시 유입 채널별 품질 및 첫구매 카테고리 분석</p>
     </div>
     """, unsafe_allow_html=True)
     
-    # 채널별 VIP 전환율
-    st.subheader("📊 트래픽 소스별 VIP 전환율")
-    
+    # -------------------------------------------------------------------------
+    # 1. 채널 분석 데이터
+    # -------------------------------------------------------------------------
+    # 컬럼명 변경: vip_conversion_rate -> vip_maturity_rate (VIP 성숙도/비중)
+    channel_data = pd.DataFrame([
+        {"channel": "Facebook", "vip_maturity_rate": 17.80, "promising_high": 35.28, "promising_low": 46.93, "avg_ltv": 268.85},
+        {"channel": "Search",   "vip_maturity_rate": 15.37, "promising_high": 35.53, "promising_low": 49.10, "avg_ltv": 272.92},
+        {"channel": "Organic",  "vip_maturity_rate": 15.06, "promising_high": 36.87, "promising_low": 48.07, "avg_ltv": 295.01},
+        {"channel": "Email",    "vip_maturity_rate": 14.84, "promising_high": 31.71, "promising_low": 53.46, "avg_ltv": 262.42},
+        {"channel": "Display",  "vip_maturity_rate": 12.83, "promising_high": 38.01, "promising_low": 49.15, "avg_ltv": 285.63}
+    ]).sort_values('vip_maturity_rate', ascending=True)
+
+    # -------------------------------------------------------------------------
+    # 1-1. 채널별 VIP 비중 시각화
+    # -------------------------------------------------------------------------
+    st.subheader("📊 가입시 유입 채널별 활성 고객 내 VIP 비중")
+
     col1, col2 = st.columns(2)
     
     with col1:
+        # VIP 비중 차트
         fig = px.bar(
-            channel_data.sort_values('vip_conversion_rate', ascending=True),
-            x='vip_conversion_rate',
+            channel_data,
+            x='vip_maturity_rate',
             y='channel',
             orientation='h',
-            color='vip_conversion_rate',
+            color='vip_maturity_rate',
             color_continuous_scale='Greens',
-            title='채널별 VIP 전환율 (%)',
-            labels={'vip_conversion_rate': 'VIP 전환율 (%)', 'channel': '채널'}
+            title='활성 고객 중 VIP가 된 비율 (%)',
+            labels={'vip_maturity_rate': 'VIP 비중 (%)', 'channel': '유입 채널'},
+            text_auto='.1f'
         )
         fig.update_layout(height=400)
         st.plotly_chart(fig, use_container_width=True)
     
     with col2:
+        # Promising 구성비
         fig = px.bar(
             channel_data,
             x='channel',
-            y=['promising_high_share', 'promising_low_share'],
+            y=['promising_high', 'promising_low'],
             barmode='stack',
-            title='채널별 Promising 구성비',
-            labels={'value': '비중 (%)', 'channel': '채널'},
-            color_discrete_sequence=['#8b5cf6', '#f97316']
+            title='채널별 잠재 고객(Promising) 구성비',
+            labels={'value': '비중 (%)', 'channel': '채널', 'variable': '세그먼트'},
+            color_discrete_map={'promising_high': '#8b5cf6', 'promising_low': '#f97316'}
         )
         fig.update_layout(height=400, legend_title_text='세그먼트')
         st.plotly_chart(fig, use_container_width=True)
     
+    # 채널 인사이트 (수정됨)
     st.markdown("""
     <div class="insight-box success">
-        <div class="insight-title">✅ Facebook 채널 최고 효율</div>
+        <div class="insight-title">✅ Facebook: "고객 성숙도"가 가장 높은 채널</div>
         <div class="insight-text">
-            • VIP 전환율 <b>17.8%</b>로 전 채널 최고 (Display 12.8% 대비 +5%p)<br>
-            • Promising Low 비중 <b>46.93%</b>로 상대적으로 낮음<br>
-            • <b>권장:</b> Facebook 광고 예산 확대, Display 예산 재검토
+            • <b>VIP 비중 1위 (17.8%):</b> 최근 구매한 활성 고객 중 VIP로 안착한 비율이 가장 높음.<br>
+            • <b>의미:</b> Facebook을 통해 유입된 고객은 1회성 구매(Promising)에 그치지 않고 <b>VIP로 성장하는 '유지력(Retention)'이 강함.</b><br>
+            • <b>Organic:</b> VIP 평균 LTV는 $295로 가장 높으나, VIP 비중(15%)은 평균 수준임.<br>
+            • <b>Action:</b> Facebook은 <b>'충성 고객 확보'</b> 용도로, Search는 <b>'신규 모수 확보'</b> 용도로 믹스 전략 필요.
         </div>
     </div>
     """, unsafe_allow_html=True)
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+
+    # -------------------------------------------------------------------------
+    # 2. 카테고리 분석 데이터 (기존 로직 유지)
+    # -------------------------------------------------------------------------
+    category_data = pd.DataFrame([
+        {"category": "Outerwear & Coats", "vip_count": 119, "avg_ltv": 324.79},
+        {"category": "Pants & Capris",    "vip_count": 28,  "avg_ltv": 322.57},
+        {"category": "Suits & Sport Coats","vip_count": 65,  "avg_ltv": 315.22},
+        {"category": "Jeans",             "vip_count": 135, "avg_ltv": 299.16},
+        {"category": "Dresses",           "vip_count": 45,  "avg_ltv": 290.68},
+        {"category": "Active",            "vip_count": 74,  "avg_ltv": 279.64},
+        {"category": "Sweaters",          "vip_count": 108, "avg_ltv": 270.90},
+        {"category": "Tops & Tees",       "vip_count": 88,  "avg_ltv": 269.06},
+        {"category": "Accessories",       "vip_count": 76,  "avg_ltv": 262.09},
+        {"category": "Intimates",         "vip_count": 87,  "avg_ltv": 253.46}
+    ]).sort_values('avg_ltv', ascending=True)
+
+    # 2-1. 카테고리별 VIP 분석 시각화
+    st.subheader("🏷️ VIP 입문(Gateway) 카테고리 분석")
     
-    # 채널별 상세 분석
-    st.subheader("📋 채널별 상세 지표")
+    col1, col2 = st.columns([2, 1])
     
-    channel_detail = channel_data.copy()
-    channel_detail.columns = ['채널', 'VIP 전환율(%)', 'Promising High(%)', 'Promising Low(%)', 
-                              'VIP 평균 LTV($)', '총 고객 수']
-    st.dataframe(channel_detail, hide_index=True, use_container_width=True)
+    with col1:
+        fig = px.bar(
+            category_data,
+            x='avg_ltv',
+            y='category',
+            orientation='h',
+            color='vip_count',
+            color_continuous_scale='Blues',
+            title='첫 구매 카테고리별 VIP 평균 LTV TOP 10',
+            labels={'avg_ltv': '평균 LTV ($)', 'category': '카테고리', 'vip_count': 'VIP 배출 수'}
+        )
+        fig.update_layout(height=500)
+        st.plotly_chart(fig, use_container_width=True)
     
-    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
-    
-    # 카테고리별 VIP 전환율
-    st.subheader("🏷️ 카테고리별 VIP 전환율 TOP 10")
-    
-    fig = px.bar(
-        category_vip_conversion,
-        x='vip_conversion_pct',
-        y='category',
-        orientation='h',
-        color='avg_total_ltv',
-        color_continuous_scale='Greens',
-        title='첫 구매 카테고리별 VIP 전환율 및 평균 LTV',
-        labels={'vip_conversion_pct': 'VIP 전환율 (%)', 'category': '카테고리'}
-    )
-    fig.update_layout(height=500, yaxis={'categoryorder': 'total ascending'})
-    st.plotly_chart(fig, use_container_width=True)
-    
-    st.markdown("""
-    <div class="insight-box success">
-        <div class="insight-title">✅ 고가 카테고리 = 높은 VIP 전환</div>
-        <div class="insight-text">
-            • <b>Outerwear & Coats:</b> 전환율 22.46%, 평균 LTV <b>$345.31</b> (최고)<br>
-            • <b>Blazers & Jackets:</b> 전환율 21.56%, 평균 LTV $261.14<br>
-            • <b>Suits:</b> 전환율 25.00%, 평균 LTV $248.88<br>
-            • <b>전략:</b> 신규 고객에게 고가 카테고리 첫 구매 유도 → VIP 전환 가속화
+    with col2:
+        st.markdown("""
+        <div class="insight-box success">
+            <div class="insight-title">🏆 Gateway Product: 아우터 & 수트</div>
+            <div class="insight-text">
+                • <b>Outerwear & Coats:</b><br>
+                LTV <b>$324.79</b> (1위) / VIP 수 119명 (2위)<br>
+                → <i>객단가와 VIP 배출력을 모두 갖춘 핵심 입문 상품</i><br><br>
+                • <b>Suits & Sport Coats:</b><br>
+                LTV <b>$315.22</b> (3위) / VIP 수 65명<br>
+                → <i>확실한 고가치 고객 유입 통로</i><br><br>
+                • <b>Jeans:</b><br>
+                VIP 수 <b>135명</b> (최다) / LTV $299.16<br>
+                → <i>VIP로 가는 가장 넓은 문(Volume) 역할</i>
+            </div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
+        
+        st.image("https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400&q=80", 
+                 caption="Merchandising Strategy Idea", use_column_width=True)
+
+
+# -------------------------------------------------------------------------
+# 3. 분석 방법론 (Methodology) - 정의 구체화
+# -------------------------------------------------------------------------
+    with st.expander("📊 데이터 산출 로직 및 정의 (Methodology)"):
+        st.markdown("""
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; font-size: 0.9rem;">
+            <h4 style="margin-top:0;">1. 채널 분석 (Initial Acquisition Source)</h4>
+            <ul>
+                <li><b>분석 기준:</b> <code>look.users.traffic_source</code></li>
+                <li><b>의미:</b> 해당 고객이 <b>최초로 회원가입(Sign-up)했을 당시</b>의 유입 경로 (최초 획득 채널)</li>
+                <li><b>해석 목적:</b> "현재의 VIP들을 <b>맨 처음에 어디서 데려왔는지</b>"를 파악하여, 고가치 유저 획득(User Acquisition) 예산을 최적화하기 위함입니다. (재구매 시점의 클릭 배너 아님)</li>
+            </ul>
+            <h4 style="margin-top:15px;">2. 카테고리 분석 (Gateway Product)</h4>
+            <ul>
+                <li><b>분석 대상:</b> 현재 <code>Champions</code> 등급인 유저들의 <b>가입 후 첫 번째 구매 상품</b></li>
+                <li><b>지표:</b> <code>avg_ltv</code> (해당 카테고리로 입문한 유저들의 누적 구매액 평균)</li>
+                <li><b>해석 목적:</b> VIP를 유치하기 위해 첫 구매 유도 시 어떤 상품을 미끼(Hook)로 쓸지 결정</li>
+            </ul>
+            <h4 style="margin-top:15px;">3. 지표 정의 (Metric)</h4>
+            <ul>
+                 <li><b>VIP 비중 (Maturity Rate):</b> <code>VIP 수 / (VIP + Promising High + Promising Low)</code></li>
+                 <li>최근 활동 유저 중 <b>VIP 단계까지 성숙한 비율</b>을 의미합니다.</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
 
 # ============================================
 # 페이지 8: Action Plan & ROI
