@@ -1,0 +1,14 @@
+venv/
+env/
+.venv/
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+dbt_packages/
+target/
+logs/
+*.json
+.env 
+secrets/
+profiles.yml
+Thumbs.db
