@@ -1222,7 +1222,6 @@ elif pages[selected_page] == "problems":
                 <li><b>Low Value:</b> ($47.18 - $32.59) × 4,275명 = <b>$62,372</b></li>
                 <li><i>근거: 미활동 고객이 활동 고객만큼의 행동 패턴을 보였을 때 기대할 수 있는 기회비용 총합</i></li>
             </ul>
-            
             <h4 style="margin-top:15px;">2. 잠재 기회 (Opportunity) 시뮬레이션</h4>
             <p><b>모델:</b> 단계별 전환 퍼널(Funnel) 적용 (보수적 추정치 사용)</p>
             <table style="width:100%; font-size:0.85rem; border-collapse: collapse;">
