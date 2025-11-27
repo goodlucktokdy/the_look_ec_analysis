@@ -3,7 +3,7 @@ TheLook E-commerce RFM 분석 포트폴리오 (Complete Version v2)
 =========================================================
 분석 기간: 2023-01-01 ~ 2024-12-31
 총 분석 고객: 29,795명
-RFM 세그먼트: 9개 (VIP Champions, Loyal High/Low, Promising High/Low, Need Attention, At Risk, Hibernating, Others)
+RFM 세그먼트: 9개 (VIP, Loyal High/Low, Promising High/Low, Need Attention, At Risk, Hibernating, Others)
 """
 
 import streamlit as st
@@ -17,7 +17,7 @@ import numpy as np
 # 페이지 설정
 # ============================================
 st.set_page_config(
-    page_title="김동윤: TheLook 데이터셋 RFM 분석 포트폴리오",
+    page_title="TheLook RFM 분석 포트폴리오",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -453,8 +453,8 @@ pages = {
     "🔬 RFM 등급 기준 & 근거": "rfm_criteria",
     "👥 세그먼트 현황 분석": "segments",
     "⚠️ 문제 정의 & 인사이트": "problems",
-    "🎯 Promising 전환 분석": "promising",
-    "👑 VIP Champions 심층분석": "vip",
+    "🎯 Promising 분석": "promising",
+    "👑 VIP 분석": "vip",
     "📢 채널 & 카테고리 분석": "channel",
     "🚀 Action Plan & ROI": "action"
 }
@@ -612,7 +612,7 @@ if pages[selected_page] == "executive":
             <div class="insight-title">💡 세그먼트 핵심 요약</div>
             <div class="insight-text">
                 <b>성장 동력 (28.4%)</b><br>
-                • VIP Champions: 5.14%<br>
+                • VIP: 5.14%<br>
                 • Promising: 28.35%<br><br>
                 <b>위험 고객 (54.9%)</b><br>
                 • At Risk: 22.28%<br>
@@ -905,7 +905,7 @@ elif pages[selected_page] == "rfm_criteria":
     """, unsafe_allow_html=True)
     
     segment_criteria = pd.DataFrame({
-        "세그먼트": ["VIP Champions", "Loyal High Value", "Loyal Low Value", "Promising High Value", 
+        "세그먼트": ["VIP", "Loyal High Value", "Loyal Low Value", "Promising High Value", 
                    "Promising Low Value", "Need Attention", "At Risk", "Hibernating", "Others"],
         "R 조건": ["≥4", "≥3", "≥3", "≥4", "≥4", "≤2", "=3", "≤2", "기타"],
         "F 조건": ["≥4", "≥4", "≥4", "=3", "=3", "≥4", "=3", "≤3", "기타"],
@@ -975,7 +975,7 @@ elif pages[selected_page] == "rfm_criteria":
     <div class="insight-box success">
         <div class="insight-title">✅ 세그먼트 분류 검증 결과</div>
         <div class="insight-text">
-            • <b>VIP Champions (5.14%)</b>: 평균 LTV $275.88로 전체 평균의 <b>2.7배</b> → 프리미엄 고객 정확 식별<br>
+            • <b>VIP (5.14%)</b>: 평균 LTV $275.88로 전체 평균의 <b>2.7배</b> → 프리미엄 고객 정확 식별<br>
             • <b>Promising (28.35%)</b>: 최근성 높고 1회 구매 → 전환 잠재력 높은 그룹 정확 분리<br>
             • <b>At Risk + Hibernating (54.86%)</b>: 과반수가 이탈 위험 → <b>리텐션 전략 시급</b>
         </div>
@@ -1097,7 +1097,7 @@ elif pages[selected_page] == "segments":
     <div class="insight-box">
         <div class="insight-title">💡 세그먼트 특성 요약</div>
         <div class="insight-text">
-            • <b>VIP Champions</b>: 모든 RFM 지표 최상위 (R:4.59, F:4.28, M:4.30)<br>
+            • <b>VIP</b>: 모든 RFM 지표 최상위 (R:4.59, F:4.28, M:4.30)<br>
             • <b>Promising</b>: 높은 Recency(4.55)와 중간 Monetary, 낮은 Frequency(3.0) → 재구매 유도 핵심 타겟<br>
             • <b>Hibernating</b>: 모든 지표 최하위 (R:1.53, F:3.0, M:2.35) → 윈백 또는 자연 이탈 허용
         </div>
@@ -1308,12 +1308,12 @@ elif pages[selected_page] == "problems":
         <div style="color: #4b5563; line-height: 1.8;">
             <b>🎯 핵심 전략: "세션 활동 유도"가 최우선</b><br>
             • 구매 횟수 1회인데 세션 활동이 많은 고객의 객단가가 더 높음<br>
-            • <b>세션 활동 유도 → 사이트 재방문 → 더 많은 상품 탐색 → 재구매 시 높은 객단가</b><br><br>            
+            • <b>세션 활동 유도 → 사이트 재방문 → 더 많은 상품 탐색 → 재구매 시 높은 객단가</b><br><br>
             <b>🟣 Promising High Value 전략 (세션 활동 유도 → 고가 상품 재구매):</b><br>
             • D+1: "구매하신 상품과 어울리는 프리미엄 아이템" 이메일 (사이트 방문 유도)<br>
             • D+3: "나만의 스타일 큐레이션" 개인화 추천 (브라우징 유도)<br>
             • D+7: 신상품 프리뷰 + VIP 전용 얼리 액세스 (세션 증가 유도)<br>
-            • D+14: "VIP까지 1회 남았습니다" + 고가 상품 20% 할인 (재구매 전환)<br><br>            
+            • D+14: "VIP까지 1회 남았습니다" + 고가 상품 20% 할인 (재구매 전환)<br><br>
             <b>🟠 Promising Low Value 전략 (세션 활동 유도 → 업셀링):</b><br>
             • D+1: "이 상품을 본 고객이 함께 구매한 아이템" (사이트 방문 유도)<br>
             • D+3: 베스트셀러 큐레이션 + "무료배송까지 $XX" (브라우징 유도)<br>
@@ -1326,7 +1326,7 @@ elif pages[selected_page] == "problems":
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
     # 문제 2: VIP 재구매 지연
-    st.subheader("🚨 문제 #2: VIP Champions 재구매 주기 과다 지연")
+    st.subheader("🚨 문제 #2: VIP 재구매 주기 과다 지연")
     
     col1, col2 = st.columns([1, 1])
     
@@ -1347,7 +1347,7 @@ elif pages[selected_page] == "problems":
         <div class="problem-box">
             <div class="problem-title">📊 현황 데이터</div>
             <div style="color: #4b5563; line-height: 1.8;">
-                <b>VIP Champions 재구매 타이밍:</b><br>
+                <b>VIP 재구매 타이밍:</b><br>
                 • 1주일 이내: 3.07% (47명)<br>
                 • 2주 이내: 2.61% (40명)<br>
                 • 1개월 이내: 5.09% (78명)<br>
@@ -1605,12 +1605,12 @@ elif pages[selected_page] == "promising":
     """, unsafe_allow_html=True)
 
 # ============================================
-# 페이지 6: VIP Champions 심층분석
+# 페이지 6: VIP 심층분석
 # ============================================
 elif pages[selected_page] == "vip":
     st.markdown("""
     <div class="main-header">
-        <h1>👑 VIP Champions 심층분석</h1>
+        <h1>👑 VIP 심층분석</h1>
         <p>최고 가치 고객군의 행동 패턴 및 성공 요인 분석</p>
     </div>
     """, unsafe_allow_html=True)
@@ -1622,7 +1622,7 @@ elif pages[selected_page] == "vip":
         st.markdown("""
         <div class="metric-card green">
             <div class="metric-value">1,531</div>
-            <div class="metric-label">VIP Champions</div>
+            <div class="metric-label">VIP</div>
             <div class="metric-delta">전체의 5.14%</div>
         </div>
         """, unsafe_allow_html=True)
@@ -1700,7 +1700,7 @@ elif pages[selected_page] == "vip":
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
     # 전환 속도 분석
-    st.subheader("🚀 Champions 전환 속도별 분석")
+    st.subheader("🚀 VIP 전환 속도별 분석")
     
     col1, col2 = st.columns(2)
     
@@ -1711,8 +1711,8 @@ elif pages[selected_page] == "vip":
             y='count',
             color='avg_ltv',
             color_continuous_scale='Greens',
-            title='전환 속도별 Champions 수',
-            labels={'count': 'Champions 수', 'speed': '전환 속도'}
+            title='전환 속도별 VIP 수',
+            labels={'count': 'VIP 수', 'speed': '전환 속도'}
         )
         fig.update_layout(height=350)
         st.plotly_chart(fig, use_container_width=True)
@@ -1964,6 +1964,25 @@ elif pages[selected_page] == "action":
         </div>
         """, unsafe_allow_html=True)
     
+    # Phase 1-A 수치 근거
+    st.markdown("""
+    <div class="insight-box navy" style="margin-top: 1rem;">
+        <div class="insight-title">📊 Phase 1-A 수치 근거 (데이터 출처)</div>
+        <div class="insight-text" style="font-size: 0.85rem;">
+            <b>🔢 전환율 가정:</b><br>
+            • <b>세션 활동 전환 30%:</b> 현재 Promising High 활동률 53.8% (1,912/3,555) 대비 보수적 가정. 이메일 오픈율 업계 평균 20-25%, 클릭율 2-5% 감안 시 5회 터치포인트로 30% 달성 가능<br>
+            • <b>재구매 전환 50%:</b> 현재 데이터에서 세션 활동 고객의 재구매 의향이 높음. VIP 전환율 17.8% (Facebook 채널) 대비 세션 활동+쿠폰 제공 시 50% 보수적 가정<br><br>
+            <b>💵 객단가 근거 (데이터 분석 결과):</b><br>
+            • <b>$176:</b> Promising High 2-3 Sessions 고객의 평균 LTV $176.89에서 도출<br>
+            • <b>$275 (VIP 객단가):</b> VIP 평균 LTV $277.56에서 도출<br>
+            • <b>$120 (3차 구매):</b> 평균 재구매 객단가 (VIP $275의 약 44%, 객단가 하락 반영)<br><br>
+            <b>📈 VIP 전환율 20% 근거:</b><br>
+            • Outerwear & Coats 카테고리 VIP 전환율 22.5%, Suits 25.0% 데이터 기반<br>
+            • 고가 상품 구매 유도 시 20% 전환 현실적 목표
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
     st.markdown("<br>", unsafe_allow_html=True)
     
     # Phase 1-B: Promising Low Value
@@ -2017,6 +2036,26 @@ elif pages[selected_page] == "action":
         </div>
         """, unsafe_allow_html=True)
     
+    # Phase 1-B 수치 근거
+    st.markdown("""
+    <div class="insight-box navy" style="margin-top: 1rem;">
+        <div class="insight-title">📊 Phase 1-B 수치 근거 (데이터 출처)</div>
+        <div class="insight-text" style="font-size: 0.85rem;">
+            <b>🔢 전환율 가정:</b><br>
+            • <b>세션 활동 전환 20%:</b> Promising Low 현재 활동률 12.6% (616/4,891)로 매우 낮음. High 대비 보수적으로 20% 설정 (현 활동률 대비 +7.4%p)<br>
+            • <b>재구매 전환 35%:</b> Low 세그먼트는 객단가가 낮아 재구매 허들도 낮음. 단, 업셀링 없이는 수익성 제한. High 50% 대비 보수적 설정<br><br>
+            <b>💵 객단가 근거 (데이터 분석 결과):</b><br>
+            • <b>$47:</b> Promising Low 2-3 Sessions 고객의 평균 LTV $47.18에서 도출<br>
+            • <b>$80 (업셀링):</b> Low→High 업셀링 시 예상 객단가. Promising High 미활동 LTV $131의 약 61%<br>
+            • <b>$180 (VIP 객단가):</b> VIP LTV $277 대비 Low 출신 VIP는 약 65% 수준으로 보수적 가정<br>
+            • <b>$50 (3차 구매):</b> Low 세그먼트 평균 객단가 수준 유지 가정<br><br>
+            <b>📈 업셀링/VIP 전환율 근거:</b><br>
+            • <b>업셀링 30%:</b> 번들/세트 할인 30% 제공 시 업셀링 성공률. 업계 평균 번들 구매율 25-35%<br>
+            • <b>VIP 전환 10%:</b> Low 세그먼트의 낮은 객단가 특성상 High 20% 대비 절반 수준으로 보수적 가정
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
     st.markdown("<br>", unsafe_allow_html=True)
     
     # Phase 2: VIP 유지
@@ -2027,7 +2066,7 @@ elif pages[selected_page] == "action":
     with col1:
         st.markdown("""
         <div class="action-box">
-            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🎯 대상: VIP Champions 1,531명</div>
+            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🎯 대상: VIP 1,531명</div>
             <b>구체적 액션:</b><br>
             • <b>VIP 전용 멤버십 프로그램:</b> 포인트 적립, 전용 할인, 얼리 액세스<br>
             • <b>개인화 리마인더:</b> 구매 주기 기반 자동 알림 (보충형 상품)<br>
@@ -2060,6 +2099,25 @@ elif pages[selected_page] == "action":
             </div>
         </div>
         """, unsafe_allow_html=True)
+    
+    # Phase 2 수치 근거
+    st.markdown("""
+    <div class="insight-box navy" style="margin-top: 1rem;">
+        <div class="insight-title">📊 Phase 2 수치 근거 (데이터 출처)</div>
+        <div class="insight-text" style="font-size: 0.85rem;">
+            <b>🔢 재구매 주기 데이터 (VIP 분석 결과):</b><br>
+            • <b>현재 3개월 이내 재구매: 28.6% (438명)</b> - VIP 재구매 타이밍 분석에서 도출<br>
+            • <b>목표 50% (765명):</b> 업계 우수 VIP 재구매율 45-55% 벤치마크. 추가 327명 = 현재 대비 +74.7%<br><br>
+            <b>💵 객단가 근거 (데이터 분석 결과):</b><br>
+            • <b>$28 LTV 증가분:</b> 1주일 내 재구매 VIP LTV $303.42 vs 3개월+ 재구매 VIP LTV $275.30. 차이 $28.12<br>
+            • <b>$140 재구매 객단가:</b> VIP 평균 LTV $277.56의 약 50% (재구매 시 객단가 하락 반영)<br>
+            • <b>$160 이탈 방지 효과:</b> VIP 이탈 시 손실 LTV. 평균 LTV $277의 약 58% (잔존 가치)<br><br>
+            <b>📈 이탈 방지율 10% 근거:</b><br>
+            • VIP 1,531명 중 At Risk 전환 위험군 추정 15% (약 230명)<br>
+            • 리텐션 캠페인으로 이 중 66% (153명) 이탈 방지 가정. 업계 VIP 이탈 방지 성공률 60-70%
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
     
@@ -2109,6 +2167,26 @@ elif pages[selected_page] == "action":
         </div>
         """, unsafe_allow_html=True)
     
+    # Phase 3 수치 근거
+    st.markdown("""
+    <div class="insight-box navy" style="margin-top: 1rem;">
+        <div class="insight-title">📊 Phase 3 수치 근거 (데이터 출처)</div>
+        <div class="insight-text" style="font-size: 0.85rem;">
+            <b>🔢 복귀율 가정 (보수적 - 업계 벤치마크):</b><br>
+            • <b>Need Attention 10%:</b> 최근 이탈 고객으로 복귀 가능성 높음. 업계 윈백 캠페인 성공률 8-15%<br>
+            • <b>At Risk 5%:</b> 중기 이탈 고객. 업계 평균 3-7%. 할인 쿠폰+감성 접근으로 5% 가정<br>
+            • <b>Hibernating 2%:</b> 장기 이탈 고객으로 복귀 확률 매우 낮음. 업계 1-3%. 파격 할인으로 2%<br><br> 
+            <b>💵 객단가 근거 (세그먼트별 LTV 분석):</b><br>
+            • <b>$180 (Need Attention):</b> 과거 VIP/Loyal 출신. 복귀 시 높은 객단가 유지. VIP LTV $277의 65%<br>
+            • <b>$85 (At Risk):</b> At Risk 평균 LTV $80.26에서 도출. 복귀 시 소폭 상승 가정<br>
+            • <b>$70 (Hibernating):</b> Hibernating 평균 LTV $73.11에서 도출<br>
+            • <b>$65 (2차 구매):</b> 복귀 고객의 2차 구매 시 객단가 하락 반영 (평균의 약 75%)<br><br>           
+            <b>📈 세그먼트 인원 (데이터 분석 결과):</b><br>
+            • Need Attention: 730명 × 10% = 73명 / At Risk: 6,637명 × 5% = 332명 / Hibernating: 9,707명 × 2% = 194명
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
     st.markdown("<br>", unsafe_allow_html=True)
     
     # Phase 4: 채널 최적화
@@ -2119,11 +2197,11 @@ elif pages[selected_page] == "action":
     with col1:
         st.markdown("""
         <div class="action-box">
-            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🎯 대상: 전 채널 마케팅 예산</div>
+            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🎯 대상: 전 채널 마케팅 예산</div>            
             <b>채널 예산 재배분:</b><br>
             • <b>Facebook:</b> 예산 20% 증액 (VIP 전환율 17.8% 최고)<br>
             • <b>Display:</b> 예산 15% 감축 (VIP 전환율 12.8% 최저)<br>
-            • <b>Organic:</b> SEO/콘텐츠 투자 강화 (VIP LTV $295 최고)<br><br>
+            • <b>Organic:</b> SEO/콘텐츠 투자 강화 (VIP LTV $295 최고)<br><br>            
             <b>카테고리 타겟팅 최적화:</b><br>
             • 고가 카테고리 (Outerwear, Suits, Blazers) 광고 비중 확대<br>
             • Promising High에게 고가 카테고리 추천<br>
@@ -2149,6 +2227,28 @@ elif pages[selected_page] == "action":
             </div>
         </div>
         """, unsafe_allow_html=True)
+    
+    # Phase 4 수치 근거
+    st.markdown("""
+    <div class="insight-box navy" style="margin-top: 1rem;">
+        <div class="insight-title">📊 Phase 4 수치 근거 (데이터 출처)</div>
+        <div class="insight-text" style="font-size: 0.85rem;">
+            <b>🔢 채널 효율 데이터 (채널별 VIP 전환율 분석):</b><br>
+            • <b>Facebook VIP 전환율 17.8%:</b> 채널별 분석 결과 최고 효율. Display 12.8% 대비 +5%p<br>
+            • <b>Organic VIP LTV $295.01:</b> 채널별 VIP LTV 분석 결과 최고. Facebook VIP LTV $276 대비 +7%<br>
+            • <b>효율 10% 개선:</b> Facebook 예산 증액 + Display 감축으로 평균 전환 효율 개선 보수적 가정<br><br>
+            <b>💵 추가 VIP 156명 산출 근거:</b><br>
+            • 월 예산 $50,000 × 12개월 = 연간 $600,000 마케팅 비용<br>
+            • 현재 VIP 전환율 가중평균 약 14% → 15.4%로 +10% 개선 시<br>
+            • 현재 연간 VIP 획득 약 1,560명 → +10% = 추가 156명<br>
+            • <b>$275:</b> VIP 평균 LTV $277.56에서 도출<br><br>           
+            <b>📈 CAC 절감 $15,000 근거:</b><br>
+            • Display 예산 15% 감축 = 연간 약 $9,000 절감<br>
+            • 저효율 채널 비용 절감 + Organic 강화로 추가 $6,000 절감 효과<br>
+            • 총 $15,000 = 순수 비용 절감 (추가 수익 아닌 비용 감소)
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
@@ -2192,7 +2292,7 @@ elif pages[selected_page] == "action":
     kpi_data = pd.DataFrame({
         "KPI": ["Promising High 세션 활동 전환", "Promising Low 세션 활동 전환", 
                 "Promising High 재구매 전환", "Promising Low 재구매 전환",
-                "VIP Champions 비율", "평균 LTV"],
+                "VIP 비율", "평균 LTV"],
         "현재": ["53.8% (활동)", "12.6% (활동)", "0% (1회 구매)", "0% (1회 구매)", "5.14%", "$102.82"],
         "목표 (3개월)": ["60%", "18%", "15%", "10%", "6%", "$108"],
         "목표 (6개월)": ["65%", "25%", "25%", "15%", "7%", "$115"],
@@ -2221,7 +2321,7 @@ st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown("""
 <div style="text-align: center; color: #9ca3af; font-size: 0.85rem; padding: 2rem 0; border-top: 1px solid #e5e7eb;">
     <p><b>TheLook E-commerce RFM 분석 포트폴리오</b></p>
-    <p>분석 기간: 2023.01 - 2024.12</p>
+    <p>분석 기간: 2023.01 - 2024.12 | 총 고객: 29,795명 | 총 매출: $3,063,495</p>
     <p>데이터: BigQuery thelook_ecommerce</p>
     <p style="margin-top: 0.5rem;">Built with Streamlit & Plotly</p>
 </div>
