@@ -321,18 +321,18 @@ segment_data = pd.DataFrame([
      "avg_frequency": 2.02, "avg_monetary": 48.79, "revenue_pct": 0.21, 
      "r_score": 1.73, "f_score": 4.02, "m_score": 1.85, "total_revenue": 6391.18}
 ])
-
-# 트래픽 소스별 VIP 전환율
+# 컬럼명 변경: vip_conversion_rate -> vip_maturity_rate (VIP 성숙도/비중)
+# 트래픽 소스별 VIP 비율
 channel_data = pd.DataFrame([
-    {"channel": "Facebook", "vip_conversion_rate": 17.80, "promising_high_share": 35.28, 
+    {"channel": "Facebook", "vip_maturity_rate": 17.80, "promising_high_share": 35.28, 
      "promising_low_share": 46.93, "avg_monetary_vip": 268.85, "total_users": 618},
-    {"channel": "Search", "vip_conversion_rate": 15.37, "promising_high_share": 35.53, 
+    {"channel": "Search", "vip_maturity_rate": 15.37, "promising_high_share": 35.53, 
      "promising_low_share": 49.10, "avg_monetary_vip": 272.92, "total_users": 6927},
-    {"channel": "Organic", "vip_conversion_rate": 15.06, "promising_high_share": 36.87, 
+    {"channel": "Organic", "vip_maturity_rate": 15.06, "promising_high_share": 36.87, 
      "promising_low_share": 48.07, "avg_monetary_vip": 295.01, "total_users": 1527},
-    {"channel": "Email", "vip_conversion_rate": 14.84, "promising_high_share": 31.71, 
+    {"channel": "Email", "vip_maturity_rate": 14.84, "promising_high_share": 31.71, 
      "promising_low_share": 53.46, "avg_monetary_vip": 262.42, "total_users": 492},
-    {"channel": "Display", "vip_conversion_rate": 12.83, "promising_high_share": 38.01, 
+    {"channel": "Display", "vip_maturity_rate": 12.83, "promising_high_share": 38.01, 
      "promising_low_share": 49.15, "avg_monetary_vip": 285.63, "total_users": 413}
 ])
 
@@ -370,7 +370,7 @@ vip_repurchase_timing = pd.DataFrame([
      "avg_first_revenue": 127.70, "avg_second_revenue": 120.24, "avg_ltv": 275.30}
 ])
 
-# Champions 전환 속도 분석
+# VIP의 첫구매이후 두번째 구매 전환 속도 분석
 conversion_speed = pd.DataFrame([
     {"speed": "1. Quick (≤30 days)", "count": 165, "avg_days": 14.4, "avg_sessions": 0.9, 
      "avg_product_views": 0.2, "avg_ltv": 282.50, "avg_m_score": 4.35},
@@ -394,20 +394,6 @@ signup_to_purchase = pd.DataFrame([
      "vip_rate": 4.64, "promising_high_rate": 11.88, "promising_low_rate": 16.16}
 ])
 
-# 첫 구매 카테고리별 VIP 전환율 TOP 10
-category_vip_conversion = pd.DataFrame([
-    {"category": "Clothing Sets", "vip_conversion_pct": 36.36, "avg_total_ltv": 259.81, "vip_count": 4},
-    {"category": "Suits", "vip_conversion_pct": 25.00, "avg_total_ltv": 248.88, "vip_count": 15},
-    {"category": "Outerwear & Coats", "vip_conversion_pct": 22.46, "avg_total_ltv": 345.31, "vip_count": 124},
-    {"category": "Blazers & Jackets", "vip_conversion_pct": 21.56, "avg_total_ltv": 261.14, "vip_count": 36},
-    {"category": "Jeans", "vip_conversion_pct": 18.88, "avg_total_ltv": 282.84, "vip_count": 132},
-    {"category": "Suits & Sport Coats", "vip_conversion_pct": 17.75, "avg_total_ltv": 280.37, "vip_count": 52},
-    {"category": "Jumpsuits & Rompers", "vip_conversion_pct": 17.31, "avg_total_ltv": 215.66, "vip_count": 9},
-    {"category": "Accessories", "vip_conversion_pct": 17.17, "avg_total_ltv": 271.72, "vip_count": 91},
-    {"category": "Dresses", "vip_conversion_pct": 16.67, "avg_total_ltv": 276.64, "vip_count": 49},
-    {"category": "Sweaters", "vip_conversion_pct": 16.50, "avg_total_ltv": 270.27, "vip_count": 102}
-])
-
 # 첫 세션 행동 분석 (세그먼트별)
 first_session_behavior = pd.DataFrame([
     {"segment": "VIP Champions", "avg_events": 6.64, "cart_usage_rate": 100.0, 
@@ -423,6 +409,18 @@ first_session_behavior = pd.DataFrame([
     {"segment": "Hibernating", "avg_events": 6.05, "cart_usage_rate": 99.96, 
      "purchase_rate": 100.0, "avg_monetary": 86.39}
 ])
+category_data = pd.DataFrame([
+        {"category": "Outerwear & Coats", "vip_count": 119, "avg_ltv": 324.79},
+        {"category": "Pants & Capris",    "vip_count": 28,  "avg_ltv": 322.57},
+        {"category": "Suits & Sport Coats","vip_count": 65,  "avg_ltv": 315.22},
+        {"category": "Jeans",             "vip_count": 135, "avg_ltv": 299.16},
+        {"category": "Dresses",           "vip_count": 45,  "avg_ltv": 290.68},
+        {"category": "Active",            "vip_count": 74,  "avg_ltv": 279.64},
+        {"category": "Sweaters",          "vip_count": 108, "avg_ltv": 270.90},
+        {"category": "Tops & Tees",       "vip_count": 88,  "avg_ltv": 269.06},
+        {"category": "Accessories",       "vip_count": 76,  "avg_ltv": 262.09},
+        {"category": "Intimates",         "vip_count": 87,  "avg_ltv": 253.46}
+    ]).sort_values('avg_ltv', ascending=True)
 
 # 채널 x 카테고리별 Champions LTV TOP 10
 channel_category_ltv = pd.DataFrame([
@@ -438,6 +436,7 @@ channel_category_ltv = pd.DataFrame([
      "avg_ltv": 361.10, "avg_first_price": 81.58, "m_score_5_count": 7}
 ])
 
+
 # ============================================
 # 사이드바 네비게이션
 # ============================================
@@ -449,6 +448,7 @@ st.sidebar.markdown("""
 """, unsafe_allow_html=True)
 
 pages = {
+    "📁 데이터셋 소개": "dataset_intro",
     "📋 Executive Summary": "executive",
     "🔬 RFM 등급 기준 & 근거": "rfm_criteria",
     "👥 세그먼트 현황 분석": "segments",
@@ -465,11 +465,286 @@ st.sidebar.markdown("---")
 st.sidebar.markdown("""
 <div style="font-size: 0.8rem; color: #9ca3af;">
     <p><strong>분석 기간:</strong> 2023.01 - 2024.12</p>
+    <p><strong>Recency 기준일:</strong> 2025-01-01</p>
     <p><strong>총 고객 수:</strong> 29,795명</p>
     <p><strong>총 매출:</strong> $3,063,495</p>
     <p><strong>데이터:</strong> BigQuery thelook</p>
 </div>
 """, unsafe_allow_html=True)
+
+# ============================================
+# 페이지 0: 데이터셋 소개
+# ============================================
+if pages[selected_page] == "dataset_intro":
+    st.markdown("""
+    <div class="main-header">
+        <h1>📁 TheLook E-commerce 데이터셋 소개</h1>
+        <p>Google BigQuery Public Dataset | 패션 의류 쇼핑몰 분석</p>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # 데이터셋 개요
+    st.subheader("🏪 TheLook E-commerce란?")
+    
+    st.markdown("""
+    <div class="insight-box">
+        <div class="insight-title">📌 데이터셋 개요</div>
+        <div class="insight-text">
+            <b>TheLook</b>은 Google BigQuery에서 제공하는 <b>가상의 패션 의류 쇼핑몰</b> 데이터셋입니다.<br><br>
+            실제 이커머스 환경을 모방하여 생성된 <b>합성 데이터(Synthetic Data)</b>로, 
+            고객 행동, 주문, 상품, 재고, 마케팅 채널 등 온라인 쇼핑몰 운영에 필요한 모든 요소를 포함합니다.<br><br>
+            <b>📦 BigQuery 경로:</b> <code>bigquery-public-data.thelook_ecommerce</code>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # 분석 기간 및 기준
+    st.subheader("📅 분석 기간 & 기준")
+    
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        st.markdown("""
+        <div class="metric-card blue">
+            <div class="metric-value">2023.01 - 2024.12</div>
+            <div class="metric-label">분석 기간 (2년)</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="metric-card purple">
+            <div class="metric-value">2025-01-01</div>
+            <div class="metric-label">Recency 기준일</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col3:
+        st.markdown("""
+        <div class="metric-card green">
+            <div class="metric-value">29,795명</div>
+            <div class="metric-label">분석 대상 고객</div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("""
+    <div class="insight-box navy">
+        <div class="insight-title">⏰ Recency 계산 기준</div>
+        <div class="insight-text">
+            고객의 <b>마지막 구매일로부터 2025-01-01까지의 일수</b>를 Recency로 계산합니다.<br>
+            예: 마지막 구매일이 2024-12-01인 고객의 Recency = 31일
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # ERD 다이어그램
+    st.subheader("🗂️ ERD (Entity Relationship Diagram)")
+    
+    st.markdown("""
+    <div class="insight-box">
+        <div class="insight-title">📊 데이터베이스 구조</div>
+        <div class="insight-text">
+            TheLook E-commerce는 <b>7개의 핵심 테이블</b>로 구성되어 있으며, 
+            고객 → 주문 → 상품 → 재고 → 물류센터까지 이커머스 전 과정을 커버합니다.
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # ERD를 시각적으로 표현
+    col1, col2 = st.columns([3, 2])
+    
+    with col1:
+        st.markdown("#### 📋 테이블 관계도")
+        st.markdown("""
+        ```
+        ┌─────────────────┐
+        │     USERS       │──────────────────────────────────┐
+        │─────────────────│                                  │
+        │ id (PK)         │                                  │
+        │ first_name      │                                  │
+        │ email           │     ┌─────────────────┐          │
+        │ age             │     │    ORDERS       │          │
+        │ gender          │─────│─────────────────│          │
+        │ state           │     │ order_id (PK)   │          │
+        │ country         │     │ user_id (FK)    │──────────┤
+        │ traffic_source  │     │ status          │          │
+        │ created_at      │     │ created_at      │          │
+        └─────────────────┘     │ num_of_item     │          │
+                                └────────┬────────┘          │
+        ┌─────────────────┐              │                   │
+        │    EVENTS       │              │                   │
+        │─────────────────│              │                   │
+        │ id (PK)         │              │                   │
+        │ user_id (FK)    │──────────────┤                   │
+        │ session_id      │              │                   │
+        │ event_type      │     ┌────────┴────────┐          │
+        │ traffic_source  │     │  ORDER_ITEMS    │          │
+        │ uri             │     │─────────────────│          │
+        └─────────────────┘     │ id (PK)         │          │
+                                │ order_id (FK)   │──────────┤
+        ┌─────────────────┐     │ user_id (FK)    │──────────┘
+        │   PRODUCTS      │     │ product_id (FK) │
+        │─────────────────│─────│ sale_price      │
+        │ id (PK)         │     │ status          │
+        │ cost            │     └─────────────────┘
+        │ category        │
+        │ name            │     ┌─────────────────┐
+        │ brand           │     │ INVENTORY_ITEMS │
+        │ retail_price    │─────│─────────────────│
+        │ department      │     │ id (PK)         │
+        └─────────────────┘     │ product_id (FK) │
+                                │ cost            │
+        ┌─────────────────┐     │ product_category│
+        │DISTRIBUTION_    │     └────────┬────────┘
+        │   CENTERS       │              │
+        │─────────────────│──────────────┘
+        │ id (PK)         │
+        │ name            │
+        │ latitude        │
+        │ longitude       │
+        └─────────────────┘
+        ```
+        """)
+    
+    with col2:
+        st.markdown("#### 🔗 테이블 관계")
+        st.markdown("""
+        <div style="background: white; padding: 1rem; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.06);">
+            <p><b>USERS</b> → <b>ORDERS</b><br>
+            <span style="color: #6b7280;">1명의 고객이 여러 주문 가능</span></p>
+            <hr style="margin: 0.75rem 0;">
+            <p><b>USERS</b> → <b>EVENTS</b><br>
+            <span style="color: #6b7280;">1명의 고객이 여러 이벤트 생성</span></p>
+            <hr style="margin: 0.75rem 0;">
+            <p><b>ORDERS</b> → <b>ORDER_ITEMS</b><br>
+            <span style="color: #6b7280;">1개 주문에 여러 상품 포함</span></p>
+            <hr style="margin: 0.75rem 0;">
+            <p><b>PRODUCTS</b> → <b>ORDER_ITEMS</b><br>
+            <span style="color: #6b7280;">1개 상품이 여러 주문에 포함</span></p>
+            <hr style="margin: 0.75rem 0;">
+            <p><b>PRODUCTS</b> → <b>INVENTORY_ITEMS</b><br>
+            <span style="color: #6b7280;">1개 상품이 여러 재고로 관리</span></p>
+            <hr style="margin: 0.75rem 0;">
+            <p><b>DISTRIBUTION_CENTERS</b> → <b>INVENTORY</b><br>
+            <span style="color: #6b7280;">1개 물류센터가 여러 재고 보유</span></p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # 테이블 상세 설명
+    st.subheader("📑 테이블 상세 설명")
+    
+    tab1, tab2, tab3, tab4 = st.tabs(["👥 고객/주문", "📦 상품/재고", "📊 이벤트", "🏭 물류센터"])
+    
+    with tab1:
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("##### USERS (고객)")
+            users_df = pd.DataFrame({
+                "컬럼": ["id", "first_name", "email", "age", "gender", "state", "country", "traffic_source", "created_at"],
+                "설명": ["고객 고유 ID (PK)", "이름", "이메일", "나이", "성별", "주/지역", "국가", "유입 채널", "가입일시"]
+            })
+            st.dataframe(users_df, hide_index=True, use_container_width=True)
+        
+        with col2:
+            st.markdown("##### ORDERS (주문)")
+            orders_df = pd.DataFrame({
+                "컬럼": ["order_id", "user_id", "status", "created_at", "returned_at", "num_of_item"],
+                "설명": ["주문 ID (PK)", "고객 ID (FK)", "주문 상태", "주문일시", "반품일시", "상품 수량"]
+            })
+            st.dataframe(orders_df, hide_index=True, use_container_width=True)
+        
+        st.markdown("##### ORDER_ITEMS (주문 상세)")
+        order_items_df = pd.DataFrame({
+            "컬럼": ["id", "order_id", "user_id", "product_id", "sale_price", "status", "created_at"],
+            "설명": ["주문상세 ID (PK)", "주문 ID (FK)", "고객 ID (FK)", "상품 ID (FK)", "판매가격", "상태", "생성일시"]
+        })
+        st.dataframe(order_items_df, hide_index=True, use_container_width=True)
+    
+    with tab2:
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("##### PRODUCTS (상품)")
+            products_df = pd.DataFrame({
+                "컬럼": ["id", "cost", "category", "name", "brand", "retail_price", "department"],
+                "설명": ["상품 ID (PK)", "원가", "카테고리", "상품명", "브랜드", "소매가격", "부서(남/여)"]
+            })
+            st.dataframe(products_df, hide_index=True, use_container_width=True)
+        
+        with col2:
+            st.markdown("##### INVENTORY_ITEMS (재고)")
+            inventory_df = pd.DataFrame({
+                "컬럼": ["id", "product_id", "created_at", "cost", "product_category"],
+                "설명": ["재고 ID (PK)", "상품 ID (FK)", "입고일시", "원가", "상품 카테고리"]
+            })
+            st.dataframe(inventory_df, hide_index=True, use_container_width=True)
+    
+    with tab3:
+        st.markdown("##### EVENTS (이벤트/행동 로그)")
+        events_df = pd.DataFrame({
+            "컬럼": ["id", "user_id", "session_id", "created_at", "event_type", "traffic_source", "uri"],
+            "설명": ["이벤트 ID (PK)", "고객 ID (FK)", "세션 ID", "이벤트 발생일시", "이벤트 유형", "트래픽 소스", "페이지 URI"]
+        })
+        st.dataframe(events_df, hide_index=True, use_container_width=True)
+        
+        st.markdown("""
+        <div class="insight-box warning">
+            <div class="insight-title">📌 주요 Event Types</div>
+            <div class="insight-text">
+                <code>home</code> · <code>department</code> · <code>product</code> · <code>cart</code> · <code>purchase</code> · <code>cancel</code>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with tab4:
+        st.markdown("##### DISTRIBUTION_CENTERS (물류센터)")
+        dc_df = pd.DataFrame({
+            "컬럼": ["id", "name", "latitude", "longitude"],
+            "설명": ["물류센터 ID (PK)", "물류센터명", "위도", "경도"]
+        })
+        st.dataframe(dc_df, hide_index=True, use_container_width=True)
+    
+    st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
+    
+    # 분석에 사용한 테이블
+    st.subheader("🔬 본 분석에 사용한 핵심 테이블")
+    
+    st.markdown("""
+    <div class="insight-box success">
+        <div class="insight-title">✅ RFM 분석 핵심 테이블</div>
+        <div class="insight-text">
+            <b>1. USERS</b> - 고객 기본 정보 (유입 채널, 가입일 등)<br>
+            <b>2. ORDER_ITEMS</b> - 구매 금액 (sale_price), 주문일시, 상품 정보<br>
+            <b>3. EVENTS</b> - 구매 후 세션 활동 분석 (Promising 고객 분석)<br>
+            <b>4. PRODUCTS</b> - 카테고리별 VIP 비율 분석
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
+    # SQL 예시
+    with st.expander("📝 RFM 분석 기본 SQL 쿼리 예시"):
+        st.code("""
+-- RFM 기본 지표 추출 쿼리
+SELECT 
+    u.id AS user_id,
+    DATE_DIFF('2025-01-01', MAX(DATE(oi.created_at)), DAY) AS recency,
+    COUNT(DISTINCT oi.order_id) AS frequency,
+    SUM(oi.sale_price) AS monetary,
+    u.traffic_source
+FROM `bigquery-public-data.thelook_ecommerce.users` u
+JOIN `bigquery-public-data.thelook_ecommerce.order_items` oi
+    ON u.id = oi.user_id
+WHERE oi.status NOT IN ('Cancelled', 'Returned')
+    AND DATE(oi.created_at) BETWEEN '2023-01-01' AND '2024-12-31'
+GROUP BY u.id, u.traffic_source
+        """, language="sql")
 
 # ============================================
 # 페이지 1: Executive Summary
@@ -562,7 +837,7 @@ if pages[selected_page] == "executive":
         st.markdown("""
         <div class="key-finding opportunity">
             <div style="font-weight: 700; color: #059669; margin-bottom: 0.5rem;">✅ Opportunity #1</div>
-            <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Facebook 채널 VIP 전환율 17.8%</div>
+            <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Facebook 채널 VIP 비율 17.8%</div>
             <div style="color: #4b5563; line-height: 1.6;">
                 • 전 채널 최고 효율 (Display 12.8% 대비 +5%p)<br>
                 • Organic 채널 VIP LTV 최고: <b>$295.01</b><br>
@@ -574,11 +849,11 @@ if pages[selected_page] == "executive":
         st.markdown("""
         <div class="key-finding opportunity">
             <div style="font-weight: 700; color: #059669; margin-bottom: 0.5rem;">✅ Opportunity #2</div>
-            <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">고가 카테고리 = 높은 VIP 전환</div>
+            <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">고가 카테고리 = 높은 VIP 비율</div>
             <div style="color: #4b5563; line-height: 1.6;">
-                • Outerwear & Coats: 전환율 22.5%, LTV <b>$345</b><br>
-                • Suits: 전환율 25.0%, LTV $249<br>
-                • 첫 구매 카테고리 유도로 VIP 전환 가속화
+                • Outerwear & Coats: VIP 비율 22.5%, LTV <b>$345</b><br>
+                • Suits: VIP 비율 25.0%, LTV $249<br>
+                • 첫 구매 카테고리 유도로 VIP 확보 가속화
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1597,14 +1872,7 @@ elif pages[selected_page] == "channel":
     # -------------------------------------------------------------------------
     # 1. 채널 분석 데이터
     # -------------------------------------------------------------------------
-    # 컬럼명 변경: vip_conversion_rate -> vip_maturity_rate (VIP 성숙도/비중)
-    channel_data = pd.DataFrame([
-        {"channel": "Facebook", "vip_maturity_rate": 17.80, "promising_high": 35.28, "promising_low": 46.93, "avg_ltv": 268.85},
-        {"channel": "Search",   "vip_maturity_rate": 15.37, "promising_high": 35.53, "promising_low": 49.10, "avg_ltv": 272.92},
-        {"channel": "Organic",  "vip_maturity_rate": 15.06, "promising_high": 36.87, "promising_low": 48.07, "avg_ltv": 295.01},
-        {"channel": "Email",    "vip_maturity_rate": 14.84, "promising_high": 31.71, "promising_low": 53.46, "avg_ltv": 262.42},
-        {"channel": "Display",  "vip_maturity_rate": 12.83, "promising_high": 38.01, "promising_low": 49.15, "avg_ltv": 285.63}
-    ]).sort_values('vip_maturity_rate', ascending=True)
+
 
     # -------------------------------------------------------------------------
     # 1-1. 채널별 VIP 비중 시각화
@@ -1661,18 +1929,7 @@ elif pages[selected_page] == "channel":
     # -------------------------------------------------------------------------
     # 2. 카테고리 분석 데이터 (기존 로직 유지)
     # -------------------------------------------------------------------------
-    category_data = pd.DataFrame([
-        {"category": "Outerwear & Coats", "vip_count": 119, "avg_ltv": 324.79},
-        {"category": "Pants & Capris",    "vip_count": 28,  "avg_ltv": 322.57},
-        {"category": "Suits & Sport Coats","vip_count": 65,  "avg_ltv": 315.22},
-        {"category": "Jeans",             "vip_count": 135, "avg_ltv": 299.16},
-        {"category": "Dresses",           "vip_count": 45,  "avg_ltv": 290.68},
-        {"category": "Active",            "vip_count": 74,  "avg_ltv": 279.64},
-        {"category": "Sweaters",          "vip_count": 108, "avg_ltv": 270.90},
-        {"category": "Tops & Tees",       "vip_count": 88,  "avg_ltv": 269.06},
-        {"category": "Accessories",       "vip_count": 76,  "avg_ltv": 262.09},
-        {"category": "Intimates",         "vip_count": 87,  "avg_ltv": 253.46}
-    ]).sort_values('avg_ltv', ascending=True)
+
 
     # 2-1. 카테고리별 VIP 분석 시각화
     st.subheader("🏷️ VIP 입문(Gateway) 카테고리 분석")
@@ -1710,10 +1967,6 @@ elif pages[selected_page] == "channel":
             </div>
         </div>
         """, unsafe_allow_html=True)
-        
-        st.image("https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=400&q=80", 
-                 caption="Merchandising Strategy Idea", use_column_width=True)
-
 
 # -------------------------------------------------------------------------
 # 3. 분석 방법론 (Methodology) - 정의 구체화
@@ -1899,13 +2152,13 @@ elif pages[selected_page] == "action":
             <div class="insight-text" style="font-size: 0.85rem;">
                 <b>🔢 전환율 가정:</b><br>
                 • <b>세션 활동 전환 30%:</b> 현재 Promising High 활동률 53.8% (1,912/3,555) 대비 보수적 가정. 이메일 오픈율 업계 평균 20-25%, 클릭율 2-5% 감안 시 5회 터치포인트로 30% 달성 가능<br>
-                • <b>재구매 전환 50%:</b> 현재 데이터에서 세션 활동 고객의 재구매 의향이 높음. VIP 전환율 17.8% (Facebook 채널) 대비 세션 활동+쿠폰 제공 시 50% 보수적 가정<br><br>
+                • <b>재구매 전환 50%:</b> 현재 데이터에서 세션 활동 고객의 재구매 의향이 높음. Facebook 채널 VIP 비율 17.8% 대비 세션 활동+쿠폰 제공 시 50% 보수적 가정<br><br>
                 <b>💵 객단가 근거 (데이터 분석 결과):</b><br>
                 • <b>$176:</b> Promising High 2-3 Sessions 고객의 평균 LTV $176.89에서 도출<br>
                 • <b>$275 (VIP 객단가):</b> VIP 평균 LTV $277.56에서 도출<br>
                 • <b>$120 (3차 구매):</b> 평균 재구매 객단가 (VIP $275의 약 44%, 객단가 하락 반영)<br><br>
-                <b>📈 VIP 전환율 20% 근거:</b><br>
-                • Outerwear & Coats 카테고리 VIP 전환율 22.5%, Suits 25.0% 데이터 기반<br>
+                <b>📈 VIP 전환 목표 20% 근거:</b><br>
+                • Outerwear & Coats 카테고리 VIP 비율 22.5%, Suits 25.0% 데이터 기반<br>
                 • 고가 상품 구매 유도 시 20% 전환 현실적 목표
             </div>
         </div>
@@ -2130,8 +2383,8 @@ elif pages[selected_page] == "action":
         <div class="action-box">
             <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🎯 대상: 전 채널 마케팅 예산</div>            
             <b>채널 예산 재배분:</b><br>
-            • <b>Facebook:</b> 예산 20% 증액 (VIP 전환율 17.8% 최고)<br>
-            • <b>Display:</b> 예산 15% 감축 (VIP 전환율 12.8% 최저)<br>
+            • <b>Facebook:</b> 예산 20% 증액 (VIP 비율 17.8% 최고)<br>
+            • <b>Display:</b> 예산 15% 감축 (VIP 비율 12.8% 최저)<br>
             • <b>Organic:</b> SEO/콘텐츠 투자 강화 (VIP LTV $295 최고)<br><br>            
             <b>카테고리 타겟팅 최적화:</b><br>
             • 고가 카테고리 (Outerwear, Suits, Blazers) 광고 비중 확대<br>
@@ -2165,13 +2418,13 @@ elif pages[selected_page] == "action":
         <div class="insight-box navy" style="margin-top: 1rem;">
             <div class="insight-title">📊 Phase 4 수치 근거 (데이터 출처)</div>
             <div class="insight-text" style="font-size: 0.85rem;">
-                <b>🔢 채널 효율 데이터 (채널별 VIP 전환율 분석):</b><br>
-                • <b>Facebook VIP 전환율 17.8%:</b> 채널별 분석 결과 최고 효율. Display 12.8% 대비 +5%p<br>
+                <b>🔢 채널 효율 데이터 (채널별 VIP 비율 분석):</b><br>
+                • <b>Facebook VIP 비율 17.8%:</b> 채널별 분석 결과 최고 효율. Display 12.8% 대비 +5%p<br>
                 • <b>Organic VIP LTV $295.01:</b> 채널별 VIP LTV 분석 결과 최고. Facebook VIP LTV $276 대비 +7%<br>
-                • <b>효율 10% 개선:</b> Facebook 예산 증액 + Display 감축으로 평균 전환 효율 개선 보수적 가정<br><br>
+                • <b>효율 10% 개선:</b> Facebook 예산 증액 + Display 감축으로 평균 VIP 비율 개선 보수적 가정<br><br>
                 <b>💵 추가 VIP 156명 산출 근거:</b><br>
                 • 월 예산 $50,000 × 12개월 = 연간 $600,000 마케팅 비용<br>
-                • 현재 VIP 전환율 가중평균 약 14% → 15.4%로 +10% 개선 시<br>
+                • 현재 VIP 비율 가중평균 약 14% → 15.4%로 +10% 개선 시<br>
                 • 현재 연간 VIP 획득 약 1,560명 → +10% = 추가 156명<br>
                 • <b>$275:</b> VIP 평균 LTV $277.56에서 도출<br><br>           
                 <b>📈 CAC 절감 $15,000 근거:</b><br>
@@ -2191,7 +2444,7 @@ elif pages[selected_page] == "action":
         "Phase": ["Phase 1-A: Promising High", "Phase 1-B: Promising Low",
                   "Phase 2: VIP 유지", "Phase 3: Winback", "Phase 4: 채널 최적화", "Total"],
         "대상": ["미활동 1,643명", "미활동 4,275명", "VIP 1,531명", "이탈위험 16,344명", "전 채널", "-"],
-        "핵심 전환 지표": ["세션30%→재구매50%", "세션20%→재구매35%", "3개월 재구매50%", "복귀율5%", "VIP전환+10%", "-"],
+        "핵심 전환 지표": ["세션30%→재구매50%", "세션20%→재구매35%", "3개월 재구매50%", "복귀율5%", "VIP비율+10%", "-"],
         "예상 추가 매출": ["$131,000", "$82,000", "$79,000", "$93,000", "$60,000", "$445,000"],
         "캠페인 비용(20%)": ["$26,200", "$16,400", "$15,800", "$18,600", "$12,000", "$89,000"],
         "순이익": ["$104,800", "$65,600", "$63,200", "$74,400", "$48,000", "$356,000"],
