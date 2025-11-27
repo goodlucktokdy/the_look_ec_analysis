@@ -1746,8 +1746,11 @@ elif pages[selected_page] == "vip":
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
+# -------------------------------------------------------------------------
     # 전환 속도 분석
-    st.subheader("🚀 VIP 전환 속도별 분석")
+    # -------------------------------------------------------------------------
+    # [수정] 헤더에 구체적인 정의(첫 구매 -> VIP 달성) 명시
+    st.subheader("🚀 VIP 전환 속도 분석 (첫 구매 시점 → VIP 등급 달성까지 소요 기간)")
     
     col1, col2 = st.columns(2)
     
@@ -1758,8 +1761,8 @@ elif pages[selected_page] == "vip":
             y='count',
             color='avg_ltv',
             color_continuous_scale='Greens',
-            title='전환 속도별 VIP 수',
-            labels={'count': 'VIP 수', 'speed': '전환 속도'}
+            title='전환 속도별 VIP 수 분포',
+            labels={'count': 'VIP 수', 'speed': '달성 소요 기간 (Bucket)'}
         )
         fig.update_layout(height=350)
         st.plotly_chart(fig, use_container_width=True)
@@ -1771,20 +1774,42 @@ elif pages[selected_page] == "vip":
             y='avg_sessions',
             color='avg_sessions',
             color_continuous_scale='Blues',
-            title='전환 속도별 평균 세션 수',
-            labels={'avg_sessions': '평균 세션 수', 'speed': '전환 속도'}
+            title='전환 속도별 평균 세션 활동 수',
+            labels={'avg_sessions': '평균 세션 수', 'speed': '달성 소요 기간 (Bucket)'}
         )
         fig.update_layout(height=350)
         st.plotly_chart(fig, use_container_width=True)
     
+    # [수정/추가] 분석 모수 및 산출 근거 (Expander)
+    with st.expander("📊 분석 대상 모집단 및 선정 근거 (Methodology)"):
+        st.markdown("""
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; font-size: 0.9rem;">
+            <h4 style="margin-top:0;">1. 분석 대상 (Population)</h4>
+            <ul>
+                <li><b>대상 세그먼트:</b> Promising (High/Low) + VIP</li>
+                <li><b>공통 기준:</b> <code>Recency ≤ 180일</code> (최근 6개월 내 구매 이력 보유)</li>
+            </ul>    
+            <h4 style="margin-top:15px;">2. 선정 근거 (Rationale)</h4>
+            <ul>
+                <li><b>타겟팅 적합성:</b> 이탈(Churn)하지 않고, 최근 우리 브랜드를 경험하여 리텐션 유도가 가능한 <b>'활성 고객군(Active Users)'</b>만을 대상으로 함.</li>
+                <li><b>전환 가능성:</b> Promising 그룹(구매 1회)은 VIP(구매 N회)로 전환될 잠재 고객이며, VIP는 이미 전환된 롤모델 그룹이므로 <b>두 그룹을 비교 분석하는 것이 유효함.</b></li>
+            </ul>
+            <h4 style="margin-top:15px;">3. 지표 정의 (Definition)</h4>
+            <ul>
+                <li><b>전환 속도 (Conversion Speed):</b> <code>VIP 달성일 - 첫 구매일</code></li>
+                <li>Quick: 30일 이내 달성 / Slow: 61일 이후 달성</li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
+
     st.markdown("""
     <div class="insight-box">
-        <div class="insight-title">💡 Quick Converters의 특징</div>
+        <div class="insight-title">💡 Quick Converters의 특징 및 시사점</div>
         <div class="insight-text">
             • <b>Quick (≤30일):</b> 165명, 평균 14.4일 만에 재구매, LTV $282.50<br>
             • <b>Slow (61+일):</b> 1,237명, 평균 273.2일 후 재구매, LTV $274.58<br>
-            • Quick Converters가 LTV <b>$8 더 높음</b> (상대적으로 적은 차이)<br>
-            • 핵심: <b>전환 속도보다 "전환 자체"가 중요</b> → 1회 구매자를 2회 구매자로 만드는 것이 핵심
+            • <b>Insight:</b> Quick Converters가 LTV가 $8 더 높지만, 큰 차이는 아님.<br>
+            • <b>Action Item:</b> 속도보다 중요한 것은 <b>"전환 자체"</b>임. Promising(1회 구매) 고객을 포기하지 않고 <b>Slow Track이라도 VIP로 안착시키는 것</b>이 전체 매출 볼륨에 핵심.
         </div>
     </div>
     """, unsafe_allow_html=True)
