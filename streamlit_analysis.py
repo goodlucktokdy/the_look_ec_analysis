@@ -324,16 +324,16 @@ segment_data = pd.DataFrame([
 # 컬럼명 변경: vip_conversion_rate -> vip_maturity_rate (VIP 성숙도/비중)
 # 트래픽 소스별 VIP 비율
 channel_data = pd.DataFrame([
-    {"channel": "Facebook", "vip_maturity_rate": 17.80, "promising_high_share": 35.28, 
-     "promising_low_share": 46.93, "avg_monetary_vip": 268.85, "total_users": 618},
-    {"channel": "Search", "vip_maturity_rate": 15.37, "promising_high_share": 35.53, 
-     "promising_low_share": 49.10, "avg_monetary_vip": 272.92, "total_users": 6927},
-    {"channel": "Organic", "vip_maturity_rate": 15.06, "promising_high_share": 36.87, 
-     "promising_low_share": 48.07, "avg_monetary_vip": 295.01, "total_users": 1527},
-    {"channel": "Email", "vip_maturity_rate": 14.84, "promising_high_share": 31.71, 
-     "promising_low_share": 53.46, "avg_monetary_vip": 262.42, "total_users": 492},
-    {"channel": "Display", "vip_maturity_rate": 12.83, "promising_high_share": 38.01, 
-     "promising_low_share": 49.15, "avg_monetary_vip": 285.63, "total_users": 413}
+    {"channel": "Facebook", "vip_maturity_rate": 17.80, "promising_high": 35.28, 
+     "promising_low": 46.93, "avg_monetary_vip": 268.85, "total_users": 618},
+    {"channel": "Search", "vip_maturity_rate": 15.37, "promising_high": 35.53, 
+     "promising_low": 49.10, "avg_monetary_vip": 272.92, "total_users": 6927},
+    {"channel": "Organic", "vip_maturity_rate": 15.06, "promising_high": 36.87, 
+     "promising_low": 48.07, "avg_monetary_vip": 295.01, "total_users": 1527},
+    {"channel": "Email", "vip_maturity_rate": 14.84, "promising_high": 31.71, 
+     "promising_low": 53.46, "avg_monetary_vip": 262.42, "total_users": 492},
+    {"channel": "Display", "vip_maturity_rate": 12.83, "promising_high": 38.01, 
+     "promising_low": 49.15, "avg_monetary_vip": 285.63, "total_users": 413}
 ])
 
 # Promising 세그먼트 구매 후 활동 분석
@@ -1540,13 +1540,12 @@ elif pages[selected_page] == "problems":
         """, unsafe_allow_html=True)
 
 # ============================================
-# 페이지 5: Promising 전환 분석
+# 페이지 5: Promising 분석
 # ============================================
 elif pages[selected_page] == "promising":
     st.markdown("""
     <div class="main-header">
-        <h1>🎯 Promising 전환 분석</h1>
-        <p>Promising → VIP 전환 경로 및 핵심 성공 요인 분석</p>
+        <h1>🎯 Promising 분석</h1>
     </div>
     """, unsafe_allow_html=True)
     
