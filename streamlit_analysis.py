@@ -2054,25 +2054,26 @@ elif pages[selected_page] == "action":
         </div>
     </div>
     """, unsafe_allow_html=True)
-    # -------------------------------------------------------------------------
-    # [추가됨] ROI 산출 근거 (벤치마크 및 가정) - Expander 적용
-    # -------------------------------------------------------------------------
+
+# -------------------------------------------------------------------------
+# [수정됨] ROI 산출 근거 - ROAS와 ROI의 관계 명확화
+# -------------------------------------------------------------------------
     with st.expander("📌 ROI 비용 설정(20%) 근거 및 업계 벤치마크 확인하기"):
         st.markdown("""
         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; font-size: 0.9rem; color: #333;">
-            <h4 style="margin-top: 0; font-size: 1rem; color: #333;">1. 비용 구조 상세 (Cost Breakdown)</h4>
-            <p style="margin-bottom: 10px;">
-                본 시뮬레이션의 캠페인 비용(매출의 20%)은 단순 발송비가 아닌 <b>실질적 프로모션 비용</b>을 포함한 총 비용입니다.
-            </p>
+            <h4 style="margin-top: 0; font-size: 1rem; color: #333;">1. ROAS vs ROI 관점 적용</h4>
             <ul style="margin-bottom: 15px;">
-                <li><b>판촉비 (Incentive Cost, ~15%):</b> 재구매 유도를 위한 할인 쿠폰(10~20%) 및 무료배송 지원금 (회계상 매출 차감/판촉비 성격)</li>
-                <li><b>운영비 (Direct Cost, ~5%):</b> CRM 솔루션(알림톡/이메일) 발송비, 콘텐츠 제작 및 운영 인건비</li>
+                <li><b>일반적 ROAS (광고 효율):</b> 보통 패션 커머스의 목표 ROAS는 500% (광고비가 매출의 20%) 수준입니다.</li>
+                <li><b>본 리포트의 ROI 접근:</b> CRM 캠페인은 매체비는 적게 들지만 <b>'할인 쿠폰(판촉비)'</b> 비중이 큽니다.</li>
+                <li><b>결론:</b> 보수적인 수익성 검토를 위해, 일반적인 광고비 비중(20%)을 <b>'캠페인 총 비용(할인+발송비)' 한도(Budget Cap)</b>로 설정하여 계산했습니다.</li>
             </ul>
-            <h4 style="margin-top: 0; font-size: 1rem; color: #333;">2. 업계 벤치마크 (Industry Standard)</h4>
+            <h4 style="margin-top: 0; font-size: 1rem; color: #333;">2. 비용 구조 상세 (Cost Breakdown)</h4>
+            <p style="margin-bottom: 10px;">
+                매출의 <b>20%</b>를 캠페인 예산으로 설정한 세부 내역입니다.
+            </p>
             <ul>
-                <li><b>Target ROAS 500%:</b> 패션 이커머스 리텐션 캠페인의 건전한 목표 효율은 통상 <b>ROAS 400~500%</b>입니다.</li>
-                <li><b>계산식 역산:</b> <code>매출 100 / 비용 20 = ROAS 500%</code> 공식을 역산하여 보수적인 예산 비율(20%)을 설정했습니다.</li>
-                <li><b>Reference:</b> <i>Common Thread Collective (Ecommerce Growth), Shopify Retention Benchmarks</i></li>
+                <li><b>판촉비 (Incentive, ~15%):</b> 재구매 유도를 위한 할인 쿠폰 및 혜택 비용 (가장 큰 비중)</li>
+                <li><b>운영비 (Operation, ~5%):</b> 문자/알림톡 발송비 및 콘텐츠 제작 인건비</li>
             </ul>
         </div>
         """, unsafe_allow_html=True)
