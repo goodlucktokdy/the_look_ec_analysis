@@ -542,9 +542,6 @@ if pages[selected_page] == "executive":
             <div style="color: #4b5563; line-height: 1.6;">
                 • Promising High: 46.2% 미활동 (1,643명)<br>
                 • Promising Low: <b>87.4%</b> 미활동 (4,275명)<br>
-                • <b>잠재 손실: $248K</b> (미활동 vs 활동 LTV 차이)<br>
-                <span style="font-size: 0.85rem; color: #6b7280;">└ High: 1,643×($244-$131)=$186K / Low: 4,275×($47-$33)=$62K</span><br>
-                • <b>잠재 기회: $213K</b> (세션 유도 시 예상 추가 매출)
             </div>
         </div>
         """, unsafe_allow_html=True)
