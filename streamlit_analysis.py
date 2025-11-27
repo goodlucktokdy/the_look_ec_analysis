@@ -1776,7 +1776,7 @@ elif pages[selected_page] == "action":
     </div>
     """, unsafe_allow_html=True)
     
-    # 전체 ROI 요약
+    # 전체 ROI 요약 (Active 유저 추가에 따른 수치 상향 조정됨)
     st.subheader("💰 전체 예상 ROI 요약")
     
     col1, col2, col3 = st.columns(3)
@@ -1784,16 +1784,16 @@ elif pages[selected_page] == "action":
     with col1:
         st.markdown("""
         <div class="metric-card green">
-            <div class="metric-value">$385,400</div>
+            <div class="metric-value">$412,675</div>
             <div class="metric-label">Total Expected Revenue Lift</div>
-            <div class="metric-delta delta-positive">보수적 시나리오 기준</div>
+            <div class="metric-delta delta-positive">Active 유저 타겟팅 포함</div>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
         <div class="metric-card blue">
-            <div class="metric-value">$289,050</div>
+            <div class="metric-value">$309,500</div>
             <div class="metric-label">Net Profit Impact</div>
             <div class="metric-delta">마케팅/할인 비용 25% 차감 후</div>
         </div>
@@ -1802,9 +1802,9 @@ elif pages[selected_page] == "action":
     with col3:
         st.markdown("""
         <div class="metric-card purple">
-            <div class="metric-value">Promising High</div>
-            <div class="metric-label">최우선 타겟 세그먼트</div>
-            <div class="metric-delta">미활동 → 활동 전환 시 LTV +$113</div>
+            <div class="metric-value">Conversion Focus</div>
+            <div class="metric-label">Active 유저 전략 추가</div>
+            <div class="metric-delta">탐색 유저 구매 전환 시 +$13,275</div>
         </div>
         """, unsafe_allow_html=True)
     
@@ -1819,16 +1819,17 @@ elif pages[selected_page] == "action":
             • Promising High <b>미활동(0 Session)</b> 유저 LTV: <b>$131.06</b><br>
             • Promising High <b>활동(4-5 Sessions)</b> 유저 LTV: <b>$244.25</b> <span style="color:#4ade80">(+$113.19, 86%↑)</span><br>
             → <i>단순 구매 유도가 아닌 '사이트 방문(Session)' 유도가 선행될 때 LTV가 급격히 상승함이 증명됨.</i><br><br>
-            <b>2. 재구매 시 평균 객단가 (Revenue Potential):</b><br>
-            • VIP/Promising High 그룹의 <b>2차 구매 평균 금액: 약 $115~$120</b> (time_to_second SQL 결과)<br>
-            → <i>재구매 전환 1건당 최소 $115의 즉각적인 매출 발생 기대.</i>
+            <b>2. Active 유저의 구매 전환 잠재력 (Conversion Potential):</b><br>
+            • 현재 Promising 그룹 내 <b>Active 유저(세션 보유자)는 약 1,600명</b>입니다.<br>
+            • 이들은 이미 관심을 보이고 있으므로, 미활동 유저 대비 <b>전환율(CVR)이 2~3배 높을 것</b>으로 예측됩니다.<br>
+            → <i>리마인딩이 아닌 '구매 결정타(Trigger)'가 필요한 시점.</i>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Phase 1-A: Promising High Value
+    # Phase 1-A: Promising High Value (Inactive)
     st.markdown("### 🔴 Phase 1-A: Promising High Value 리텐션 (Whales in Waiting)")
     
     col1, col2 = st.columns([1.8, 1.2])
@@ -1842,11 +1843,11 @@ elif pages[selected_page] == "action":
             • 잠재력은 높으나 브랜드와의 접점이 끊긴 상태입니다.<br><br>
             <b>Action Plan (The Nudge Strategy):</b><br>
             1. <b>[인지] 개인화 리마인딩 (Open Rate 목표 25%):</b><br>
-               - "회원님의 첫 구매(Outerwear/Jeans)와 완벽한 매칭" 룩북 발송.<br>
+                - "회원님의 첫 구매(Outerwear/Jeans)와 완벽한 매칭" 룩북 발송.<br>
             2. <b>[방문] 로그인 유도 (Click Rate 목표 10%):</b><br>
-               - "VIP 승급까지 단 1번의 구매가 남았습니다" 진행 상황 바(Bar) 노출.<br>
+                - "VIP 승급까지 단 1번의 구매가 남았습니다" 진행 상황 바(Bar) 노출.<br>
             3. <b>[전환] 시크릿 오퍼 (Conversion 목표 5%):</b><br>
-               - 48시간 한정 $20 크레딧 (최소 주문금액 $100 조건).
+                - 48시간 한정 $20 크레딧 (최소 주문금액 $100 조건).
         </div>
         """, unsafe_allow_html=True)
     
@@ -1878,7 +1879,7 @@ elif pages[selected_page] == "action":
     
     st.markdown("<br>", unsafe_allow_html=True)
     
-    # Phase 1-B: Promising Low Value
+    # Phase 1-B: Promising Low Value (Inactive)
     st.markdown("### 🔴 Phase 1-B: Promising Low Value 리텐션 (Volume Play)")
     
     col1, col2 = st.columns([1.8, 1.2])
@@ -1892,12 +1893,12 @@ elif pages[selected_page] == "action":
             • 하지만 인원수(Volume)가 가장 많아, 작은 전환율 개선으로도 큰 매출을 만듭니다.<br><br>
             <b>Action Plan (Volume & Bundle):</b><br>
             1. <b>[유입] 번들링 프로모션:</b><br>
-               - 저단가 상품 구매자 특성상 '무료배송 임계치' 공략이 유효.<br>
-               - "3개 담으면 20% 할인 + 무료배송" 캠페인.<br>
+                - 저단가 상품 구매자 특성상 '무료배송 임계치' 공략이 유효.<br>
+                - "3개 담으면 20% 할인 + 무료배송" 캠페인.<br>
             2. <b>[추천] 베스트셀러 큐레이션:</b><br>
-               - 취향 분석보다는 '가장 잘 팔리는(실패 없는) 상품' 위주 노출.<br>
+                - 취향 분석보다는 '가장 잘 팔리는(실패 없는) 상품' 위주 노출.<br>
             3. <b>[채널] 저비용 채널 활용:</b><br>
-               - 광고비 효율을 위해 앱 푸시, 이메일 등 오운드 미디어(Owned Media) 집중.
+                - 광고비 효율을 위해 앱 푸시, 이메일 등 오운드 미디어(Owned Media) 집중.
         </div>
         """, unsafe_allow_html=True)
     
@@ -1922,6 +1923,56 @@ elif pages[selected_page] == "action":
                 <div style="background:#fff7ed; padding:8px; border-radius:4px; font-weight:bold; color:#9a3412">
                     총 예상 가치: $3,880<br>
                     (마진율 방어가 핵심)
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # ---------------------------------------------------------
+    # [NEW] Phase 1-C: Promising Active (Conversion Booster)
+    # ---------------------------------------------------------
+    st.markdown("### 🔵 Phase 1-C: Promising Active 구매 전환 (Conversion Booster)")
+    
+    col1, col2 = st.columns([1.8, 1.2])
+    
+    with col1:
+        st.markdown("""
+        <div class="action-box">
+            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 1rem;">🔵 타겟: 이미 방문 중인 Promising 유저 (약 1,600명)</div>
+            <b>데이터 현황 (Browsing but Not Buying):</b><br>
+            • 이들은 최근 사이트에 방문했으나(Session > 0), 2차 구매를 망설이고 있습니다.<br>
+            • <b>High Active:</b> 약 450명 (평균 객단가 높음, 탐색 깊이 깊음)<br>
+            • <b>Low Active:</b> 약 1,150명 (가격 비교 중일 가능성 높음)<br><br>
+            <b>Action Plan (Trigger & CRO):</b><br>
+            1. <b>[High] 장바구니 리타겟팅 (Dynamic Ads):</b><br>
+                - 본 상품과 연관된 악세서리 제안으로 크로스셀링 유도.<br>
+                - "장바구니 상품 재고가 3개 남았습니다" 희소성 알림.<br>
+            2. <b>[Low] 타임 어택 쿠폰 (On-site Pop-up):</b><br>
+                - 상세 페이지 체류 1분 경과 시 '지금 결제 시 5% 추가 할인' 팝업.<br>
+                - 배송비 허들 제거를 위한 '오늘만 무료배송' 티켓 증정.
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        st.markdown("""
+        <div class="roi-box">
+            <div class="roi-title">💰 ROI 산출 (전환율 개선)</div>
+            <div style="color: #4b5563; line-height: 1.6; font-size: 0.9rem;">
+                <b>1. Promising High Active</b><br>
+                • 대상: 450명<br>
+                • 전환율 목표: 5% → <b>15%</b> (Booster)<br>
+                • 예상 매출: 67명 × $120 (평균)<br>
+                • = <b>$8,040</b><br><br>
+                <b>2. Promising Low Active</b><br>
+                • 대상: 1,150명<br>
+                • 전환율 목표: 3% → <b>10%</b> (Booster)<br>
+                • 예상 매출: 115명 × $45 (평균)<br>
+                • = <b>$5,175</b><br><br>
+                <div style="background:#eff6ff; padding:8px; border-radius:4px; font-weight:bold; color:#1e40af">
+                    총 예상 가치: $13,215<br>
+                    (투입 비용 대비 효율 최상)
                 </div>
             </div>
         </div>
@@ -2015,24 +2066,27 @@ elif pages[selected_page] == "action":
 
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
 
-    # 최종 ROI Aggregation Table
+    # 최종 ROI Aggregation Table (Active 유저 전략 행 추가)
     st.subheader("📈 Final Strategic ROI Projection")
     st.markdown("위의 각 Phase별 시나리오를 종합한 연간 예상 성과입니다.")
 
     roi_summary = pd.DataFrame({
-        "Strategic Phase": ["1-A. Promising High Activation", "1-B. Promising Low Activation", 
+        "Strategic Phase": ["1-A. High Inactive (Activation)", "1-B. Low Inactive (Activation)", 
+                           "1-C. Active Users (Conversion)", 
                            "2. VIP Velocity Increase", "3. Winback (High/Mid Risk)", "Total"],
-        "Target Audience": ["1,643명 (High Value Inactive)", "4,275명 (Low Value Inactive)", 
-                            "218명 (Slow VIP)", "7,367명 (Churned)", "13,503명"],
+        "Target Audience": ["1,643명 (Inactive)", "4,275명 (Inactive)", 
+                            "1,600명 (Active Browsers)",
+                            "218명 (Slow VIP)", "7,367명 (Churned)", "15,103명"],
         "Conversion Goal": ["Activate 20% → Buy 30%", "Activate 10% → Buy 15%", 
+                            "Conversion rate +5~7%p", 
                             "Frequency +1/yr", "Winback 5~10%", "-"],
-        "Expected Revenue": ["$22,638", "$3,880", "$29,866", "$43,173", "$99,557"],
-        "Est. Cost (25%)": ["-$5,659", "-$970", "-$7,466", "-$10,793", "-$24,888"],
-        "Net Profit": ["$16,979", "$2,910", "$22,400", "$32,380", "$74,669"],
-        "Priority": ["🔴 P1 (Quick Win)", "🟡 P3 (Volume)", "🟢 P2 (Long-term)", "🟠 P1 (High Impact)", "-"]
+        "Expected Revenue": ["$22,638", "$3,880", "$13,215", "$29,866", "$43,173", "$112,772"],
+        "Est. Cost (25%)": ["-$5,659", "-$970", "-$3,303", "-$7,466", "-$10,793", "-$28,191"],
+        "Net Profit": ["$16,979", "$2,910", "$9,912", "$22,400", "$32,380", "$84,581"],
+        "Priority": ["🔴 P1 (Quick Win)", "🟡 P3 (Volume)", "🔵 P1 (Efficiency)", "🟢 P2 (Long-term)", "🟠 P1 (High Impact)", "-"]
     })
     
-    # 데이터프레임 스타일링 (Streamlit native column config 활용)
+    # 데이터프레임 스타일링
     st.dataframe(
         roi_summary, 
         hide_index=True, 
@@ -2046,11 +2100,11 @@ elif pages[selected_page] == "action":
 
     st.markdown("""
     <div class="insight-box success">
-        <div class="insight-title">💡 Executive Summary</div>
+        <div class="insight-title">💡 Executive Summary (Updated)</div>
         <div class="insight-text">
-            • <b>최우선 과제:</b> <b>Promising High 미활동 유저(1,643명)의 세션 유도</b>입니다. 이들은 구매력($150+)이 검증되었으며, 활성화 시 LTV가 2배($131→$244)로 뜁니다.<br>
-            • <b>가장 큰 기회비용:</b> <b>Need Attention (이탈한 VIP)</b> 그룹입니다. 730명을 방치하면 약 $150k 규모의 잠재 매출이 소멸됩니다. 즉각적인 Winback 캠페인이 필요합니다.<br>
-            • <b>실행 제언:</b> 모든 그룹에 동일한 예산을 쓰지 마십시오. <b>Promising High와 Need Attention 그룹에 예산의 70%를 집중</b>하는 것이 ROI 관점에서 타당합니다.
+            • <b>최우선 과제:</b> <b>Promising High 미활동 유저의 활성화(P1-A)</b>와 <b>이미 방문 중인 Active 유저의 구매 전환(P1-C)</b>입니다. 이 두 트랙을 병행할 때 가장 빠른 매출 회복이 가능합니다.<br>
+            • <b>효율성 극대화:</b> Active 유저 타겟팅(P1-C)은 별도의 유입 비용 없이 사이트 내 장치(On-site)만으로 $13,215의 매출을 추가할 수 있어 <b>가성비(ROI)가 가장 높습니다.</b><br>
+            • <b>리스크 관리:</b> Need Attention 그룹의 Winback은 여전히 가장 큰 기회비용을 차지하므로, 즉각적인 할인/쿠폰 오퍼가 필요합니다.
         </div>
     </div>
     """, unsafe_allow_html=True)
