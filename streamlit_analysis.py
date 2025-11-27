@@ -634,7 +634,7 @@ if pages[selected_page] == "executive":
     <div class="insight-box navy">
         <div class="insight-title">📌 ROI 산출 정의</div>
         <div class="insight-text">
-            • <b>ROI (Return on Investment)</b> = (순이익 / 캠페인 비용) × 100%<br>
+            • <b>ROI (Return on Investment)</b> = (순이익 / 캠페인 비용) × 100<br>
             • <b>캠페인 비용</b>: 이메일 발송, 할인 쿠폰, 마케팅 인력 등 (예상 매출의 약 20% 가정)<br>
             • <b>예상 추가 매출</b>: 세션 활동 유도 → 재구매 전환 → VIP 전환 시나리오 기반
         </div>
@@ -1993,7 +1993,7 @@ elif pages[selected_page] == "action":
     <div class="insight-box navy">
         <div class="insight-title">📌 ROI 산출 방법론</div>
         <div class="insight-text">
-            • <b>ROI (Return on Investment)</b> = (순이익 / 캠페인 비용) × 100%<br>
+            • <b>ROI (Return on Investment)</b> = (순이익 / 캠페인 비용) × 100<br>
             • <b>순이익</b> = 예상 추가 매출 - 캠페인 비용<br>
             • <b>캠페인 비용</b>: 이메일 발송, 할인 쿠폰, 마케팅 인력, 시스템 비용 등 (예상 매출의 약 20% 가정)
         </div>
@@ -2417,7 +2417,7 @@ elif pages[selected_page] == "action":
             • 예상 총 추가 매출: <b>$445,000</b> (현 매출 $3.06M 대비 +14.5%)<br>
             • 예상 캠페인 비용: <b>$89,000</b> (추가 매출의 20%)<br>
             • 예상 순이익: <b>$356,000</b> (추가 매출 - 비용)<br>
-            • <b>ROI = $356,000 / $89,000 × 100% = 400%</b><br><br>
+            • <b>ROI = $356,000 / $89,000 × 100 = 400%</b><br><br>
             <b>🔑 핵심 발견 기반 전략:</b><br>
             • Promising 고객은 모두 <b>구매 횟수 1회</b>인데, 세션 활동에 따라 LTV가 다름<br>
             • <b>세션 활동 유도 → 더 많은 탐색 → 재구매 시 높은 객단가 → VIP 전환</b>
