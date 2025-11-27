@@ -1785,7 +1785,7 @@ elif pages[selected_page] == "vip":
         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; font-size: 0.9rem;">
             <h4 style="margin-top:0;">1. 분석 대상 (Population)</h4>
             <ul>
-                <li><b>분석 데이터:</b> 현재 <b>Champions(VIP)</b> 등급 유저들의 과거 구매 이력</li>
+                <li><b>분석 데이터:</b> 현재 <b>VIP</b> 등급 유저들의 과거 구매 이력</li>
                 <li><b>타겟 적용 대상:</b> 재구매 유도가 필요한 <b>Promising(1회 구매)</b> 세그먼트</li>
                 <li><b>공통 기준:</b> <code>Recency ≤ 180일</code> (최근 트렌드를 반영하기 위해 활성 유저 한정)</li>
             </ul>    
@@ -1959,19 +1959,19 @@ elif pages[selected_page] == "channel":
         <div style="background-color: #f8f9fa; padding: 15px; border-radius: 10px; font-size: 0.9rem;">
             <h4 style="margin-top:0;">1. 채널 분석 (Initial Acquisition Source)</h4>
             <ul>
-                <li><b>분석 기준:</b> <code>look.users.traffic_source</code></li>
-                <li><b>의미:</b> 해당 고객이 <b>최초로 회원가입(Sign-up)했을 당시</b>의 유입 경로 (최초 획득 채널)</li>
-                <li><b>해석 목적:</b> "현재의 VIP들을 <b>맨 처음에 어디서 데려왔는지</b>"를 파악하여, 고가치 유저 획득(User Acquisition) 예산을 최적화하기 위함입니다. (재구매 시점의 클릭 배너 아님)</li>
+                <li><b>분석 기준:</b>users 테이블의 traffic_source 컬럼</li>
+                <li><b>의미:</b> 해당 고객이 <b>최초로 회원가입했을 당시</b>의 유입 경로 (최초 획득 채널)</li>
+                <li><b>해석 목적:</b> "현재의 VIP들을 <b>맨 처음에 어디서 데려왔는지</b>"를 파악하여, 고가치 유저 획득 예산을 최적화하기 위함입니다. (재구매 시점의 클릭 배너 아님)</li>
             </ul>
             <h4 style="margin-top:15px;">2. 카테고리 분석 (Gateway Product)</h4>
             <ul>
-                <li><b>분석 대상:</b> 현재 <code>Champions</code> 등급인 유저들의 <b>가입 후 첫 번째 구매 상품</b></li>
-                <li><b>지표:</b> <code>avg_ltv</code> (해당 카테고리로 입문한 유저들의 누적 구매액 평균)</li>
+                <li><b>분석 대상:</b> 현재 VIP 등급인 유저들의 <b>가입 후 첫 번째 구매 상품</b></li>
+                <li><b>지표:</b> avg_ltv (해당 카테고리로 입문한 유저들의 누적 구매액 평균)</li>
                 <li><b>해석 목적:</b> VIP를 유치하기 위해 첫 구매 유도 시 어떤 상품을 미끼(Hook)로 쓸지 결정</li>
             </ul>
             <h4 style="margin-top:15px;">3. 지표 정의 (Metric)</h4>
             <ul>
-                 <li><b>VIP 비중 (Maturity Rate):</b> <code>VIP 수 / (VIP + Promising High + Promising Low)</code></li>
+                 <li><b>VIP 비중 (Maturity Rate):</b>VIP 수 / (VIP + Promising High + Promising Low)</li>
                  <li>최근 활동 유저 중 <b>VIP 단계까지 성숙한 비율</b>을 의미합니다.</li>
             </ul>
         </div>
