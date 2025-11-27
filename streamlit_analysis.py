@@ -1118,19 +1118,62 @@ elif pages[selected_page] == "problems":
     # 문제 1: Promising 미활동 (High/Low 분리)
     st.subheader("🚨 문제 #1: Promising 고객 대다수 미활동 (구매 횟수 = 모두 1회)")
     
-    # 핵심 특성 강조
+    # 1. 핵심 특성 강조 (수정됨: Recency 근거 추가)
     st.markdown("""
     <div class="insight-box navy">
-        <div class="insight-title">⚠️ 핵심 특성: Promising 세그먼트는 모두 구매 횟수 1회</div>
+        <div class="insight-title">⚠️ 핵심 특성: VIP와 유사한 '최신성'을 가진 잠재 충성 고객</div>
         <div class="insight-text">
-            • Promising High Value: 평균 구매 횟수 <b>1.0회</b> (F Score = 3)<br>
-            • Promising Low Value: 평균 구매 횟수 <b>1.0회</b> (F Score = 3)<br>
-            • <b>아직 재구매가 발생하지 않은 "잠재 충성 고객"</b> → 2차 구매 유도가 핵심 과제
+            • <b>Why Promising?</b> 최근 구매일(Recency)이 <b>180일 이내</b>로 VIP 등급과 유사한 분포<br>
+            • <b>Current Status:</b> 평균 구매 횟수는 <b>1.0회</b>로 아직 재구매 경험 없음<br>
+            • <b>Opportunity:</b> 최근 사이트 경험이 생생한 상태 → <b>지금이 리텐션 활성화(2차 구매)의 골든타임</b>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # 잠재 손실 & 잠재 기회
+    # 2. 현황 데이터 & 차트 (위치 이동: 위로 배치)
+    col1, col2 = st.columns([1, 1])
+    
+    with col1:
+        st.markdown("""
+        <div class="problem-box">
+            <div class="problem-title">📊 현황 데이터 (High/Low 분리) - 구매 횟수 1회</div>
+            <div style="color: #4b5563; line-height: 1.8;">
+                <b>🟣 Promising High Value (3,555명) - 구매 1회</b><br>
+                • 미활동(0 Session): <b>46.22%</b> (1,643명)<br>
+                • 1 Session: 13.31% (473명)<br>
+                • 2-3 Sessions: 35.67% (1,268명)<br>
+                • 평균 LTV: <b>$155.86</b> (1회 구매 금액)<br><br>
+                <b>🟠 Promising Low Value (4,891명) - 구매 1회</b><br>
+                • 미활동(0 Session): <b>87.41%</b> (4,275명)<br>
+                • 1 Session: 4.64% (227명)<br>
+                • 2-3 Sessions: 7.85% (384명)<br>
+                • 평균 LTV: <b>$34.28</b> (1회 구매 금액)
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        # 데이터프레임 정의도 함께 이동
+        promising_no_activity = pd.DataFrame([
+            {"segment": "Promising High", "status": "미활동", "count": 1643},
+            {"segment": "Promising High", "status": "활동", "count": 1912},
+            {"segment": "Promising Low", "status": "미활동", "count": 4275},
+            {"segment": "Promising Low", "status": "활동", "count": 616}
+        ])
+        
+        fig = px.bar(
+            promising_no_activity,
+            x='segment',
+            y='count',
+            color='status',
+            barmode='stack',
+            title='Promising 세그먼트 활동 현황',
+            color_discrete_map={'미활동': '#ef4444', '활동': '#10b981'}
+        )
+        fig.update_layout(height=350)
+        st.plotly_chart(fig, use_container_width=True)
+
+    # 3. 잠재 손실 & 잠재 기회 (위치 이동: 아래로 배치)
     col_loss, col_opp = st.columns(2)
     
     with col_loss:
@@ -1168,47 +1211,6 @@ elif pages[selected_page] == "problems":
             </div>
         </div>
         """, unsafe_allow_html=True)
-    
-    col1, col2 = st.columns([1, 1])
-    
-    with col1:
-        st.markdown("""
-        <div class="problem-box">
-            <div class="problem-title">📊 현황 데이터 (High/Low 분리) - 구매 횟수 1회</div>
-            <div style="color: #4b5563; line-height: 1.8;">
-                <b>🟣 Promising High Value (3,555명) - 구매 1회</b><br>
-                • 미활동(0 Session): <b>46.22%</b> (1,643명)<br>
-                • 1 Session: 13.31% (473명)<br>
-                • 2-3 Sessions: 35.67% (1,268명)<br>
-                • 평균 LTV: <b>$155.86</b> (1회 구매 금액)<br><br>
-                <b>🟠 Promising Low Value (4,891명) - 구매 1회</b><br>
-                • 미활동(0 Session): <b>87.41%</b> (4,275명)<br>
-                • 1 Session: 4.64% (227명)<br>
-                • 2-3 Sessions: 7.85% (384명)<br>
-                • 평균 LTV: <b>$34.28</b> (1회 구매 금액)
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-    
-    with col2:
-        promising_no_activity = pd.DataFrame([
-            {"segment": "Promising High", "status": "미활동", "count": 1643},
-            {"segment": "Promising High", "status": "활동", "count": 1912},
-            {"segment": "Promising Low", "status": "미활동", "count": 4275},
-            {"segment": "Promising Low", "status": "활동", "count": 616}
-        ])
-        
-        fig = px.bar(
-            promising_no_activity,
-            x='segment',
-            y='count',
-            color='status',
-            barmode='stack',
-            title='Promising 세그먼트 활동 현황',
-            color_discrete_map={'미활동': '#ef4444', '활동': '#10b981'}
-        )
-        fig.update_layout(height=350)
-        st.plotly_chart(fig, use_container_width=True)
     
     # Promising High Value 인사이트 & ROI
     st.markdown("#### 🟣 Promising High Value 분석 (구매 횟수 = 1회)")
@@ -1407,7 +1409,7 @@ elif pages[selected_page] == "problems":
                 • <b>합계: 16,475명 (55.30%)</b><br><br>
                 <b>매출 영향:</b><br>
                 • 이탈 위험 고객 매출: $1.4M (45.9%)<br>
-                • 완전 이탈 시 <b>연 매출 46% 손실</b>
+                • 완전 이탈 시 <b>총 매출의 46% 타격</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
