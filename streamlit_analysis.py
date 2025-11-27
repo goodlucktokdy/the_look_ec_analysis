@@ -676,7 +676,7 @@ elif pages[selected_page] == "rfm_criteria":
             "금액": ["$18.02", "$34.00", "$66.50", "$134.72", "$228.68", "$301.98"]
         })
         st.dataframe(monetary_df, hide_index=True, use_container_width=True)
-        st.markdown(f"**평균:** ${rfm_distribution['monetary']['avg']} | **표준편차:** ${rfm_distribution['monetary']['std']}")
+        st.markdown(f"평균: ${rfm_distribution['monetary']['avg']} | 표준편차: ${rfm_distribution['monetary']['std']}")
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
