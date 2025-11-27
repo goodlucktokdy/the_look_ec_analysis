@@ -1415,34 +1415,6 @@ elif pages[selected_page] == "promising":
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
-    # 첫 구매 카테고리별 VIP 전환율
-    st.subheader("🏷️ 첫 구매 카테고리별 VIP 전환율")
-    
-    fig = px.bar(
-        category_vip_conversion.head(10),
-        x='vip_conversion_pct',
-        y='category',
-        orientation='h',
-        color='avg_total_ltv',
-        color_continuous_scale='Greens',
-        title='첫 구매 카테고리별 VIP 전환율 TOP 10',
-        labels={'vip_conversion_pct': 'VIP 전환율 (%)', 'category': '카테고리'}
-    )
-    fig.update_layout(height=450, yaxis={'categoryorder': 'total ascending'})
-    st.plotly_chart(fig, use_container_width=True)
-    
-    st.markdown("""
-    <div class="insight-box success">
-        <div class="insight-title">✅ 고가 카테고리 = 높은 VIP 전환</div>
-        <div class="insight-text">
-            • <b>Outerwear & Coats:</b> 전환율 22.46%, 평균 LTV <b>$345.31</b> (최고)<br>
-            • <b>Suits:</b> 전환율 25.00%, 평균 LTV $248.88<br>
-            • <b>Blazers & Jackets:</b> 전환율 21.56%, 평균 LTV $261.14<br><br>
-            <b>→ Promising High에게 고가 카테고리 추천, Low에게는 번들로 고가 카테고리 접근 유도</b>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
-
 # ============================================
 # 페이지 6: VIP 심층분석
 # ============================================
