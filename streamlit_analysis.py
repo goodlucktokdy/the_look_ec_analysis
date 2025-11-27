@@ -1860,17 +1860,14 @@ elif pages[selected_page] == "action":
                 • 목표 전환율: <b>20%</b> (업계 이메일 오픈율 평균)<br>
                 • 예상 활성 유저: <b>328명</b><br>
                 <i style="color:#666; font-size:0.8rem">→ 데이터 근거: '1 Session' 유저의 LTV 상승분 반영</i><br><br>
-                
                 <b>2. 재구매 전환 (Repurchase)</b><br>
                 • 대상: 활성 유저 328명<br>
                 • 목표 전환율: <b>30%</b> (고관여 유저 평균 재구매율)<br>
                 • 예상 구매자: <b>98명</b><br><br>
-                
                 <b>3. 매출 임팩트 (Revenue)</b><br>
                 • 98명 × <b>$118</b> (SQL상 2차 구매 평균액)<br>
                 • = <b>$11,564 (즉시 매출)</b><br>
                 • LTV 상승분: 98명 × ($244 - $131) = <b>$11,074</b><br><br>
-                
                 <div style="background:#f0fdf4; padding:8px; border-radius:4px; font-weight:bold; color:#166534">
                     총 예상 가치: $22,638<br>
                     (ROI: 4.5x assuming $5k cost)
@@ -1913,18 +1910,15 @@ elif pages[selected_page] == "action":
                 • 대상: 4,275명<br>
                 • 목표 전환율: <b>10%</b> (저관여 유저 보수적 적용)<br>
                 • 예상 활성 유저: <b>427명</b><br><br>
-                
                 <b>2. 재구매 전환 (Repurchase)</b><br>
                 • 대상: 활성 유저 427명<br>
                 • 목표 전환율: <b>15%</b> (할인 민감층)<br>
                 • 예상 구매자: <b>64명</b><br><br>
-                
                 <b>3. 매출 임팩트 (Revenue)</b><br>
                 • 64명 × <b>$45</b> (SQL상 Low유저 2차 구매액)<br>
                 • = <b>$2,880 (즉시 매출)</b><br>
                 • 업셀링(번들) 효과: 20% 유저가 $80 구매 시<br>
                 • +$1,000 추가 매출<br><br>
-                
                 <div style="background:#fff7ed; padding:8px; border-radius:4px; font-weight:bold; color:#9a3412">
                     총 예상 가치: $3,880<br>
                     (마진율 방어가 핵심)
@@ -1961,16 +1955,13 @@ elif pages[selected_page] == "action":
             <div style="color: #4b5563; line-height: 1.6; font-size: 0.9rem;">
                 <b>1. 타겟 세그먼트</b><br>
                 • 대상: 재구매 주기 3개월 이상인 VIP (1,093명)<br><br>
-                
                 <b>2. 행동 변화 유도</b><br>
                 • 목표: 대상의 <b>20% (218명)</b>를 '3개월 내 구매' 패턴으로 전환<br><br>
-                
                 <b>3. 매출 임팩트 (Annual Impact)</b><br>
                 • 기존: 연 2회 구매 ($275/년)<br>
                 • 개선: 연 3회 구매 ($412/년, +$137)<br>
                 • 218명 × <b>$137 (추가 LTV)</b><br>
                 • = <b>$29,866 (연간 추가 매출)</b><br><br>
-                
                 <div style="background:#eff6ff; padding:8px; border-radius:4px; font-weight:bold; color:#1e40af">
                     총 예상 가치: $29,866/년<br>
                     (가장 안정적인 Cash Cow)
@@ -2009,13 +2000,11 @@ elif pages[selected_page] == "action":
                 • 목표 복귀율: <b>10% (73명)</b><br>
                 • 가치: 73명 × $206 (기존 LTV 회복)<br>
                 • = <b>$15,038</b><br><br>
-                
                 <b>2. At Risk Winback</b><br>
                 • 대상: 6,637명<br>
                 • 목표 복귀율: <b>5% (331명)</b><br>
                 • 가치: 331명 × $85 (평균 LTV)<br>
                 • = <b>$28,135</b><br><br>
-                
                 <div style="background:#fff1f2; padding:8px; border-radius:4px; font-weight:bold; color:#be123c">
                     총 예상 가치: $43,173<br>
                     (순수 마진율 높음)
