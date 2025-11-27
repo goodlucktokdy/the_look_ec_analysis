@@ -835,26 +835,38 @@ if pages[selected_page] == "executive":
         """, unsafe_allow_html=True)
     
     with col2:
+        # Opportunity #1
         st.markdown("""
         <div class="key-finding opportunity">
             <div style="font-weight: 700; color: #059669; margin-bottom: 0.5rem;">✅ Opportunity #1</div>
-            <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Facebook 채널 VIP 비율 17.8%</div>
-            <div style="color: #4b5563; line-height: 1.6;">
+            <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">가입시 유입채널이 Facebook인 VIP비율 17.8%</div>
+            <div style="color: #4b5563; line-height: 1.6; margin-bottom: 12px;">
                 • 전 채널 최고 효율 (Display 12.8% 대비 +5%p)<br>
                 • Organic 채널 VIP LTV 최고: <b>$295.01</b><br>
                 • 광고 예산 재배분으로 ROI 극대화 가능
             </div>
+            <div style="background-color: #ecfdf5; padding: 10px; border-radius: 6px; border-top: 1px dashed #6ee7b7; font-size: 0.85rem; color: #047857;">
+                ℹ️ <b>Why Active Segments?</b><br>
+                이탈한 고객을 제외하고, <b>최근 180일 내 구매 이력(Recency)</b>이 있는 
+                <b>Active 세그먼트</b>(VIP, Promising)만을 모수로 하여 실질적인 육성 성과를 측정했습니다.
+            </div>
         </div>
         """, unsafe_allow_html=True)
         
+        # Opportunity #2
         st.markdown("""
         <div class="key-finding opportunity">
             <div style="font-weight: 700; color: #059669; margin-bottom: 0.5rem;">✅ Opportunity #2</div>
-            <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">고가 카테고리 = 높은 VIP 비율</div>
-            <div style="color: #4b5563; line-height: 1.6;">
+            <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">첫구매가 고가 카테고리 = 높은 VIP 비율</div>
+            <div style="color: #4b5563; line-height: 1.6; margin-bottom: 12px;">
                 • Outerwear & Coats: VIP 비율 22.5%, LTV <b>$345</b><br>
                 • Suits: VIP 비율 25.0%, LTV $249<br>
                 • 첫 구매 카테고리 유도로 VIP 확보 가속화
+            </div>
+            <div style="background-color: #ecfdf5; padding: 10px; border-radius: 6px; border-top: 1px dashed #6ee7b7; font-size: 0.85rem; color: #047857;">
+                ℹ️ <b>Why Active Segments?</b><br>
+                허수(이탈 고객)를 제거하고, <b>최근 6개월(180일) 내 활동 중인 Active 유저</b> 내에서의 
+                전환 성과를 분석하여 데이터 신뢰도를 높였습니다.
             </div>
         </div>
         """, unsafe_allow_html=True)
