@@ -1776,35 +1776,43 @@ elif pages[selected_page] == "action":
     </div>
     """, unsafe_allow_html=True)
     
-    # 전체 ROI 요약 (Active 유저 추가에 따른 수치 상향 조정됨)
-    st.subheader("💰 전체 예상 ROI 요약")
+    # --------------------------------------------------------------------------
+    # [수정됨] 전체 ROI 요약: 매출 단순 합산이 아닌, 투자 대비 효율(%) 중심으로 변경
+    # --------------------------------------------------------------------------
+    st.subheader("💰 전체 예상 ROI (Projected ROI)")
+    
+    # 계산 로직 (BA 관점 정밀 산출)
+    total_revenue = 112772          # 하단 테이블의 총 예상 매출 합계
+    est_cost = total_revenue * 0.25 # Investment: 마케팅/할인 비용 (매출의 25% 가정)
+    net_profit = total_revenue - est_cost # Return: 순수익
+    roi_percentage = (net_profit / est_cost) * 100 # ROI = (Return / Investment) * 100
     
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        st.markdown("""
-        <div class="metric-card green">
-            <div class="metric-value">$412,675</div>
-            <div class="metric-label">Total Expected Revenue Lift</div>
-            <div class="metric-delta delta-positive">Active 유저 타겟팅 포함</div>
+        st.markdown(f"""
+        <div class="metric-card blue">
+            <div class="metric-value">${net_profit:,.0f}</div>
+            <div class="metric-label">Net Return (순수익)</div>
+            <div class="metric-delta">Gross Revenue: ${total_revenue:,.0f}</div>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
-        st.markdown("""
-        <div class="metric-card blue">
-            <div class="metric-value">$309,500</div>
-            <div class="metric-label">Net Profit Impact</div>
-            <div class="metric-delta">마케팅/할인 비용 25% 차감 후</div>
+        st.markdown(f"""
+        <div class="metric-card cancel">
+            <div class="metric-value">${est_cost:,.0f}</div>
+            <div class="metric-label">Est. Investment (투자비용)</div>
+            <div class="metric-delta delta-negative">매출의 25% 예산 배정</div>
         </div>
         """, unsafe_allow_html=True)
     
     with col3:
-        st.markdown("""
-        <div class="metric-card purple">
-            <div class="metric-value">Conversion Focus</div>
-            <div class="metric-label">Active 유저 전략 추가</div>
-            <div class="metric-delta">탐색 유저 구매 전환 시 +$13,275</div>
+        st.markdown(f"""
+        <div class="metric-card green">
+            <div class="metric-value">{roi_percentage:.0f}%</div>
+            <div class="metric-label">Projected ROI</div>
+            <div class="metric-delta delta-positive">Return / Investment</div>
         </div>
         """, unsafe_allow_html=True)
     
@@ -1930,9 +1938,7 @@ elif pages[selected_page] == "action":
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # ---------------------------------------------------------
-    # [NEW] Phase 1-C: Promising Active (Conversion Booster)
-    # ---------------------------------------------------------
+    # Phase 1-C: Promising Active (Conversion Booster)
     st.markdown("### 🔵 Phase 1-C: Promising Active 구매 전환 (Conversion Booster)")
     
     col1, col2 = st.columns([1.8, 1.2])
@@ -2066,7 +2072,7 @@ elif pages[selected_page] == "action":
 
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
 
-    # 최종 ROI Aggregation Table (Active 유저 전략 행 추가)
+    # 최종 ROI Aggregation Table (Active 유저 전략 행 추가 및 ROI 계산 반영)
     st.subheader("📈 Final Strategic ROI Projection")
     st.markdown("위의 각 Phase별 시나리오를 종합한 연간 예상 성과입니다.")
 
