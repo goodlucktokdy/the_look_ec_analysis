@@ -1118,47 +1118,45 @@ elif pages[selected_page] == "problems":
     # 문제 1: Promising 미활동 (High/Low 분리)
     st.subheader("🚨 문제 #1: Promising 고객 대다수 미활동 (구매 횟수 = 모두 1회)")
     
-    # 1. 핵심 특성 강조 (수정됨: Recency 근거 추가)
+    # 1. 핵심 특성 강조 (Recency + 구매 후 활동의 의미 추가)
     st.markdown("""
     <div class="insight-box navy">
-        <div class="insight-title">⚠️ 핵심 특성: VIP와 유사한 '최신성'을 가진 잠재 충성 고객</div>
+        <div class="insight-title">⚠️ 핵심 특성: VIP와 유사한 '최신성'을 가졌으나 '재구매'가 지연됨</div>
         <div class="insight-text">
-            • <b>Why Promising?</b> 최근 구매일(Recency)이 <b>180일 이내</b>로 VIP 등급과 유사한 분포<br>
-            • <b>Current Status:</b> 평균 구매 횟수는 <b>1.0회</b>로 아직 재구매 경험 없음<br>
-            • <b>Opportunity:</b> 최근 사이트 경험이 생생한 상태 → <b>지금이 리텐션 활성화(2차 구매)의 골든타임</b>
+            • <b>Why Promising?</b> 최근 구매일(Recency)이 <b>180일 이내</b>로 우리 브랜드를 기억하고 있는 상태<br>
+            • <b>Behavior Pattern:</b> 모든 고객이 <b>구매 1회</b>로 동일하지만, <b>'구매 후 사이트 활동(Session)'</b>에서 극명한 차이<br>
+            • <b>Key Insight:</b> <u>"구매 후 다시 찾아와 둘러보았으나(Session ↑), 아직 결제하지 않음"</u> → <b>가장 확실한 잠재 수요</b>
         </div>
     </div>
     """, unsafe_allow_html=True)
     
-    # 2. 현황 데이터 & 차트 (위치 이동: 위로 배치)
+    # 2. 현황 데이터 & 차트 (구매 후 활동 관점 강조)
     col1, col2 = st.columns([1, 1])
     
     with col1:
         st.markdown("""
         <div class="problem-box">
-            <div class="problem-title">📊 현황 데이터 (High/Low 분리) - 구매 횟수 1회</div>
+            <div class="problem-title">📊 현황 데이터: 첫 구매 후 추가 탐색 활동 여부</div>
             <div style="color: #4b5563; line-height: 1.8;">
-                <b>🟣 Promising High Value (3,555명) - 구매 1회</b><br>
-                • 미활동(0 Session): <b>46.22%</b> (1,643명)<br>
-                • 1 Session: 13.31% (473명)<br>
-                • 2-3 Sessions: 35.67% (1,268명)<br>
-                • 평균 LTV: <b>$155.86</b> (1회 구매 금액)<br><br>
-                <b>🟠 Promising Low Value (4,891명) - 구매 1회</b><br>
-                • 미활동(0 Session): <b>87.41%</b> (4,275명)<br>
-                • 1 Session: 4.64% (227명)<br>
-                • 2-3 Sessions: 7.85% (384명)<br>
-                • 평균 LTV: <b>$34.28</b> (1회 구매 금액)
+                <b>🟣 Promising High Value (3,555명)</b><br>
+                • <b>구매 후 미방문(0 Session): 46.22%</b> (1,643명) → <span style="color:#ef4444">위험</span><br>
+                • 재방문/탐색(1 Session): 13.31%<br>
+                • <b>적극적 탐색(2+ Sessions): 40.47%</b> (고관여 그룹)<br>
+                → <i>구매 후 다시 방문한 그룹의 LTV가 월등히 높음</i><br><br>
+                <b>🟠 Promising Low Value (4,891명)</b><br>
+                • <b>구매 후 미방문(0 Session): 87.41%</b> (4,275명) → <span style="color:#ef4444">심각</span><br>
+                • 재방문/탐색(1+ Session): 12.59%<br>
+                → <i>대다수가 구매 후 사이트를 잊고 있음 (이탈 전조)</i>
             </div>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
-        # 데이터프레임 정의도 함께 이동
         promising_no_activity = pd.DataFrame([
-            {"segment": "Promising High", "status": "미활동", "count": 1643},
-            {"segment": "Promising High", "status": "활동", "count": 1912},
-            {"segment": "Promising Low", "status": "미활동", "count": 4275},
-            {"segment": "Promising Low", "status": "활동", "count": 616}
+            {"segment": "Promising High", "status": "구매 후 미방문", "count": 1643},
+            {"segment": "Promising High", "status": "재방문/탐색 중", "count": 1912},
+            {"segment": "Promising Low", "status": "구매 후 미방문", "count": 4275},
+            {"segment": "Promising Low", "status": "재방문/탐색 중", "count": 616}
         ])
         
         fig = px.bar(
@@ -1167,29 +1165,29 @@ elif pages[selected_page] == "problems":
             y='count',
             color='status',
             barmode='stack',
-            title='Promising 세그먼트 활동 현황',
-            color_discrete_map={'미활동': '#ef4444', '활동': '#10b981'}
+            title='첫 구매 이후 사이트 재방문 현황',
+            color_discrete_map={'구매 후 미방문': '#ef4444', '재방문/탐색 중': '#10b981'}
         )
         fig.update_layout(height=350)
         st.plotly_chart(fig, use_container_width=True)
-
-    # 3. 잠재 손실 & 잠재 기회 (위치 이동: 아래로 배치)
+    
+    # 3. 잠재 손실 & 잠재 기회 (내용 유지하되 텍스트 뉘앙스 조정)
     col_loss, col_opp = st.columns(2)
     
     with col_loss:
         st.markdown("""
         <div class="insight-box danger">
-            <div class="insight-title">📉 잠재 손실: $248K (미활동 vs 활동 LTV 차이)</div>
+            <div class="insight-title">📉 잠재 손실: 재방문 유도 실패에 따른 기회비용</div>
             <div class="insight-text">
+                <b>"한 번 오고 다시 오지 않는 고객"의 낮은 가치</b><br><br>
                 <b>🟣 Promising High Value:</b><br>
-                • 미활동 LTV: $131.06 vs 활동(4-5 Sessions) LTV: $244.25<br>
-                • LTV 차이: $113.19<br>
-                • 잠재 손실: 1,643명 × $113.19 = <b>$185,971</b><br><br>
+                • 재방문 고객 LTV($244) vs 미방문 고객 LTV($131)<br>
+                • <b>격차: $113.19</b> (방문 유도만으로 기대되는 가치 상승분)<br>
+                • 총 잠재 손실: <b>$185,971</b><br><br>
                 <b>🟠 Promising Low Value:</b><br>
-                • 미활동 LTV: $32.59 vs 활동(2-3 Sessions) LTV: $47.18<br>
-                • LTV 차이: $14.59<br>
-                • 잠재 손실: 4,275명 × $14.59 = <b>$62,372</b><br><br>
-                <b>총 잠재 손실: $248,343</b>
+                • 재방문 고객 LTV($47) vs 미방문 고객 LTV($32)<br>
+                • <b>격차: $14.59</b><br>
+                • 총 잠재 손실: <b>$62,372</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1197,39 +1195,37 @@ elif pages[selected_page] == "problems":
     with col_opp:
         st.markdown("""
         <div class="insight-box success">
-            <div class="insight-title">📈 잠재 기회: $213K (세션 유도 시 예상 추가 매출)</div>
+            <div class="insight-title">📈 잠재 기회: '탐색'을 '구매'로 전환 시</div>
             <div class="insight-text">
+                <b>"이미 둘러보고 있는 고객"을 건드려줄 때의 파급력</b><br><br>
                 <b>🟣 Phase 1-A: Promising High</b><br>
-                • 세션 활동 전환 30% → 재구매 50%<br>
-                • 예상 추가 매출: <b>$131,000</b><br>
-                • ROI: 400%<br><br>
+                • 목표: 미방문 고객을 '탐색 고객'으로 전환 → 구매 유도<br>
+                • 예상 추가 매출: <b>$131,000</b><br><br>
                 <b>🟠 Phase 1-B: Promising Low</b><br>
-                • 세션 활동 전환 20% → 재구매 35%<br>
-                • 예상 추가 매출: <b>$82,000</b><br>
-                • ROI: 400%<br><br>
+                • 목표: 단순 방문 유도를 통해 브랜드 회상 유도<br>
+                • 예상 추가 매출: <b>$82,000</b><br><br>
                 <b>총 잠재 기회: $213,000</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
-    
-    # Promising High Value 인사이트 & ROI
-    st.markdown("#### 🟣 Promising High Value 분석 (구매 횟수 = 1회)")
+
+    # 4. 상세 분석 (High/Low) - 세션 활동과 구매 의도 연결 강화
+    st.markdown("#### 🟣 Promising High Value 분석 (고관여 잠재 고객)")
     
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
         <div class="insight-box purple">
-            <div class="insight-title">💡 핵심 인사이트: 구매 1회인데 세션 활동에 따라 LTV 차이 발생</div>
+            <div class="insight-title">💡 인사이트: "탐색하는 고객이 비싸게 산다"</div>
             <div class="insight-text">
-                <b>🔍 놀라운 발견:</b> 모든 Promising High 고객은 <b>구매 횟수가 1회</b>로 동일한데,<br>
-                첫 구매 후 <b>세션 활동</b>에 따라 <b>첫 구매 객단가(LTV)</b>가 크게 다름:<br><br>
-                • 미활동(0 Session) LTV: <b>$131.06</b><br>
-                • 1 Session LTV: <b>$153.98</b> (+17%)<br>
-                • 2-3 Sessions LTV: <b>$176.89</b> (+35%)<br>
-                • 4-5 Sessions LTV: <b>$244.25</b> (<b>+86%</b>)<br><br>
-                <b>→ 세션 활동이 많은 고객 = 더 비싼 상품을 첫 구매 시 선택</b><br>
-                <b>→ 세션 유도 = 2차 구매 시 더 높은 객단가 기대</b>
+                <b>🔍 행동 데이터 연결:</b><br>
+                모두 구매 횟수는 1회지만, <b>구매 전후로 세션 활동(4-5회)이 많았던 고객</b>은<br>
+                그렇지 않은 고객보다 <b>LTV가 86%나 더 높음 ($131 vs $244).</b><br><br>
+                <b>📝 해석:</b><br>
+                1. <b>신중한 탐색:</b> 여러 번 방문하며 상품을 꼼꼼히 본 고객이 고가 제품을 구매함.<br>
+                2. <b>재구매 시그널:</b> 구매 후에도 사이트에 접속했다는 것은 <b>추가 구매 아이템을 찾고 있다</b>는 강력한 신호.<br>
+                3. <b>결론:</b> 이들에게 필요한 것은 할인이 아니라, <b>"확신"을 주는 큐레이션</b>임.
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1237,44 +1233,36 @@ elif pages[selected_page] == "problems":
     with col2:
         st.markdown("""
         <div class="roi-box">
-            <div class="roi-title">💰 Promising High 수익 & ROI 산출</div>
+            <div class="roi-title">💰 전략 및 ROI: 큐레이션으로 '확신' 심어주기</div>
             <div style="color: #4b5563; line-height: 1.8; font-size: 0.9rem;">
-                <b>전략: 세션 활동 유도 → 재구매 시 높은 객단가</b><br><br>
-                <b>전환 시나리오:</b><br>
-                • 미활동 1,643명 중 30% 세션 활동 전환 = 493명<br>
-                • 세션 활동 고객의 50% 재구매 = 247명<br>
-                • 재구매 시 예상 객단가: $176<br><br>
-                <b>매출 산출:</b><br>
-                • 2차 구매: 247명 × $176 = <b>$43,472</b><br>
-                • VIP 전환(20%): 49명 × $275 = <b>$13,475</b><br>
-                • 3차 재구매(40%): 99명 × $120 = <b>$11,880</b><br>
-                • 객단가 상승 효과: <b>$62,173</b><br>
-                • <b>총 추가 매출: $131,000</b><br><br>
-                <b>ROI 계산:</b><br>
-                • 비용(20%): $26,200 / 순이익: $104,800<br>
-                • <b>ROI: 400%</b>
+                <b>전략: Active Browsing 유도 (단순 클릭 X, 상품 탐색 O)</b><br><br>
+                <b>실행 방안:</b><br>
+                • 첫 구매 상품과 '스타일링' 가능한 연관 상품 제안<br>
+                • "고객님이 보셨던 그 상품, 재고가 얼마 남지 않았어요" (리마인드)<br><br>
+                <b>기대 효과:</b><br>
+                • 미활동 고객의 30%를 '탐색 상태'로 전환<br>
+                • 탐색 고객의 50%가 2차 구매 (객단가 $176 예상)<br>
+                • <b>예상 매출: $131,000 (ROI 400%)</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
-    
-    # Promising Low Value 인사이트 & ROI
-    st.markdown("#### 🟠 Promising Low Value 분석 (구매 횟수 = 1회)")
+        
+    st.markdown("#### 🟠 Promising Low Value 분석 (이탈 위험 잠재 고객)")
     
     col1, col2 = st.columns(2)
     
     with col1:
         st.markdown("""
         <div class="insight-box warning">
-            <div class="insight-title">💡 핵심 인사이트: 구매 1회인데 세션 활동에 따라 LTV 차이 발생</div>
+            <div class="insight-title">💡 인사이트: "잊혀지기 전에 다시 부르는 것이 급선무"</div>
             <div class="insight-text">
-                <b>🔍 놀라운 발견:</b> 모든 Promising Low 고객도 <b>구매 횟수가 1회</b>로 동일한데,<br>
-                첫 구매 후 <b>세션 활동</b>에 따라 <b>첫 구매 객단가(LTV)</b>가 다름:<br><br>
-                • 미활동(0 Session) LTV: <b>$32.59</b><br>
-                • 1 Session LTV: <b>$44.13</b> (+35%)<br>
-                • 2-3 Sessions LTV: <b>$47.18</b> (<b>+45%</b>)<br><br>
-                <b>→ 세션 활동이 많은 고객 = 더 비싼 상품 선택 경향</b><br>
-                <b>→ 87.4% 미활동 = 세션 활동 유도가 최우선 과제</b><br>
-                <b>→ 세션 유도 후 업셀링 → LTV 상승 가능</b>
+                <b>🔍 행동 데이터 연결:</b><br>
+                이 그룹의 <b>87%는 첫 구매 후 사이트에 단 한 번도 오지 않음.</b><br>
+                하지만, 2-3회라도 다시 방문한 소수 고객은 <b>LTV가 45% 상승 ($32 vs $47).</b><br><br>
+                <b>📝 해석:</b><br>
+                1. <b>단순 이탈 위험:</b> 구매 후 만족도 문제보다는, 단순히 <b>브랜드를 잊어버렸을 확률</b>이 높음.<br>
+                2. <b>가벼운 관심:</b> 깊은 탐색보다는 가벼운 아이쇼핑(Window Shopping) 유도가 필요.<br>
+                3. <b>결론:</b> 이들에게 필요한 것은 거창한 제안이 아니라, <b>"가볍게 클릭해볼 만한" 미끼(Hook)</b>임.
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -1282,45 +1270,34 @@ elif pages[selected_page] == "problems":
     with col2:
         st.markdown("""
         <div class="roi-box">
-            <div class="roi-title">💰 Promising Low 수익 & ROI 산출</div>
+            <div class="roi-title">💰 전략 및 ROI: 가벼운 방문 유도 (Click-bait)</div>
             <div style="color: #4b5563; line-height: 1.8; font-size: 0.9rem;">
-                <b>전략: 세션 활동 유도 → 재구매 시 업셀링</b><br><br>
-                <b>전환 시나리오:</b><br>
-                • 미활동 4,275명 중 20% 세션 활동 전환 = 855명<br>
-                • 세션 활동 고객의 35% 재구매 = 299명<br>
-                • 재구매 시 예상 객단가: $47<br><br>
-                <b>매출 산출:</b><br>
-                • 2차 구매: 299명 × $47 = <b>$14,053</b><br>
-                • 업셀링 성공(30%): 90명 × $80 = <b>$7,200</b><br>
-                • VIP 전환(10%): 30명 × $180 = <b>$5,400</b><br>
-                • 3차 재구매(25%): 75명 × $50 = <b>$3,750</b><br>
-                • 객단가 상승 효과: <b>$51,597</b><br>
-                • <b>총 추가 매출: $82,000</b><br><br>
-                <b>ROI 계산:</b><br>
-                • 비용(20%): $16,400 / 순이익: $65,600<br>
-                • <b>ROI: 400%</b>
+                <b>전략: Re-Visit 유도 (일단 사이트에 오게 만들기)</b><br><br>
+                <b>실행 방안:</b><br>
+                • "적립금 소멸 예정" 알림 (가장 강력한 방문 트리거)<br>
+                • 베스트셀러 랭킹 뉴스레터 (가볍게 볼거리 제공)<br><br>
+                <b>기대 효과:</b><br>
+                • 미활동 고객의 20%만 다시 방문해도 855명 확보<br>
+                • 이 중 35%가 저가 상품이라도 재구매 시<br>
+                • <b>예상 매출: $82,000 (ROI 400%)</b>
             </div>
         </div>
         """, unsafe_allow_html=True)
-    
+
     # 해결방안 (High/Low 차별화) - 세션 활동 유도 중심
     st.markdown("""
     <div class="solution-box">
-        <div class="solution-title">✅ 해결 방안: 세션 활동 유도 → 재구매 시 높은 객단가 (High/Low 차별화)</div>
+        <div class="solution-title">✅ 통합 해결 솔루션: Post-Purchase Engagement (구매 후 관계 형성)</div>
         <div style="color: #4b5563; line-height: 1.8;">
-            <b>🎯 핵심 전략: "세션 활동 유도"가 최우선</b><br>
-            • 구매 횟수 1회인데 세션 활동이 많은 고객의 객단가가 더 높음<br>
-            • <b>세션 활동 유도 → 사이트 재방문 → 더 많은 상품 탐색 → 재구매 시 높은 객단가</b><br><br>
-            <b>🟣 Promising High Value 전략 (세션 활동 유도 → 고가 상품 재구매):</b><br>
-            • D+1: "구매하신 상품과 어울리는 프리미엄 아이템" 이메일 (사이트 방문 유도)<br>
-            • D+3: "나만의 스타일 큐레이션" 개인화 추천 (브라우징 유도)<br>
-            • D+7: 신상품 프리뷰 + VIP 전용 얼리 액세스 (세션 증가 유도)<br>
-            • D+14: "VIP까지 1회 남았습니다" + 고가 상품 20% 할인 (재구매 전환)<br><br>
-            <b>🟠 Promising Low Value 전략 (세션 활동 유도 → 업셀링):</b><br>
-            • D+1: "이 상품을 본 고객이 함께 구매한 아이템" (사이트 방문 유도)<br>
-            • D+3: 베스트셀러 큐레이션 + "무료배송까지 $XX" (브라우징 유도)<br>
-            • D+7: 번들/세트 상품 30% 할인 (업셀링 + 세션 유도)<br>
-            • D+14: 리뷰 하이라이트 + 한정 시간 15% 쿠폰 (재구매 전환)
+            <b>🎯 핵심 목표: "첫 구매는 끝이 아니라 시작" → 구매 후 30일 내 재방문 유도</b><br><br>
+            
+            <b>🟣 High Value (Relationship): "더 깊은 관계 맺기"</b><br>
+            • <b>Action:</b> 구매 상품 관리 팁, 스타일링 가이드 발송 (정보성 콘텐츠)<br>
+            • <b>Logic:</b> 단순 판매 촉진이 아닌, '브랜드 경험'을 확장하여 자연스러운 재방문 유도<br><br>
+
+            <b>🟠 Low Value (Remind): "존재감 상기 시키기"</b><br>
+            • <b>Action:</b> 타임세일, 무료배송 쿠폰, 신규 가입 혜택 리마인드<br>
+            • <b>Logic:</b> 잊혀진 브랜드 인지도를 다시 깨우는 강력한 '혜택' 위주의 넛지(Nudge)
         </div>
     </div>
     """, unsafe_allow_html=True)
