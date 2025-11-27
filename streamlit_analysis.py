@@ -636,7 +636,7 @@ if pages[selected_page] == "dataset_intro":
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
-    # 테이블 상세 설명
+# 테이블 상세 설명
     st.subheader("📑 테이블 상세 설명")
     
     tab1, tab2, tab3, tab4 = st.tabs(["👥 고객/주문", "📦 상품/재고", "📊 이벤트", "🏭 물류센터"])
@@ -647,7 +647,7 @@ if pages[selected_page] == "dataset_intro":
         with col1:
             st.markdown("##### USERS (고객)")
             users_df = pd.DataFrame({
-                "컬럼": ["id", "first_name", "email", "age", "gender", "state", "country", "traffic_source", "created_at"],
+                "주요 컬럼": ["id", "first_name", "email", "age", "gender", "state", "country", "traffic_source", "created_at"],
                 "설명": ["고객 고유 ID (PK)", "이름", "이메일", "나이", "성별", "주/지역", "국가", "유입 채널", "가입일시"]
             })
             st.dataframe(users_df, hide_index=True, use_container_width=True)
@@ -655,14 +655,14 @@ if pages[selected_page] == "dataset_intro":
         with col2:
             st.markdown("##### ORDERS (주문)")
             orders_df = pd.DataFrame({
-                "컬럼": ["order_id", "user_id", "status", "created_at", "returned_at", "num_of_item"],
+                "주요 컬럼": ["order_id", "user_id", "status", "created_at", "returned_at", "num_of_item"],
                 "설명": ["주문 ID (PK)", "고객 ID (FK)", "주문 상태", "주문일시", "반품일시", "상품 수량"]
             })
             st.dataframe(orders_df, hide_index=True, use_container_width=True)
         
         st.markdown("##### ORDER_ITEMS (주문 상세)")
         order_items_df = pd.DataFrame({
-            "컬럼": ["id", "order_id", "user_id", "product_id", "sale_price", "status", "created_at"],
+            "주요 컬럼": ["id", "order_id", "user_id", "product_id", "sale_price", "status", "created_at"],
             "설명": ["주문상세 ID (PK)", "주문 ID (FK)", "고객 ID (FK)", "상품 ID (FK)", "판매가격", "상태", "생성일시"]
         })
         st.dataframe(order_items_df, hide_index=True, use_container_width=True)
@@ -673,7 +673,7 @@ if pages[selected_page] == "dataset_intro":
         with col1:
             st.markdown("##### PRODUCTS (상품)")
             products_df = pd.DataFrame({
-                "컬럼": ["id", "cost", "category", "name", "brand", "retail_price", "department"],
+                "주요 컬럼": ["id", "cost", "category", "name", "brand", "retail_price", "department"],
                 "설명": ["상품 ID (PK)", "원가", "카테고리", "상품명", "브랜드", "소매가격", "부서(남/여)"]
             })
             st.dataframe(products_df, hide_index=True, use_container_width=True)
@@ -681,7 +681,7 @@ if pages[selected_page] == "dataset_intro":
         with col2:
             st.markdown("##### INVENTORY_ITEMS (재고)")
             inventory_df = pd.DataFrame({
-                "컬럼": ["id", "product_id", "created_at", "cost", "product_category"],
+                "주요 컬럼": ["id", "product_id", "created_at", "cost", "product_category"],
                 "설명": ["재고 ID (PK)", "상품 ID (FK)", "입고일시", "원가", "상품 카테고리"]
             })
             st.dataframe(inventory_df, hide_index=True, use_container_width=True)
@@ -689,7 +689,7 @@ if pages[selected_page] == "dataset_intro":
     with tab3:
         st.markdown("##### EVENTS (이벤트/행동 로그)")
         events_df = pd.DataFrame({
-            "컬럼": ["id", "user_id", "session_id", "created_at", "event_type", "traffic_source", "uri"],
+            "주요 컬럼": ["id", "user_id", "session_id", "created_at", "event_type", "traffic_source", "uri"],
             "설명": ["이벤트 ID (PK)", "고객 ID (FK)", "세션 ID", "이벤트 발생일시", "이벤트 유형", "트래픽 소스", "페이지 URI"]
         })
         st.dataframe(events_df, hide_index=True, use_container_width=True)
@@ -706,7 +706,7 @@ if pages[selected_page] == "dataset_intro":
     with tab4:
         st.markdown("##### DISTRIBUTION_CENTERS (물류센터)")
         dc_df = pd.DataFrame({
-            "컬럼": ["id", "name", "latitude", "longitude"],
+            "주요 컬럼": ["id", "name", "latitude", "longitude"],
             "설명": ["물류센터 ID (PK)", "물류센터명", "위도", "경도"]
         })
         st.dataframe(dc_df, hide_index=True, use_container_width=True)
@@ -723,7 +723,8 @@ if pages[selected_page] == "dataset_intro":
             <b>1. USERS</b> - 고객 기본 정보 (유입 채널, 가입일 등)<br>
             <b>2. ORDER_ITEMS</b> - 구매 금액 (sale_price), 주문일시, 상품 정보<br>
             <b>3. EVENTS</b> - 구매 후 세션 활동 분석 (Promising 고객 분석)<br>
-            <b>4. PRODUCTS</b> - 카테고리별 VIP 비율 분석
+            <b>4. PRODUCTS</b> - 카테고리별 VIP 비율 분석<br>
+            <b>5. ORDERS</b> - 주문이 Cancelled, Complete, Returned 인지 구분
         </div>
     </div>
     """, unsafe_allow_html=True)
