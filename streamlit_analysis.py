@@ -847,8 +847,8 @@ if pages[selected_page] == "executive":
             </div>
             <div style="background-color: #ecfdf5; padding: 10px; border-radius: 6px; border-top: 1px dashed #6ee7b7; font-size: 0.85rem; color: #047857;">
                 ℹ️ <b>Why Active Segments?</b><br>
-                이탈한 고객을 제외하고, <b>최근 180일 내 구매 이력(Recency)</b>이 있는 
-                <b>Active 세그먼트</b>(VIP, Promising)만을 모수로 하여 실질적인 육성 성과를 측정했습니다.
+                <b>최근 180일 내 구매 이력(Recency)</b>이 있는 
+                <b>Active 세그먼트</b>(VIP, Promising)만을 모수로 하여 실질적인 성과를 측정했습니다.
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -865,8 +865,8 @@ if pages[selected_page] == "executive":
             </div>
             <div style="background-color: #ecfdf5; padding: 10px; border-radius: 6px; border-top: 1px dashed #6ee7b7; font-size: 0.85rem; color: #047857;">
                 ℹ️ <b>Why Active Segments?</b><br>
-                허수(이탈 고객)를 제거하고, <b>최근 6개월(180일) 내 활동 중인 Active 유저</b> 내에서의 
-                전환 성과를 분석하여 데이터 신뢰도를 높였습니다.
+                <b>최근 180일 내 구매 이력(Recency)</b>이 있는 
+                <b>Active 세그먼트</b>(VIP, Promising)만을 모수로 하여 실질적인 성과를 측정했습니다.
             </div>
         </div>
         """, unsafe_allow_html=True)
