@@ -2054,7 +2054,28 @@ elif pages[selected_page] == "action":
         </div>
     </div>
     """, unsafe_allow_html=True)
-    
+    # -------------------------------------------------------------------------
+    # [추가됨] ROI 산출 근거 (벤치마크 및 가정) - Expander 적용
+    # -------------------------------------------------------------------------
+    with st.expander("📌 ROI 비용 설정(20%) 근거 및 업계 벤치마크 확인하기"):
+        st.markdown("""
+        <div style="background-color: #f8f9fa; padding: 15px; border-radius: 5px; font-size: 0.9rem; color: #333;">
+            <h4 style="margin-top: 0; font-size: 1rem; color: #333;">1. 비용 구조 상세 (Cost Breakdown)</h4>
+            <p style="margin-bottom: 10px;">
+                본 시뮬레이션의 캠페인 비용(매출의 20%)은 단순 발송비가 아닌 <b>실질적 프로모션 비용</b>을 포함한 총 비용입니다.
+            </p>
+            <ul style="margin-bottom: 15px;">
+                <li><b>판촉비 (Incentive Cost, ~15%):</b> 재구매 유도를 위한 할인 쿠폰(10~20%) 및 무료배송 지원금 (회계상 매출 차감/판촉비 성격)</li>
+                <li><b>운영비 (Direct Cost, ~5%):</b> CRM 솔루션(알림톡/이메일) 발송비, 콘텐츠 제작 및 운영 인건비</li>
+            </ul>
+            <h4 style="margin-top: 0; font-size: 1rem; color: #333;">2. 업계 벤치마크 (Industry Standard)</h4>
+            <ul>
+                <li><b>Target ROAS 500%:</b> 패션 이커머스 리텐션 캠페인의 건전한 목표 효율은 통상 <b>ROAS 400~500%</b>입니다.</li>
+                <li><b>계산식 역산:</b> <code>매출 100 / 비용 20 = ROAS 500%</code> 공식을 역산하여 보수적인 예산 비율(20%)을 설정했습니다.</li>
+                <li><b>Reference:</b> <i>Common Thread Collective (Ecommerce Growth), Shopify Retention Benchmarks</i></li>
+            </ul>
+        </div>
+        """, unsafe_allow_html=True)
     # Phase 1-A: Promising High Value
     st.markdown("### 🔴 Phase 1-A: Promising High Value 리텐션 (구매 1회 → 세션 유도 → 재구매)")
     
@@ -2106,23 +2127,24 @@ elif pages[selected_page] == "action":
         """, unsafe_allow_html=True)
     
     # Phase 1-A 수치 근거
-    st.markdown("""
-    <div class="insight-box navy" style="margin-top: 1rem;">
-        <div class="insight-title">📊 Phase 1-A 수치 근거 (데이터 출처)</div>
-        <div class="insight-text" style="font-size: 0.85rem;">
-            <b>🔢 전환율 가정:</b><br>
-            • <b>세션 활동 전환 30%:</b> 현재 Promising High 활동률 53.8% (1,912/3,555) 대비 보수적 가정. 이메일 오픈율 업계 평균 20-25%, 클릭율 2-5% 감안 시 5회 터치포인트로 30% 달성 가능<br>
-            • <b>재구매 전환 50%:</b> 현재 데이터에서 세션 활동 고객의 재구매 의향이 높음. VIP 전환율 17.8% (Facebook 채널) 대비 세션 활동+쿠폰 제공 시 50% 보수적 가정<br><br>
-            <b>💵 객단가 근거 (데이터 분석 결과):</b><br>
-            • <b>$176:</b> Promising High 2-3 Sessions 고객의 평균 LTV $176.89에서 도출<br>
-            • <b>$275 (VIP 객단가):</b> VIP 평균 LTV $277.56에서 도출<br>
-            • <b>$120 (3차 구매):</b> 평균 재구매 객단가 (VIP $275의 약 44%, 객단가 하락 반영)<br><br>
-            <b>📈 VIP 전환율 20% 근거:</b><br>
-            • Outerwear & Coats 카테고리 VIP 전환율 22.5%, Suits 25.0% 데이터 기반<br>
-            • 고가 상품 구매 유도 시 20% 전환 현실적 목표
+    with st.expander("📌 Phase 1-A 수치 근거"):
+        st.markdown("""
+        <div class="insight-box navy" style="margin-top: 1rem;">
+            <div class="insight-title">📊 Phase 1-A 수치 근거 (데이터 출처)</div>
+            <div class="insight-text" style="font-size: 0.85rem;">
+                <b>🔢 전환율 가정:</b><br>
+                • <b>세션 활동 전환 30%:</b> 현재 Promising High 활동률 53.8% (1,912/3,555) 대비 보수적 가정. 이메일 오픈율 업계 평균 20-25%, 클릭율 2-5% 감안 시 5회 터치포인트로 30% 달성 가능<br>
+                • <b>재구매 전환 50%:</b> 현재 데이터에서 세션 활동 고객의 재구매 의향이 높음. VIP 전환율 17.8% (Facebook 채널) 대비 세션 활동+쿠폰 제공 시 50% 보수적 가정<br><br>
+                <b>💵 객단가 근거 (데이터 분석 결과):</b><br>
+                • <b>$176:</b> Promising High 2-3 Sessions 고객의 평균 LTV $176.89에서 도출<br>
+                • <b>$275 (VIP 객단가):</b> VIP 평균 LTV $277.56에서 도출<br>
+                • <b>$120 (3차 구매):</b> 평균 재구매 객단가 (VIP $275의 약 44%, 객단가 하락 반영)<br><br>
+                <b>📈 VIP 전환율 20% 근거:</b><br>
+                • Outerwear & Coats 카테고리 VIP 전환율 22.5%, Suits 25.0% 데이터 기반<br>
+                • 고가 상품 구매 유도 시 20% 전환 현실적 목표
+            </div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
     
@@ -2178,24 +2200,25 @@ elif pages[selected_page] == "action":
         """, unsafe_allow_html=True)
     
     # Phase 1-B 수치 근거
-    st.markdown("""
-    <div class="insight-box navy" style="margin-top: 1rem;">
-        <div class="insight-title">📊 Phase 1-B 수치 근거 (데이터 출처)</div>
-        <div class="insight-text" style="font-size: 0.85rem;">
-            <b>🔢 전환율 가정:</b><br>
-            • <b>세션 활동 전환 20%:</b> Promising Low 현재 활동률 12.6% (616/4,891)로 매우 낮음. High 대비 보수적으로 20% 설정 (현 활동률 대비 +7.4%p)<br>
-            • <b>재구매 전환 35%:</b> Low 세그먼트는 객단가가 낮아 재구매 허들도 낮음. 단, 업셀링 없이는 수익성 제한. High 50% 대비 보수적 설정<br><br>
-            <b>💵 객단가 근거 (데이터 분석 결과):</b><br>
-            • <b>$47:</b> Promising Low 2-3 Sessions 고객의 평균 LTV $47.18에서 도출<br>
-            • <b>$80 (업셀링):</b> Low→High 업셀링 시 예상 객단가. Promising High 미활동 LTV $131의 약 61%<br>
-            • <b>$180 (VIP 객단가):</b> VIP LTV $277 대비 Low 출신 VIP는 약 65% 수준으로 보수적 가정<br>
-            • <b>$50 (3차 구매):</b> Low 세그먼트 평균 객단가 수준 유지 가정<br><br>
-            <b>📈 업셀링/VIP 전환율 근거:</b><br>
-            • <b>업셀링 30%:</b> 번들/세트 할인 30% 제공 시 업셀링 성공률. 업계 평균 번들 구매율 25-35%<br>
-            • <b>VIP 전환 10%:</b> Low 세그먼트의 낮은 객단가 특성상 High 20% 대비 절반 수준으로 보수적 가정
+    with st.expander("📌 Phase 1-B 수치 근거"):
+        st.markdown("""
+        <div class="insight-box navy" style="margin-top: 1rem;">
+            <div class="insight-title">📊 Phase 1-B 수치 근거 (데이터 출처)</div>
+            <div class="insight-text" style="font-size: 0.85rem;">
+                <b>🔢 전환율 가정:</b><br>
+                • <b>세션 활동 전환 20%:</b> Promising Low 현재 활동률 12.6% (616/4,891)로 매우 낮음. High 대비 보수적으로 20% 설정 (현 활동률 대비 +7.4%p)<br>
+                • <b>재구매 전환 35%:</b> Low 세그먼트는 객단가가 낮아 재구매 허들도 낮음. 단, 업셀링 없이는 수익성 제한. High 50% 대비 보수적 설정<br><br>
+                <b>💵 객단가 근거 (데이터 분석 결과):</b><br>
+                • <b>$47:</b> Promising Low 2-3 Sessions 고객의 평균 LTV $47.18에서 도출<br>
+                • <b>$80 (업셀링):</b> Low→High 업셀링 시 예상 객단가. Promising High 미활동 LTV $131의 약 61%<br>
+                • <b>$180 (VIP 객단가):</b> VIP LTV $277 대비 Low 출신 VIP는 약 65% 수준으로 보수적 가정<br>
+                • <b>$50 (3차 구매):</b> Low 세그먼트 평균 객단가 수준 유지 가정<br><br>
+                <b>📈 업셀링/VIP 전환율 근거:</b><br>
+                • <b>업셀링 30%:</b> 번들/세트 할인 30% 제공 시 업셀링 성공률. 업계 평균 번들 구매율 25-35%<br>
+                • <b>VIP 전환 10%:</b> Low 세그먼트의 낮은 객단가 특성상 High 20% 대비 절반 수준으로 보수적 가정
+            </div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
     
@@ -2242,23 +2265,24 @@ elif pages[selected_page] == "action":
         """, unsafe_allow_html=True)
     
     # Phase 2 수치 근거
-    st.markdown("""
-    <div class="insight-box navy" style="margin-top: 1rem;">
-        <div class="insight-title">📊 Phase 2 수치 근거 (데이터 출처)</div>
-        <div class="insight-text" style="font-size: 0.85rem;">
-            <b>🔢 재구매 주기 데이터 (VIP 분석 결과):</b><br>
-            • <b>현재 3개월 이내 재구매: 28.6% (438명)</b> - VIP 재구매 타이밍 분석에서 도출<br>
-            • <b>목표 50% (765명):</b> 업계 우수 VIP 재구매율 45-55% 벤치마크. 추가 327명 = 현재 대비 +74.7%<br><br>
-            <b>💵 객단가 근거 (데이터 분석 결과):</b><br>
-            • <b>$28 LTV 증가분:</b> 1주일 내 재구매 VIP LTV $303.42 vs 3개월+ 재구매 VIP LTV $275.30. 차이 $28.12<br>
-            • <b>$140 재구매 객단가:</b> VIP 평균 LTV $277.56의 약 50% (재구매 시 객단가 하락 반영)<br>
-            • <b>$160 이탈 방지 효과:</b> VIP 이탈 시 손실 LTV. 평균 LTV $277의 약 58% (잔존 가치)<br><br>
-            <b>📈 이탈 방지율 10% 근거:</b><br>
-            • VIP 1,531명 중 At Risk 전환 위험군 추정 15% (약 230명)<br>
-            • 리텐션 캠페인으로 이 중 66% (153명) 이탈 방지 가정. 업계 VIP 이탈 방지 성공률 60-70%
+    with st.expander("📌 Phase 2 수치 근거"):
+        st.markdown("""
+        <div class="insight-box navy" style="margin-top: 1rem;">
+            <div class="insight-title">📊 Phase 2 수치 근거 (데이터 출처)</div>
+            <div class="insight-text" style="font-size: 0.85rem;">
+                <b>🔢 재구매 주기 데이터 (VIP 분석 결과):</b><br>
+                • <b>현재 3개월 이내 재구매: 28.6% (438명)</b> - VIP 재구매 타이밍 분석에서 도출<br>
+                • <b>목표 50% (765명):</b> 업계 우수 VIP 재구매율 45-55% 벤치마크. 추가 327명 = 현재 대비 +74.7%<br><br>
+                <b>💵 객단가 근거 (데이터 분석 결과):</b><br>
+                • <b>$28 LTV 증가분:</b> 1주일 내 재구매 VIP LTV $303.42 vs 3개월+ 재구매 VIP LTV $275.30. 차이 $28.12<br>
+                • <b>$140 재구매 객단가:</b> VIP 평균 LTV $277.56의 약 50% (재구매 시 객단가 하락 반영)<br>
+                • <b>$160 이탈 방지 효과:</b> VIP 이탈 시 손실 LTV. 평균 LTV $277의 약 58% (잔존 가치)<br><br>
+                <b>📈 이탈 방지율 10% 근거:</b><br>
+                • VIP 1,531명 중 At Risk 전환 위험군 추정 15% (약 230명)<br>
+                • 리텐션 캠페인으로 이 중 66% (153명) 이탈 방지 가정. 업계 VIP 이탈 방지 성공률 60-70%
+            </div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
     
@@ -2309,24 +2333,25 @@ elif pages[selected_page] == "action":
         """, unsafe_allow_html=True)
     
     # Phase 3 수치 근거
-    st.markdown("""
-    <div class="insight-box navy" style="margin-top: 1rem;">
-        <div class="insight-title">📊 Phase 3 수치 근거 (데이터 출처)</div>
-        <div class="insight-text" style="font-size: 0.85rem;">
-            <b>🔢 복귀율 가정 (보수적 - 업계 벤치마크):</b><br>
-            • <b>Need Attention 10%:</b> 최근 이탈 고객으로 복귀 가능성 높음. 업계 윈백 캠페인 성공률 8-15%<br>
-            • <b>At Risk 5%:</b> 중기 이탈 고객. 업계 평균 3-7%. 할인 쿠폰+감성 접근으로 5% 가정<br>
-            • <b>Hibernating 2%:</b> 장기 이탈 고객으로 복귀 확률 매우 낮음. 업계 1-3%. 파격 할인으로 2%<br><br> 
-            <b>💵 객단가 근거 (세그먼트별 LTV 분석):</b><br>
-            • <b>$180 (Need Attention):</b> 과거 VIP/Loyal 출신. 복귀 시 높은 객단가 유지. VIP LTV $277의 65%<br>
-            • <b>$85 (At Risk):</b> At Risk 평균 LTV $80.26에서 도출. 복귀 시 소폭 상승 가정<br>
-            • <b>$70 (Hibernating):</b> Hibernating 평균 LTV $73.11에서 도출<br>
-            • <b>$65 (2차 구매):</b> 복귀 고객의 2차 구매 시 객단가 하락 반영 (평균의 약 75%)<br><br>           
-            <b>📈 세그먼트 인원 (데이터 분석 결과):</b><br>
-            • Need Attention: 730명 × 10% = 73명 / At Risk: 6,637명 × 5% = 332명 / Hibernating: 9,707명 × 2% = 194명
+    with st.expander("📌 Phase 3 수치 근거"):
+        st.markdown("""
+        <div class="insight-box navy" style="margin-top: 1rem;">
+            <div class="insight-title">📊 Phase 3 수치 근거 (데이터 출처)</div>
+            <div class="insight-text" style="font-size: 0.85rem;">
+                <b>🔢 복귀율 가정 (보수적 - 업계 벤치마크):</b><br>
+                • <b>Need Attention 10%:</b> 최근 이탈 고객으로 복귀 가능성 높음. 업계 윈백 캠페인 성공률 8-15%<br>
+                • <b>At Risk 5%:</b> 중기 이탈 고객. 업계 평균 3-7%. 할인 쿠폰+감성 접근으로 5% 가정<br>
+                • <b>Hibernating 2%:</b> 장기 이탈 고객으로 복귀 확률 매우 낮음. 업계 1-3%. 파격 할인으로 2%<br><br> 
+                <b>💵 객단가 근거 (세그먼트별 LTV 분석):</b><br>
+                • <b>$180 (Need Attention):</b> 과거 VIP/Loyal 출신. 복귀 시 높은 객단가 유지. VIP LTV $277의 65%<br>
+                • <b>$85 (At Risk):</b> At Risk 평균 LTV $80.26에서 도출. 복귀 시 소폭 상승 가정<br>
+                • <b>$70 (Hibernating):</b> Hibernating 평균 LTV $73.11에서 도출<br>
+                • <b>$65 (2차 구매):</b> 복귀 고객의 2차 구매 시 객단가 하락 반영 (평균의 약 75%)<br><br>           
+                <b>📈 세그먼트 인원 (데이터 분석 결과):</b><br>
+                • Need Attention: 730명 × 10% = 73명 / At Risk: 6,637명 × 5% = 332명 / Hibernating: 9,707명 × 2% = 194명
+            </div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
     
     st.markdown("<br>", unsafe_allow_html=True)
     
@@ -2370,26 +2395,27 @@ elif pages[selected_page] == "action":
         """, unsafe_allow_html=True)
     
     # Phase 4 수치 근거
-    st.markdown("""
-    <div class="insight-box navy" style="margin-top: 1rem;">
-        <div class="insight-title">📊 Phase 4 수치 근거 (데이터 출처)</div>
-        <div class="insight-text" style="font-size: 0.85rem;">
-            <b>🔢 채널 효율 데이터 (채널별 VIP 전환율 분석):</b><br>
-            • <b>Facebook VIP 전환율 17.8%:</b> 채널별 분석 결과 최고 효율. Display 12.8% 대비 +5%p<br>
-            • <b>Organic VIP LTV $295.01:</b> 채널별 VIP LTV 분석 결과 최고. Facebook VIP LTV $276 대비 +7%<br>
-            • <b>효율 10% 개선:</b> Facebook 예산 증액 + Display 감축으로 평균 전환 효율 개선 보수적 가정<br><br>
-            <b>💵 추가 VIP 156명 산출 근거:</b><br>
-            • 월 예산 $50,000 × 12개월 = 연간 $600,000 마케팅 비용<br>
-            • 현재 VIP 전환율 가중평균 약 14% → 15.4%로 +10% 개선 시<br>
-            • 현재 연간 VIP 획득 약 1,560명 → +10% = 추가 156명<br>
-            • <b>$275:</b> VIP 평균 LTV $277.56에서 도출<br><br>           
-            <b>📈 CAC 절감 $15,000 근거:</b><br>
-            • Display 예산 15% 감축 = 연간 약 $9,000 절감<br>
-            • 저효율 채널 비용 절감 + Organic 강화로 추가 $6,000 절감 효과<br>
-            • 총 $15,000 = 순수 비용 절감 (추가 수익 아닌 비용 감소)
+    with st.expander("📌 Phase 4 수치 근거"):
+        st.markdown("""
+        <div class="insight-box navy" style="margin-top: 1rem;">
+            <div class="insight-title">📊 Phase 4 수치 근거 (데이터 출처)</div>
+            <div class="insight-text" style="font-size: 0.85rem;">
+                <b>🔢 채널 효율 데이터 (채널별 VIP 전환율 분석):</b><br>
+                • <b>Facebook VIP 전환율 17.8%:</b> 채널별 분석 결과 최고 효율. Display 12.8% 대비 +5%p<br>
+                • <b>Organic VIP LTV $295.01:</b> 채널별 VIP LTV 분석 결과 최고. Facebook VIP LTV $276 대비 +7%<br>
+                • <b>효율 10% 개선:</b> Facebook 예산 증액 + Display 감축으로 평균 전환 효율 개선 보수적 가정<br><br>
+                <b>💵 추가 VIP 156명 산출 근거:</b><br>
+                • 월 예산 $50,000 × 12개월 = 연간 $600,000 마케팅 비용<br>
+                • 현재 VIP 전환율 가중평균 약 14% → 15.4%로 +10% 개선 시<br>
+                • 현재 연간 VIP 획득 약 1,560명 → +10% = 추가 156명<br>
+                • <b>$275:</b> VIP 평균 LTV $277.56에서 도출<br><br>           
+                <b>📈 CAC 절감 $15,000 근거:</b><br>
+                • Display 예산 15% 감축 = 연간 약 $9,000 절감<br>
+                • 저효율 채널 비용 절감 + Organic 강화로 추가 $6,000 절감 효과<br>
+                • 총 $15,000 = 순수 비용 절감 (추가 수익 아닌 비용 감소)
+            </div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
     
     st.markdown("<div class='section-divider'></div>", unsafe_allow_html=True)
     
