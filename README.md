@@ -6,7 +6,9 @@
 ![Plotly](https://img.shields.io/badge/Plotly-5.18-3F4F75?logo=plotly&logoColor=white)
 ![Pandas](https://img.shields.io/badge/Pandas-Data_Analysis-150458?logo=pandas&logoColor=white)
 
-## Database Schema
+## 📂 Database Schema (ERD)
+
+```mermaid
 erDiagram
     USERS ||--o{ ORDERS : "places"
     USERS ||--o{ EVENTS : "generates"
@@ -23,17 +25,11 @@ erDiagram
     USERS {
         int id PK
         string first_name
-        string last_name
         string email
         int age
         string gender
         string state
-        string street_address
-        string postal_code
-        string city
         string country
-        float latitude
-        float longitude
         string traffic_source
         timestamp created_at
     }
@@ -42,11 +38,8 @@ erDiagram
         int order_id PK
         int user_id FK
         string status
-        string gender
         timestamp created_at
         timestamp returned_at
-        timestamp shipped_at
-        timestamp delivered_at
         int num_of_item
     }
 
@@ -55,13 +48,9 @@ erDiagram
         int order_id FK
         int user_id FK
         int product_id FK
-        int inventory_item_id FK
+        float sale_price
         string status
         timestamp created_at
-        timestamp shipped_at
-        timestamp delivered_at
-        timestamp returned_at
-        float sale_price
     }
 
     PRODUCTS {
@@ -72,39 +61,24 @@ erDiagram
         string brand
         float retail_price
         string department
-        string sku
-        string distribution_center_id
     }
 
     EVENTS {
         int id PK
         int user_id FK
-        string sequence_number
         string session_id
         timestamp created_at
-        string ip_address
-        string city
-        string state
-        string postal_code
-        string browser
+        string event_type
         string traffic_source
         string uri
-        string event_type
     }
     
     INVENTORY_ITEMS {
         int id PK
         int product_id FK
         timestamp created_at
-        timestamp sold_at
         float cost
         string product_category
-        string product_name
-        string product_brand
-        float product_retail_price
-        string product_department
-        string product_sku
-        string product_distribution_center_id
     }
 
     DISTRIBUTION_CENTERS {
@@ -113,6 +87,8 @@ erDiagram
         float latitude
         float longitude
     }
+```
+
 ## 📝 Project Overview
 이 프로젝트는 **Looker E-commerce 데이터셋**을 기반으로 고객의 구매 행동을 분석하여 **RFM 세그먼테이션**을 수행하고, 각 세그먼트별 맞춤형 **리텐션(Retention) 전략 및 예상 ROI**를 제안하는 비즈니스 인텔리전스 대시보드입니다.
 
