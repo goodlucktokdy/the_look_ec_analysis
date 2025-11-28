@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: look
+    database: ga04-479002
+    schema: look
+    tables:
+      - name: orders
+      - name: order_items
+      - name: users
+      - name: events
+      - name: products
+      - name: distribution_centers
+      - name: inventory_items
